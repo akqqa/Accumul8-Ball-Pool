@@ -10,7 +10,7 @@ public void settings() {
 }
 
 public void setup() {
-  table = new PoolTable(8, 300, new PVector(screen_width/2,screen_height/2));
+  table = new PoolTable(7, 300, new PVector(screen_width/2,screen_height/2));
 }
 
 void draw() {  // draw() loops forever, until stopped

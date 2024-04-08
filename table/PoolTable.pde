@@ -28,9 +28,21 @@ final class PoolTable {
   void draw() {
     shape(this.shape);
     for (Line line : this.lines) {
-      stroke(100,0,0);
-      strokeWeight(20);
+      stroke(200,0,0);
+      strokeWeight(5);
       line(line.start.x, line.start.y, line.end.x, line.end.y);
+    }
+    update();
+  }
+  
+  void update() {
+    // Detect collisions for each line (with a circle around the mouse for now)
+    for (Line line : this.lines) {
+      if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, mouseX, mouseY, 1)) {
+        stroke0,200,0);
+        strokeWeight(5);
+        line(line.start.x, line.start.y, line.end.x, line.end.y);
+      }
     }
   }
 }
