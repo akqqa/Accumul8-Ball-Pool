@@ -14,7 +14,7 @@ void settings() {
 
 void setup() {
     cue_ball = new Ball(20, 20, 50, 5, "white");
-    cue_ball.applyForce(new PVector(20, 20));
+    cue_ball.applyForce(new PVector(50, 50));
     balls.add(cue_ball);
     
     balls.add(new Ball(50, 50, ball_diameter, ball_mass, "red"));

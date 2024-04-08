@@ -1,7 +1,7 @@
 
 public class Ball {
   
-    protected final float K1 = 0,
+    protected final float K1 = 0.06,
                           K2 = 0;
 
     protected PVector position;
@@ -132,6 +132,7 @@ public class Ball {
       float minDistance = radius + other.radius;
   
       if (distanceVectMag < minDistance) {
+        
         float distanceCorrection = (minDistance-distanceVectMag)/2.0;
         PVector d = distanceVect.copy();
         PVector correctionVector = d.normalize().mult(distanceCorrection);
@@ -202,8 +203,15 @@ public class Ball {
         bFinal[1].y = cosine * bTemp[1].y + sine * bTemp[1].x;
   
         // update balls to screen position
-        other.position.x = position.x + bFinal[1].x;
-        other.position.y = position.y + bFinal[1].y;
+        //other.position.x = position.x + bFinal[1].x + 1;
+        //other.position.y = position.y + bFinal[1].y + 1;
+        
+        // Simply update balls to be apart from each other in direction of intersection
+        // intersection magnitude
+        float intersectMag = this.radius + other.radius - (distanceVect.mag());
+        PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
+        this.position.x = this.position.x - scaledDistanceVect.x/2;
+        this.position.y = this.position.y - scaledDistanceVect.y/2;
   
         position.add(bFinal[0]);
   
