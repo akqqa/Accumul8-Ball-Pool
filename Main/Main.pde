@@ -50,6 +50,7 @@ void updateMovements() {
   //for (Ball b : balls) {
   //  table.boundaryCollision(b);
   //}
+  // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
       balls.get(i).ballCollision(balls.get(j));

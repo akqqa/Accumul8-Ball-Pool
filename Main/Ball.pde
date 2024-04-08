@@ -1,8 +1,9 @@
 
 public class Ball {
   
-    protected final float K1 = 0.06,
-                          K2 = 0;
+    protected final float K1 = 0.0015, //https://billiards.colostate.edu/faq/physics/physical-properties/
+                          K2 = 0.0;
+    protected final int slow_total = 200;
 
     protected PVector position;
     protected PVector velocity;
@@ -12,6 +13,8 @@ public class Ball {
     protected float radius;
     protected float mass;
     protected color colour;
+    
+    protected int slow_count = slow_total;
 
 
     public Ball(float x, float y, float diameter, float mass, String colour) {
@@ -88,6 +91,13 @@ public class Ball {
       velocity.add(acceleration);
       position.add(velocity);
       acceleration.mult(0);
+      
+      // forces slow balls to stop after 200 frames
+      if (velocity.mag() < 0.05) {
+        slow_count --;
+        if (slow_count == 0) velocity.setMag(0);
+      } else slow_count = slow_total;
+      
     }
     
     
