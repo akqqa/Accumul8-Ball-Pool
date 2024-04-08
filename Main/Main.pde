@@ -51,9 +51,9 @@ void updateMovements() {
   //  table.boundaryCollision(b);
   //}
   for (int i = 0; i < balls.size()-1; i++){
-      for (int j = i + 1; j < balls.size(); j++){
-        balls.get(i).ballCollision(balls.get(j));
-      }
+    for (int j = i + 1; j < balls.size(); j++){
+      balls.get(i).ballCollision(balls.get(j));
+    }
   }
 }
 
