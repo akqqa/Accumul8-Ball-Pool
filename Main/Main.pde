@@ -54,9 +54,8 @@ void updateMovements() {
       for (int j = i + 1; j < balls.size(); j++){
         balls.get(i).ballCollision(balls.get(j));
       }
-    }
+  }
 }
-
 
 void mousePressed() {
   balls.add(new Ball(mouseX, mouseY, 20, 2, "white"));
