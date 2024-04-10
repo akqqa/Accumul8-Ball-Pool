@@ -5,6 +5,7 @@ final float ball_mass = ball_diameter*.1;
 
 Ball cue_ball;
 ArrayList<Ball> balls = new ArrayList<>();
+PoolTable table;
 
 
 void settings() {
@@ -13,16 +14,13 @@ void settings() {
 
 
 void setup() {
-    cue_ball = new Ball(20, 20, 50, 5, "white");
-    cue_ball.applyForce(new PVector(50, 50));
+    table = new PoolTable(7, 300, new PVector(screen_width/2,screen_height/2));
+    cue_ball = new Ball(screen_width/2,screen_height/2, 50, 5, "white");
+    cue_ball.applyForce(new PVector(0, -50));
     balls.add(cue_ball);
     
-    balls.add(new Ball(50, 50, ball_diameter, ball_mass, "red"));
-    balls.add(new Ball(100, 50, ball_diameter, ball_mass, "blue"));
-    balls.add(new Ball(50, 100, ball_diameter, ball_mass, "pink"));
-    balls.add(new Ball(100, 100, ball_diameter, ball_mass, "brown"));
-    balls.add(new Ball(200, 100, ball_diameter, ball_mass, "yellow"));
-    balls.add(new Ball(100, 200, ball_diameter, ball_mass, "black"));
+    balls.add(new Ball(screen_width/2,screen_height/2 - 200, ball_diameter, ball_mass, "red"));
+    balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
 }
 
 
@@ -34,6 +32,7 @@ void draw() {
 
 void render() {
   background(255);
+  table.draw();
   for (Ball b : balls) {
     b.draw();
   }
@@ -47,14 +46,14 @@ void updateMovements() {
   for (Ball b : balls) {
     b.move();
   }
-  //for (Ball b : balls) {
-  //  table.boundaryCollision(b);
-  //}
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
       balls.get(i).ballCollision(balls.get(j));
     }
+  }
+  for (Ball b : balls) {
+   table.boundaryCollision(b);
   }
 }
 

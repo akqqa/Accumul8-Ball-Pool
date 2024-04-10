@@ -5,12 +5,12 @@ public class Ball {
                           K2 = 0.0;
     protected final int slow_total = 200;
 
-    protected PVector position;
-    protected PVector velocity;
-    protected PVector acceleration;
+    public PVector position;
+    public PVector velocity;
+    public PVector acceleration;
     protected float invMass;
     protected float diameter;
-    protected float radius;
+    public float radius;
     protected float mass;
     protected color colour;
     
@@ -61,6 +61,8 @@ public class Ball {
 
 
     public void draw() {
+      stroke(0,0,0);
+      strokeWeight(1);
       fill(colour);     
       circle(position.x, position.y, diameter);
     }
