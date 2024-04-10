@@ -62,6 +62,17 @@ final class PoolTable {
         b.velocity = newVelocity.copy();
 
         // Like with ball collisions, move ball away from the intersection between it and the wall (to prevent phasing?)
+        // Using lineCircle() logic, calculate vector between center of circle and line
+        PVector intersect = lineCircleVector(line.start.x, line.start.y, line.end.x, line.end.y, b.position.x, b.position.y, b.radius);
+        // move the position of the ball away from the wall in the direction of the intersect, with a magnitude of the radius - the intersects magnitude
+        if (intersect != null) {
+          b.position.sub(intersect.setMag(b.radius-intersect.mag()));
+          println(intersect);
+        }
+        // CURRENTLY WORKS OKAY, BUT WITH HIGHER SPEEDS (initial ball velocity above 0,-70) WHEN IT PHASES THROUGH THE WALL FULLY IT STILL GETS PUSHED OUT.
+        // POSSIBLE SOLUTION: keep track of which side of each line is the "interior" of the table, and always move the ball in this direction
+        // If mostly on the "exterior", set magnitude of the intersect to the intersect + the radius of the ball
+        // might alternatively be an issue due to the position always having the intersect subtracted - maybe should differ depending on whether above, below, etc the wall
       }
     }
   }

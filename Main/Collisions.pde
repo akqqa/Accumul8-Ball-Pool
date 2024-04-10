@@ -38,6 +38,28 @@ boolean lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, f
   return false;
 }
 
+PVector lineCircleVector(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
+  // get length of the line
+  float distX = x1 - x2;
+  float distY = y1 - y2;
+  float len = sqrt( (distX*distX) + (distY*distY) );
+
+  // get dot product of the line and circle
+  float dot = ( ((cx-x1)*(x2-x1)) + ((cy-y1)*(y2-y1)) ) / pow(len,2);
+
+  // find the closest point on the line
+  float closestX = x1 + (dot * (x2-x1));
+  float closestY = y1 + (dot * (y2-y1));
+
+  // is this point actually on the line segment?
+  // if so keep going, but if not, return false
+  boolean onSegment = linePoint(x1,y1,x2,y2, closestX,closestY);
+  if (!onSegment) return null;
+
+  // return vector circle and line intersection
+  return new PVector(closestX-cx, closestY-cy);
+}
+
 
 // POINT/CIRCLE
 boolean pointCircle(float px, float py, float cx, float cy, float r) {

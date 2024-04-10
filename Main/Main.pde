@@ -14,9 +14,10 @@ void settings() {
 
 
 void setup() {
+    frameRate(60);
     table = new PoolTable(7, 300, new PVector(screen_width/2,screen_height/2));
     cue_ball = new Ball(screen_width/2,screen_height/2, 50, 5, "white");
-    cue_ball.applyForce(new PVector(0, -50));
+    cue_ball.applyForce(new PVector(0, -65));
     balls.add(cue_ball);
     
     balls.add(new Ball(screen_width/2,screen_height/2 - 200, ball_diameter, ball_mass, "red"));
