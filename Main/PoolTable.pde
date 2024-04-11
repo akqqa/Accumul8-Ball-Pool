@@ -75,7 +75,7 @@ final class PoolTable {
           // else do with radius added to the above
           else {
             print("change");
-            println(intersect.setMag((b.radius-intersect.mag()) - b.radius));
+            println(intersect.setMag(- b.radius-intersect.mag()));
             b.position.sub(intersect);
           }
           print("intersect");
