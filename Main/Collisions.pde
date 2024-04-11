@@ -102,3 +102,9 @@ boolean linePoint(float x1, float y1, float x2, float y2, float px, float py) {
   }
   return false;
 }
+
+
+boolean centreInsideTable(float x_centre, float y_centre, float x_intersect, float y_intersect, float x_point, float y_point) {
+  // distance from centre to intersect > than from centre to point means point in table
+  return dist(x_centre, y_centre, x_intersect, y_intersect) > dist(x_centre, y_centre, x_point, y_point);
+}

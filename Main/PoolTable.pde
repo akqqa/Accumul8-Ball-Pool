@@ -50,9 +50,11 @@ final class PoolTable {
   void boundaryCollision(Ball b) {
     for (Line line : this.lines) {
       if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, b.position.x, b.position.y, b.radius)) {
-        print("colliding");
+        println("colliding");
         // Calculate normal of line - https://stackoverflow.com/a/1243676
         PVector normalVector = new PVector((line.end.y-line.start.y), -(line.end.x-line.start.x));
+        print("normal");
+        println(normalVector);
         // Calculate components of balls velocity perpendicular and parallel to the line colliding with
         // https://stackoverflow.com/a/573206
         PVector u = normalVector.mult((b.velocity.copy().dot(normalVector) / normalVector.dot(normalVector)));
@@ -60,14 +62,25 @@ final class PoolTable {
 
         PVector newVelocity = w.sub(u.mult(elasticity));
         b.velocity = newVelocity.copy();
+        print("new velocity");
+        println(b.velocity);
 
         // Like with ball collisions, move ball away from the intersection between it and the wall (to prevent phasing?)
         // Using lineCircle() logic, calculate vector between center of circle and line
         PVector intersect = lineCircleVector(line.start.x, line.start.y, line.end.x, line.end.y, b.position.x, b.position.y, b.radius);
         // move the position of the ball away from the wall in the direction of the intersect, with a magnitude of the radius - the intersects magnitude
         if (intersect != null) {
-          b.position.sub(intersect.setMag(b.radius-intersect.mag()));
+          if (centreInsideTable(position.x, position.y, intersect.x+b.position.x, intersect.y+b.position.y, b.position.x, b.position.y))
+            b.position.sub(intersect.setMag(b.radius-intersect.mag()));
+          // else do with radius added to the above
+          else {
+            print("change");
+            println(intersect.setMag((b.radius-intersect.mag()) - b.radius));
+            b.position.sub(intersect);
+          }
+          print("intersect");
           println(intersect);
+          println();
         }
         // CURRENTLY WORKS OKAY, BUT WITH HIGHER SPEEDS (initial ball velocity above 0,-70) WHEN IT PHASES THROUGH THE WALL FULLY IT STILL GETS PUSHED OUT.
         // POSSIBLE SOLUTION: keep track of which side of each line is the "interior" of the table, and always move the ball in this direction
