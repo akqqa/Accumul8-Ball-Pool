@@ -6,6 +6,7 @@ final float ball_mass = ball_diameter*.1;
 Ball cue_ball;
 ArrayList<Ball> balls = new ArrayList<>();
 PoolTable table;
+int frame = 0;
 
 
 void settings() {
@@ -17,7 +18,7 @@ void setup() {
     frameRate(60);
     table = new PoolTable(7, 300, new PVector(screen_width/2,screen_height/2));
     cue_ball = new Ball(screen_width/2,screen_height/2, 50, 5, "white");
-    cue_ball.applyForce(new PVector(0, -100));
+    cue_ball.applyForce(new PVector(0, -300));
     balls.add(cue_ball);
     
     balls.add(new Ball(screen_width/2,screen_height/2 - 200, ball_diameter, ball_mass, "red"));
@@ -26,8 +27,12 @@ void setup() {
 
 
 void draw() {
-  render();
-  updateMovements();
+  frame += 1;
+  if (frame % 1 == 0) {
+    render();
+    updateMovements();
+  }
+  
 }
 
 

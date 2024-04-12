@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 final class PoolTable {
   public int sides;
   public float scale;
@@ -47,45 +49,69 @@ final class PoolTable {
   // }
 
   // Check if ball is colliding with a wall. If so, reflect the velocity of the ball based on the wall angle
+  // Projects backwards based on the current velocity of the ball, with a step size of the balls diameter
   void boundaryCollision(Ball b) {
-    for (Line line : this.lines) {
-      if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, b.position.x, b.position.y, b.radius)) {
-        println("colliding");
-        // Calculate normal of line - https://stackoverflow.com/a/1243676
-        PVector normalVector = new PVector((line.end.y-line.start.y), -(line.end.x-line.start.x));
-        print("normal");
-        println(normalVector);
-        // Calculate components of balls velocity perpendicular and parallel to the line colliding with
-        // https://stackoverflow.com/a/573206
-        PVector u = normalVector.mult((b.velocity.copy().dot(normalVector) / normalVector.dot(normalVector)));
-        PVector w = b.velocity.copy().sub(u);
+    // Create a list of all ball positions between the current position and the previous position based on the velocity, with a step size of diameter
+    PVector currentPosition = b.position.copy();
+    ArrayList<PVector> pastPositions = new ArrayList<PVector>();
+    pastPositions.add(currentPosition);
+    // Get each position between current and next position with a step size of radius
+    if (b.velocity.mag() > b.radius) {
+      int iterations = (int) ((int)b.velocity.mag() / b.radius);
+      for (int i = 1; i <= iterations; i++) {
+        print("e");
+        pastPositions.add(b.position.copy().sub(b.velocity.copy().setMag(b.radius*i)));
+      }
+    }
+    pastPositions.add(b.position.copy().sub(b.velocity));
+    for (PVector pos : pastPositions) {
+      print("hi");
+      circle(pos.x, pos.y, 2);
+    }
 
-        PVector newVelocity = w.sub(u.mult(elasticity));
-        b.velocity = newVelocity.copy();
-        print("new velocity");
-        println(b.velocity);
+    Collections.reverse(pastPositions); // Reverse so calculates in chronological order
 
-        // Like with ball collisions, move ball away from the intersection between it and the wall (to prevent phasing?)
-        // Using lineCircle() logic, calculate vector between center of circle and line
-        PVector intersect = lineCircleVector(line.start.x, line.start.y, line.end.x, line.end.y, b.position.x, b.position.y, b.radius);
-        // move the position of the ball away from the wall in the direction of the intersect, with a magnitude of the radius - the intersects magnitude
-        if (intersect != null) {
-          if (centreInsideTable(position.x, position.y, intersect.x+b.position.x, intersect.y+b.position.y, b.position.x, b.position.y))
-            b.position.sub(intersect.setMag(b.radius-intersect.mag()));
-          // else do with radius added to the above
-          else {
-            print("change");
-            println(intersect.setMag(- b.radius-intersect.mag()));
-            b.position.sub(intersect);
+    for (PVector pos : pastPositions) {
+      boolean collided = false;
+      for (Line line : this.lines) {
+        if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, pos.x, pos.y, b.radius)) {
+          collided = true;
+          println("colliding");
+          // Calculate normal of line - https://stackoverflow.com/a/1243676
+          PVector normalVector = new PVector((line.end.y-line.start.y), -(line.end.x-line.start.x));
+          print("normal");
+          println(normalVector);
+          // Calculate components of balls velocity perpendicular and parallel to the line colliding with
+          // https://stackoverflow.com/a/573206
+          PVector u = normalVector.mult((b.velocity.copy().dot(normalVector) / normalVector.dot(normalVector)));
+          PVector w = b.velocity.copy().sub(u);
+
+          PVector newVelocity = w.sub(u.mult(elasticity));
+          b.velocity = newVelocity.copy();
+          print("new velocity");
+          println(b.velocity);
+
+          // Like with ball collisions, move ball away from the intersection between it and the wall (to prevent phasing?)
+          // Using lineCircle() logic, calculate vector between center of circle and line
+          PVector intersect = lineCircleVector(line.start.x, line.start.y, line.end.x, line.end.y, pos.x, pos.y, b.radius);
+          // move the position of the ball away from the wall in the direction of the intersect, with a magnitude of the radius - the intersects magnitude
+          if (intersect != null) {
+            if (centreInsideTable(position.x, position.y, intersect.x+pos.x, intersect.y+pos.y, pos.x, pos.y))
+              b.position = pos.sub(intersect.setMag(b.radius-intersect.mag() + 1)); // +1 as a small offset to prevent getting stuck in walls
+            // else do with radius added to the above
+            else {
+              print("change");
+              println(intersect.setMag(-b.radius-intersect.mag() - 1)); // -1 as a small offset to prevent getting stuck in walls
+              b.position = pos.sub(intersect);
+            }
+            print("intersect");
+            println(intersect);
+            println();
           }
-          print("intersect");
-          println(intersect);
-          println();
         }
-        // CURRENTLY WORKS OKAY, BUT WITH HIGHER SPEEDS (initial ball velocity above 0,-70) WHEN IT PHASES THROUGH THE WALL FULLY IT STILL GETS PUSHED OUT.
-        // POSSIBLE SOLUTION: keep track of which side of each line is the "interior" of the table, and always move the ball in this direction
-        // If mostly on the "exterior", set magnitude of the intersect to the intersect + the radius of the ball
-        // might alternatively be an issue due to the position always having the intersect subtracted - maybe should differ depending on whether above, below, etc the wall
+      }
+      if (collided) { // If this past version of the ball hit a wall, return as no need to handle further collisions of further ball versins
+        return;
       }
     }
   }
