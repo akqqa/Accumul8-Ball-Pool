@@ -7,7 +7,7 @@ final class PoolTable {
   protected float interior_angle;
   protected ArrayList<Line> lines = new ArrayList<Line>();
   protected PShape shape;
-  protected float elasticity = 1;
+  protected float elasticity = 0.5;
   
   public PoolTable(int sides, float scale, PVector position) {
     this.sides = sides;
@@ -127,6 +127,7 @@ PShape polygon(float x, float y, float radius, int sides, float initial_angle) {
     float sy = y + sin(a) * radius;
     s.vertex(sx, sy);
   }
+  s.fill(58, 181, 3);
   s.endShape(CLOSE);
   return s;
 }

@@ -17,11 +17,11 @@ void settings() {
 void setup() {
     frameRate(60);
     table = new PoolTable(7, 300, new PVector(screen_width/2,screen_height/2));
-    cue_ball = new Ball(screen_width/2,screen_height/2, 50, 5, "white");
-    cue_ball.applyForce(new PVector(0, -300));
+    cue_ball = new Ball(screen_width/2,screen_height/2 + 100, ball_diameter, ball_mass+0.5, "white");
+    cue_ball.applyForce(new PVector(0, -200));
     balls.add(cue_ball);
     
-    balls.add(new Ball(screen_width/2,screen_height/2 - 200, ball_diameter, ball_mass, "red"));
+    balls.add(new Ball(screen_width/2,screen_height/2 - 175, ball_diameter, ball_mass, "red"));
     balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
 }
 
@@ -32,7 +32,6 @@ void draw() {
     render();
     updateMovements();
   }
-  
 }
 
 
@@ -53,6 +52,9 @@ void updateMovements() {
   for (Ball b : balls) {
     b.move();
   }
+  // for (Ball b : balls) {
+  //  table.boundaryCollision(b);
+  // }
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
@@ -60,6 +62,7 @@ void updateMovements() {
     }
   }
   for (Ball b : balls) {
+    // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
    table.boundaryCollision(b);
   }
 }

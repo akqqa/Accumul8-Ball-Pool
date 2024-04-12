@@ -1,7 +1,7 @@
 
 public class Ball {
   
-    protected final float K1 = 0.0015, //https://billiards.colostate.edu/faq/physics/physical-properties/
+    protected final float K1 = 0.0315, //https://billiards.colostate.edu/faq/physics/physical-properties/
                           K2 = 0.0;
     protected final int slow_total = 200;
 
@@ -95,7 +95,7 @@ public class Ball {
       acceleration.mult(0);
       
       // forces slow balls to stop after 200 frames
-      if (velocity.mag() < 0.05) {
+      if (velocity.mag() < 1) {
         slow_count --;
         if (slow_count == 0) velocity.setMag(0);
       } else slow_count = slow_total;
