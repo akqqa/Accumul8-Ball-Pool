@@ -10,6 +10,7 @@ int points_needed = 0;
 
 Ball cue_ball;
 ArrayList<Ball> balls = new ArrayList<>();
+ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
 int frame = 0;
 
@@ -61,12 +62,15 @@ void renderHUD() {
 }
 
 void render() {
-  fill(255);  
+  fill(255);
   rect(0, 0, screen_width, screen_height);
   //background(255);
   table.draw();
   //pocket.draw();
   for (Ball b : balls) {
+    b.draw();
+  }
+  for (Ball b : pocketed) {
     b.draw();
   }
   //noLoop();
@@ -80,22 +84,28 @@ void updateMovements() {
   for (Ball b : balls) {
     b.move();
   }
-  // for (Ball b : balls) {
-  //  table.boundaryCollision(b);
-  // }
+  for (Ball b : pocketed) {
+    b.move();
+  }
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
       balls.get(i).ballCollision(balls.get(j));
     }
   }
-  ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : balls) {
     // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
    table.boundaryCollision(b);
-   if (table.ballInPocket(b)) bin.add(b);
+   if (table.ballInPocket(b)) pocketed.add(b);
   }
-  for (Ball b : bin) balls.remove(b);
+  ArrayList<Ball> bin = new ArrayList<>();
+  for (Ball b : pocketed) {
+    balls.remove(b);
+    if (table.ballFinished(b)) bin.add(b);
+  }
+  for (Ball b : bin) {
+    pocketed.remove(b);
+  }
 }
 
 // Takes in bottom ball of triangle, constructs rows rows of balls of radius radius

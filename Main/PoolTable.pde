@@ -44,7 +44,9 @@ final class PoolTable {
   
   void spawnPockets() {
     for (Line l : lines) {
-      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter));
+      // corners
+      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+      // lines
       pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
     }
   }
@@ -129,8 +131,17 @@ final class PoolTable {
   }
   boolean ballInPocket(Ball b) {
     for (Pocket p : pockets) {
-     if (p.pocketed(b)) return true;
+     if (p.pocketed(b)) {
+       b.velocity.setMag(p.position.copy().sub(b.position).mult(0.1).mag());
+       //b.velocity = p.position.copy().sub(b.position).mult(0.1);
+       b.acceleration = new PVector(0, 0);
+       return true;
+     }
     }
+    return false;
+  }
+  boolean ballFinished(Ball b) {
+    if (b.pocket_counter++ == 10) return true;
     return false;
   }
 }
