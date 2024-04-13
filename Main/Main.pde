@@ -1,12 +1,15 @@
 final int screen_width = 1280;
 final int screen_height = 720;
 final float ball_diameter = 720/25;
+final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 
 Ball cue_ball;
 ArrayList<Ball> balls = new ArrayList<>();
 PoolTable table;
 int frame = 0;
+
+//Pocket pocket;
 
 
 void settings() {
@@ -23,6 +26,8 @@ void setup() {
     
     balls.add(new Ball(screen_width/2,screen_height/2 - 175, ball_diameter, ball_mass, "red"));
     balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
+    
+    //pocket = new Pocket(screen_width/2, screen_height/2-200, pocket_diameter);
 }
 
 
@@ -38,6 +43,7 @@ void draw() {
 void render() {
   background(255);
   table.draw();
+  //pocket.draw();
   for (Ball b : balls) {
     b.draw();
   }
@@ -61,10 +67,13 @@ void updateMovements() {
       balls.get(i).ballCollision(balls.get(j));
     }
   }
+  ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : balls) {
     // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
    table.boundaryCollision(b);
+   if (table.ballInPocket(b)) bin.add(b);
   }
+  for (Ball b : bin) balls.remove(b);
 }
 
 void mousePressed() {

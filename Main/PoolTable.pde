@@ -6,6 +6,7 @@ final class PoolTable {
   public PVector position;
   protected float interior_angle;
   protected ArrayList<Line> lines = new ArrayList<Line>();
+  protected ArrayList<Pocket> pockets = new ArrayList<Pocket>();
   protected PShape shape;
   protected float elasticity = 0.5;
   
@@ -26,6 +27,7 @@ final class PoolTable {
     PVector start = this.shape.getVertex(this.shape.getVertexCount() - 1);
     PVector end = this.shape.getVertex(0);
     lines.add(new Line(start, end));
+    spawnPockets();
   }
   
   void draw() {
@@ -34,6 +36,16 @@ final class PoolTable {
       stroke(200,0,0);
       strokeWeight(5);
       line(line.start.x, line.start.y, line.end.x, line.end.y);
+    }
+    for (Pocket p : pockets) {
+      p.draw();
+    }
+  }
+  
+  void spawnPockets() {
+    for (Line l : lines) {
+      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter));
+      pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
     }
   }
   
@@ -65,7 +77,7 @@ final class PoolTable {
     }
     pastPositions.add(b.position.copy().sub(b.velocity));
     for (PVector pos : pastPositions) {
-      print("hi");
+      //print("hi");
       circle(pos.x, pos.y, 2);
     }
 
@@ -114,6 +126,12 @@ final class PoolTable {
         return;
       }
     }
+  }
+  boolean ballInPocket(Ball b) {
+    for (Pocket p : pockets) {
+     if (p.pocketed(b)) return true;
+    }
+    return false;
   }
 }
 
