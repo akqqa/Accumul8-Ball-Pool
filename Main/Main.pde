@@ -9,6 +9,7 @@ int score = 0;
 int points_needed = 0;
 
 Ball cue_ball;
+final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
 ArrayList<Ball> balls = new ArrayList<>();
 ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
@@ -25,7 +26,7 @@ void settings() {
 void setup() {
     frameRate(60);
     table = new PoolTable(4, 300, new PVector(screen_width/2,screen_height/2));
-    cue_ball = new Ball(screen_width/2,screen_height/2 + 100, ball_diameter, ball_mass+0.5, "white");
+    cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
     cue_ball.applyForce(new PVector(0, -100));
     balls.add(cue_ball);
     
@@ -107,6 +108,7 @@ void updateMovements() {
   }
   for (Ball b : bin) {
     pocketed.remove(b);
+    if (b == cue_ball) resetCue();
   }
 }
 
@@ -119,6 +121,12 @@ void setupTriangle(PVector bottom, int rows, float radius, float mass) {
       balls.add(new Ball(startx + j*radius*1.1 + random(-1,1), starty + random(-1,1), radius, mass, "red"));
     }
   }
+}
+
+
+void resetCue() {
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  balls.add(cue_ball);
 }
 
 void mousePressed() {
