@@ -23,13 +23,15 @@ void settings() {
 
 void setup() {
     frameRate(60);
-    table = new PoolTable(7, 300, new PVector(screen_width/2,screen_height/2));
+    table = new PoolTable(4, 300, new PVector(screen_width/2,screen_height/2));
     cue_ball = new Ball(screen_width/2,screen_height/2 + 100, ball_diameter, ball_mass+0.5, "white");
-    cue_ball.applyForce(new PVector(0, -200));
+    cue_ball.applyForce(new PVector(0, -100));
     balls.add(cue_ball);
     
-    balls.add(new Ball(screen_width/2,screen_height/2 - 175, ball_diameter, ball_mass, "red"));
-    balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
+    //balls.add(new Ball(screen_width/2,screen_height/2 - 175, ball_diameter, ball_mass, "red"));
+    //balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
+    
+    setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
     
     //pocket = new Pocket(screen_width/2, screen_height/2-200, pocket_diameter);
 }
@@ -94,6 +96,17 @@ void updateMovements() {
    if (table.ballInPocket(b)) bin.add(b);
   }
   for (Ball b : bin) balls.remove(b);
+}
+
+// Takes in bottom ball of triangle, constructs rows rows of balls of radius radius
+void setupTriangle(PVector bottom, int rows, float radius, float mass) {
+  for (int i = 0; i < rows; i++) {
+    float startx = bottom.x - i*radius/2;
+    float starty = bottom.y - i*radius;
+    for (int j = 0; j <= i; j++) {
+      balls.add(new Ball(startx + j*radius*1.1 + random(-1,1), starty + random(-1,1), radius, mass, "red"));
+    }
+  }
 }
 
 void mousePressed() {
