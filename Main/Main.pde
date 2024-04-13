@@ -4,6 +4,10 @@ final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 
+int round_num = 0;
+int score = 0;
+int points_needed = 0;
+
 Ball cue_ball;
 ArrayList<Ball> balls = new ArrayList<>();
 PoolTable table;
@@ -32,6 +36,7 @@ void setup() {
 
 
 void draw() {
+  renderHUD();
   frame += 1;
   if (frame % 1 == 0) {
     render();
@@ -39,9 +44,24 @@ void draw() {
   }
 }
 
+void renderHUD() {
+  background(58, 181, 3);
+  scale(0.98, 0.95);
+  translate(2*screen_width/200, 4*screen_height/100);
+  fill(0);
+  textSize(15);
+  textAlign(CENTER);
+  text("Round " + str(round_num), 4*screen_width/6.0, -screen_height*0.01);
+  textAlign(CENTER);
+  text("Points Needed " + str(points_needed), 3*screen_width/6.0, -screen_height*0.01);
+  textAlign(CENTER);
+  text("Score " + str(score), 2*screen_width/6.0, -screen_height*0.01);
+}
 
 void render() {
-  background(255);
+  fill(255);  
+  rect(0, 0, screen_width, screen_height);
+  //background(255);
   table.draw();
   //pocket.draw();
   for (Ball b : balls) {
