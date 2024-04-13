@@ -63,6 +63,8 @@ void renderHUD() {
 
 void render() {
   fill(255);
+  strokeWeight(5);
+  stroke(200, 0, 0);
   rect(0, 0, screen_width, screen_height);
   //background(255);
   table.draw();
