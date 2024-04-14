@@ -72,6 +72,7 @@ void renderHUD() {
 
 void render() {
   fill(255); 
+  // adjusting the rectangle position
   pushMatrix();
   translate(screen_width/2, screen_height/2);
   rect(0, 0, screen_width, screen_height);
@@ -153,6 +154,7 @@ void mouseReleased() {
     cue.setLockAngle(false);
 }
 
+// check if all balls have stopped
 boolean checkAllBallStop() {
   for (Ball b : balls) {
     if (b.velocity.mag() != 0) {
