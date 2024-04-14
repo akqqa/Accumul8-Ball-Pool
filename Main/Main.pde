@@ -24,7 +24,8 @@ void settings() {
 
 void setup() {
     frameRate(60);
-    table = new PoolTable(4, 300, new PVector(screen_width/2,screen_height/2));
+    // If pool table is 4 sided, make radius 450, maxX 225. IN ALL OTHER CASES make it 325
+    table = new PoolTable(4, 450, new PVector(screen_width/2,screen_height/2), 225);
     cue_ball = new Ball(screen_width/2,screen_height/2 + 100, ball_diameter, ball_mass+0.5, "white");
     cue_ball.applyForce(new PVector(0, -100));
     balls.add(cue_ball);
@@ -32,7 +33,7 @@ void setup() {
     //balls.add(new Ball(screen_width/2,screen_height/2 - 175, ball_diameter, ball_mass, "red"));
     //balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
     
-    setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+    setupTriangle(new PVector(screen_width/2,screen_height/2), 2, ball_diameter, ball_mass);
     
     //pocket = new Pocket(screen_width/2, screen_height/2-200, pocket_diameter);
 }
