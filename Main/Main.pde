@@ -4,12 +4,13 @@ final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 
-int round_num = 0;
+int round_num = 1;
 int score = 0;
 int points_needed = 0;
 
 Ball cue_ball;
 final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
+boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
 ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
@@ -25,17 +26,22 @@ void settings() {
 
 void setup() {
     frameRate(60);
-    table = new PoolTable(4, 300, new PVector(screen_width/2,screen_height/2));
-    cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
-    cue_ball.applyForce(new PVector(0, -100));
-    balls.add(cue_ball);
-    
-    //balls.add(new Ball(screen_width/2,screen_height/2 - 175, ball_diameter, ball_mass, "red"));
-    //balls.add(new Ball(screen_width/2,screen_height/2 - 100, ball_diameter, ball_mass, "blue"));
-    
-    setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
-    
-    //pocket = new Pocket(screen_width/2, screen_height/2-200, pocket_diameter);
+    table_setup();
+    //table = new PoolTable(4, 300, new PVector(screen_width/2,screen_height/2));
+    //cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+    //cue_ball.applyForce(new PVector(0, -100));
+    //balls.add(cue_ball);    
+    //setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+}
+
+
+void table_setup() {
+  table = new PoolTable(round_num + 3, 300, new PVector(screen_width/2,screen_height/2));
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  cue_ball.applyForce(new PVector(0, -100));
+  balls.clear();
+  balls.add(cue_ball);    
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
 }
 
 
@@ -43,6 +49,18 @@ void draw() {
   renderHUD();
   frame += 1;
   if (frame % 1 == 0) {
+    //if (cue_ball_potted && nextTurn()) resetCueBall();
+    switch (nextTurn()) {
+      case (0):
+        if (cue_ball_potted) resetCueBall();
+        // reactivate cue stick here
+        break;
+      case (1):
+        round_num ++;
+        table_setup();
+        // reactivate cue stick here
+        break;
+    }
     render();
     updateMovements();
   }
@@ -50,16 +68,16 @@ void draw() {
 
 void renderHUD() {
   background(58, 181, 3);
-  scale(0.98, 0.95);
-  translate(2*screen_width/200, 4*screen_height/100);
+  scale(0.98, 0.925);
+  translate(2*screen_width/200, 6*screen_height/100);
   fill(0);
-  textSize(15);
+  textSize(30);
   textAlign(CENTER);
-  text("Round " + str(round_num), 4*screen_width/6.0, -screen_height*0.01);
+  text("Round " + str(round_num), 4*screen_width/6.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Points Needed " + str(points_needed), 3*screen_width/6.0, -screen_height*0.01);
+  text("Points Needed " + str(points_needed), 3*screen_width/6.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Score " + str(score), 2*screen_width/6.0, -screen_height*0.01);
+  text("Score " + str(score), 2*screen_width/6.0, -screen_height*0.02);
 }
 
 void render() {
@@ -108,25 +126,43 @@ void updateMovements() {
   }
   for (Ball b : bin) {
     pocketed.remove(b);
-    if (b == cue_ball) resetCue();
+    if (b == cue_ball) {
+      cue_ball_potted = true;
+      score -= 40;
+    } else score += 20;
   }
 }
 
 // Takes in bottom ball of triangle, constructs rows rows of balls of radius radius
-void setupTriangle(PVector bottom, int rows, float radius, float mass) {
+void setupTriangle(PVector bottom, int rows, float diameter, float mass) {
   for (int i = 0; i < rows; i++) {
-    float startx = bottom.x - i*radius/2;
-    float starty = bottom.y - i*radius;
+    float startx = bottom.x - i*diameter/2;
+    float starty = bottom.y - i*diameter;
     for (int j = 0; j <= i; j++) {
-      balls.add(new Ball(startx + j*radius*1.1 + random(-1,1), starty + random(-1,1), radius, mass, "red"));
+      balls.add(new Ball(startx + j*diameter*1.1 + random(-1,1), starty + random(-1,1), diameter, mass, "red"));
     }
   }
 }
 
 
-void resetCue() {
+void resetCueBall() {
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   balls.add(cue_ball);
+  cue_ball_potted = false;
+}
+
+int nextTurn() {
+  // return -1 for still moving
+  // return 0 for some reds remain
+  // return 1 for no reds remain
+  if (pocketed.size() > 0) return -1;
+  for (Ball b : balls)
+   {
+     if (b.velocity.mag() != 0) {
+        return -1;
+     } else if (b != cue_ball) return 0;
+   }
+  return 1;
 }
 
 void mousePressed() {
