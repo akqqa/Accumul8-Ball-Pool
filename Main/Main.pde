@@ -36,6 +36,7 @@ void setup() {
 
 
 void table_setup() {
+  // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
   table = new PoolTable(4, 450, new PVector(screen_width/2,screen_height/2), 225);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   cue_ball.applyForce(new PVector(0, -100));

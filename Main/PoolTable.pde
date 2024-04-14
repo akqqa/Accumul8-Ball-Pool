@@ -81,7 +81,6 @@ final class PoolTable {
     pastPositions.add(b.position.copy().sub(b.velocity));
     for (PVector pos : pastPositions) {
       //print("hi");
-      circle(pos.x, pos.y, 2);
     }
 
     Collections.reverse(pastPositions); // Reverse so calculates in chronological order
