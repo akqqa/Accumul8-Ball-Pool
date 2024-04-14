@@ -56,9 +56,13 @@ void draw() {
         // reactivate cue stick here
         break;
       case (1):
-        round_num ++;
-        table_setup();
-        // reactivate cue stick here
+        if (points_needed <= 0) {
+          round_num ++;
+          table_setup();
+          points_needed = 0;
+          // reactivate cue stick here
+        } else
+          finished = true;
         break;
     }
     render();
@@ -129,7 +133,10 @@ void updateMovements() {
     if (b == cue_ball) {
       cue_ball_potted = true;
       score -= 40;
-    } else score += 20;
+    } else {
+      score += 20;
+      points_needed -= 20;
+    }
   }
 }
 
