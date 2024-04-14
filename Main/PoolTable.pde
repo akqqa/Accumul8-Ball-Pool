@@ -10,12 +10,13 @@ final class PoolTable {
   protected PShape shape;
   protected float elasticity = 0.5;
   
-  public PoolTable(int sides, float scale, PVector position) {
+  public PoolTable(int sides, float scale, PVector position, float maxX) {
     this.sides = sides;
     this.scale = scale;
     this.position = position.copy();
     this.interior_angle = ((sides-2) * 180) / sides;
-    this.shape = polygon(this.position.x, this.position.y, this.scale, this.sides, (this.interior_angle/2*PI)/180); // Rotate by half the size of the interior angle of the shape being drawn to make it upright    
+    this.shape = polygon(this.position.x, this.position.y, this.scale, this.sides, (this.interior_angle/2*PI)/180); // Rotate by half the size of the interior angle of the shape being drawn to make it upright  
+    this.shape = scaleShape(this.position.x, this.position.y, this.shape, maxX);
     
     // Create list of lines for collisions
     for (int i = 0; i < this.shape.getVertexCount() - 1; i++) {
@@ -80,7 +81,6 @@ final class PoolTable {
     pastPositions.add(b.position.copy().sub(b.velocity));
     for (PVector pos : pastPositions) {
       //print("hi");
-      circle(pos.x, pos.y, 2);
     }
 
     Collections.reverse(pastPositions); // Reverse so calculates in chronological order
@@ -159,4 +159,26 @@ PShape polygon(float x, float y, float radius, int sides, float initial_angle) {
   s.fill(58, 181, 3);
   s.endShape(CLOSE);
   return s;
+}
+
+PShape scaleShape(float x, float y, PShape shape, float maxX) {
+  float maxDist = 0;
+  for (int i = 0; i < shape.getVertexCount(); i++) {
+     if (abs(shape.getVertex(i).x - x) > maxDist) {
+       maxDist = abs(shape.getVertex(i).x - x);
+     }
+  }
+  if (maxDist < maxX) {
+    return shape;
+  }
+  
+  float scaleFactor = maxX/maxDist;
+  for (int i = 0; i < shape.getVertexCount(); i++) {
+     // Scale each x by the scale factor
+     float xDist = shape.getVertex(i).x - x;
+     xDist = xDist * scaleFactor;
+     shape.setVertex(i, x+xDist, shape.getVertex(i).y);
+  }
+  
+  return shape;
 }
