@@ -6,7 +6,8 @@ final float ball_mass = ball_diameter*.1;
 
 int round_num = 1;
 int score = 0;
-int points_needed = 0;
+int points_needed = 100;
+boolean finished = false;
 
 Ball cue_ball;
 final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
@@ -65,8 +66,11 @@ void draw() {
           finished = true;
         break;
     }
-    render();
-    updateMovements();
+    if (finished) renderEnd();
+    else {
+      render();
+      updateMovements();
+    }
   }
 }
 
@@ -82,6 +86,14 @@ void renderHUD() {
   text("Points Needed " + str(points_needed), 3*screen_width/6.0, -screen_height*0.02);
   textAlign(CENTER);
   text("Score " + str(score), 2*screen_width/6.0, -screen_height*0.02);
+}
+
+void renderEnd() {
+  render();
+  fill(255, 0, 0);
+  textSize(150);
+  textAlign(CENTER);
+  text("GAME OVER", screen_width/2.0, screen_height/2.0);
 }
 
 void render() {
@@ -133,6 +145,7 @@ void updateMovements() {
     if (b == cue_ball) {
       cue_ball_potted = true;
       score -= 40;
+      points_needed += 40;
     } else {
       score += 20;
       points_needed -= 20;
@@ -163,12 +176,14 @@ int nextTurn() {
   // return 0 for some reds remain
   // return 1 for no reds remain
   if (pocketed.size() > 0) return -1;
+  boolean reds_remain = false;
   for (Ball b : balls)
    {
      if (b.velocity.mag() != 0) {
         return -1;
-     } else if (b != cue_ball) return 0;
+     } else if (b != cue_ball) reds_remain = true;
    }
+  if (reds_remain) return 0;
   return 1;
 }
 
