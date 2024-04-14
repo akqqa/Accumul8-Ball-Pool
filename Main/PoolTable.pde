@@ -134,7 +134,7 @@ final class PoolTable {
     for (Pocket p : pockets) {
      if (p.pocketed(b)) {
        //b.velocity.setMag(p.position.copy().sub(b.position).mult(0.1).mag());
-       b.velocity = p.position.copy().sub(b.position).mult(0.1);
+       b.velocity = p.position.copy().sub(b.position).mult(0.05);
        b.acceleration = new PVector(0, 0);
        return true;
      }
@@ -142,7 +142,7 @@ final class PoolTable {
     return false;
   }
   boolean ballFinished(Ball b) {
-    if (b.pocket_counter++ == 10) return true;
+    if (b.pocket_counter++ == 20) return true;
     return false;
   }
 }
