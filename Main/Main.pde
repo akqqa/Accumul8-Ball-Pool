@@ -84,8 +84,8 @@ void render() {
     b.draw();
   }
   cue.update(cue_ball.position.copy());
-  all_ball_stop = checkAllBallStop();
-  if(all_ball_stop) {
+
+  if(cue.getActive()) {
     cue.display();
   }
   //noLoop();
@@ -134,7 +134,9 @@ void setupTriangle(PVector bottom, int rows, float radius, float mass) {
 // }
 
 void mousePressed() {
-  loop();
+  // only lock angle when cue is active
+  if (cue.getActive()) {
+    loop();
     // lock the angle of the cue
     cue.setLockAngle(true);
 
@@ -145,13 +147,20 @@ void mousePressed() {
     // debug check
     println("xStart: " + xStart);
     println("yStart: " + yStart);
+  }
+  
 }
 
 // apply resultant to the ball when the mouse is released
 void mouseReleased() {
+  // only apply resultant when cue is active
+  if (cue.getActive()) {
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
+    cue.setActive(false);
+  }
+  
 }
 
 // check if all balls have stopped
