@@ -57,7 +57,7 @@ void table_setup() {
   balls.clear();
   balls.add(cue_ball);    
   setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
-  shots = 5 + round_num;
+  //shots = 5 * round_num+1;
 }
 
 

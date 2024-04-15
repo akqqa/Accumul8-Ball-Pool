@@ -42,7 +42,7 @@ public class InvItem {
   }
   
   public boolean hovered() {
-    if (position.dist(new PVector(mouseX, mouseY)) < (ball.diameter*0.75)) return true;
+    if (position.dist(new PVector(mouseX, mouseY)) <= (ball.radius*1.5)) return true;
     return false;    
   }
   
