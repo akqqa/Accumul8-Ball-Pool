@@ -11,11 +11,11 @@ final float max_dot_product = screen_height * 0.2;
 int round_num = 1;
 
 int score = 0;
-int points_needed = 100;
+int points_needed = 80;
 boolean finished = false;
 
 boolean moving = true;
-int shots = 5;
+int shots = 10;
 
 Ball cue_ball;
 Cue cue;
@@ -24,6 +24,8 @@ boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
 ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
+final float table_rad = 450;
+Inventory inventory;
 int frame = 0;
 float xStart = 0;
 float yStart = 0;
@@ -41,18 +43,21 @@ void settings() {
 void setup() {
     frameRate(60);
     table_setup();
+    inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad*1.5, shots);
+    //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
 }
 
 
 void table_setup() {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
-  table = new PoolTable(4, 450, new PVector(screen_width/2,screen_height/2), 225);
+  table = new PoolTable(4, table_rad, new PVector(screen_width/2,screen_height/2), 225);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
   setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+  shots = 5 + round_num;
 }
 
 
@@ -93,16 +98,21 @@ void draw() {
           table_setup();
           points_needed = 0;
           if (cue_ball_potted) resetCueBall();
+          cue_ball.setColour(inventory.selectedBallType());
           // reactivate cue stick here
           cue.setActive(true);
         } else {
           if (cue_ball_potted) resetCueBall();
+          println(inventory.selectedBallType());
+          cue_ball.setColour(inventory.selectedBallType());
           print("hi");
           cue.setActive(true);
         }
         moving = false;
       }
-    }
+    } else if (checkAllBallStop() && shots != 0 && score < points_needed) {
+          cue_ball.setColour(inventory.selectedBallType());
+      }
   }
 }
 
@@ -113,11 +123,15 @@ void renderHUD() {
   fill(0);
   textSize(30);
   textAlign(CENTER);
-  text("Round " + str(round_num), 4*screen_width/6.0, -screen_height*0.02);
+  text("Round " + str(round_num), 4*screen_width/5.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Points Needed " + str(points_needed), 3*screen_width/6.0, -screen_height*0.02);
+  text("Points Needed " + str(points_needed), 3*screen_width/5.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Score " + str(score), 2*screen_width/6.0, -screen_height*0.02);
+  if (shots < 3) fill(255, 0, 0);
+  text("Shots Remaining " + str(shots), 2*screen_width/5.0, -screen_height*0.02);
+  if (shots < 3) fill(0);
+  textAlign(CENTER);
+  text("Score " + str(score), 1*screen_width/5.0, -screen_height*0.02);
 }
 
 void renderEnd() {
@@ -135,10 +149,11 @@ void render() {
   fill(255);
   strokeWeight(5);
   stroke(200, 0, 0);
-  rect(0, 0, screen_width, screen_height);
+  rect(0, 0, screen_width, screen_height, 5);
   popMatrix();
   // background(255);
   table.draw();
+  inventory.draw();
   //pocket.draw();
   for (Ball b : balls) {
     b.draw();
@@ -227,32 +242,39 @@ int nextTurn() {
 }
 
 void mousePressed() {
-  // only lock angle when cue is active
-  if (cue.getActive()) {
-    loop();
-    // lock the angle of the cue
-    cue.setLockAngle(true);
-
-    // setting up the starting position for resultant calculation
-    cue.setOriginalPosition();
-    xStart = mouseX;
-    yStart = mouseY;
-    // debug check
-    // println("xStart: " + xStart);
-    // println("yStart: " + yStart);
+  // check for mouse within inventory
+  if (inventory.mouseInInventory()) {
+    inventory.selectItem();
   }
+  else {
+    // only lock angle when cue is active
+    if (cue.getActive()) {
+      loop();
+      // lock the angle of the cue
+      cue.setLockAngle(true);
   
+      // setting up the starting position for resultant calculation
+      cue.setOriginalPosition();
+      xStart = mouseX;
+      yStart = mouseY;
+      // debug check
+      // println("xStart: " + xStart);
+      // println("yStart: " + yStart);
+    }
+  }
 }
 
 // apply resultant to the ball when the mouse is released
 void mouseReleased() {
   // only apply resultant when cue is active
-  if (cue.getActive()) {
+  if (cue.getActive() && !inventory.mouseInInventory()) {
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
     cue.setActive(false);
+    inventory.useSelected();
+    shots --;
   }
   
 }

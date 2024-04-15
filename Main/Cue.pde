@@ -99,9 +99,9 @@ public class Cue {
         rotate(angle);
         fill(139, 69, 19);
         rectMode(CENTER);
-        rect(0, 0, cueLength, 20);
+        rect(0, 0, cueLength, 10);
         fill(255);
-        square(-cueLength/2, 0, 20);
+        square(-cueLength/2, 0, 10);
         popMatrix();
     }
     
