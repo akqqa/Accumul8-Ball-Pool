@@ -15,6 +15,7 @@ public class Ball {
     protected color colour;
     
     protected int slow_count = slow_total;
+    public int pocket_counter = 0;
 
 
     public Ball(float x, float y, float diameter, float mass, String colour) {
