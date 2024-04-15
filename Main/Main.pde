@@ -4,18 +4,28 @@ final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 
+final int max_force = 100;
+final float base_distance = screen_height * 0.19/* 0.2 */;
+final float max_dot_product = screen_height * 0.2;
+
 int round_num = 1;
+
 int score = 0;
 int points_needed = 100;
 boolean finished = false;
 
 Ball cue_ball;
+Cue cue;
 final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
 boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
 ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
 int frame = 0;
+float xStart = 0;
+float yStart = 0;
+
+boolean all_ball_stop = true;
 
 //Pocket pocket;
 
@@ -28,11 +38,6 @@ void settings() {
 void setup() {
     frameRate(60);
     table_setup();
-    //table = new PoolTable(4, 300, new PVector(screen_width/2,screen_height/2));
-    //cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
-    //cue_ball.applyForce(new PVector(0, -100));
-    //balls.add(cue_ball);    
-    //setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
 }
 
 
@@ -41,9 +46,11 @@ void table_setup() {
   table = new PoolTable(4, 450, new PVector(screen_width/2,screen_height/2), 225);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   cue_ball.applyForce(new PVector(0, -100));
+  cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
   setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+>>>>>>> PoolBallsBranch
 }
 
 
@@ -98,20 +105,27 @@ void renderEnd() {
 }
 
 void render() {
+  // adjusting the rectangle position
+  pushMatrix();
+  translate(screen_width/2, screen_height/2);
   fill(255);
   strokeWeight(5);
   stroke(200, 0, 0);
   rect(0, 0, screen_width, screen_height);
-  //background(255);
+  popMatrix();
+  // background(255);
   table.draw();
   //pocket.draw();
   for (Ball b : balls) {
     b.draw();
   }
+  cue.update(cue_ball.position.copy());
+
+  if(cue.getActive()) {
+    cue.display();
   for (Ball b : pocketed) {
     b.draw();
   }
-  //noLoop();
 }
 
 
@@ -165,7 +179,6 @@ void setupTriangle(PVector bottom, int rows, float diameter, float mass) {
   }
 }
 
-
 void resetCueBall() {
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   balls.add(cue_ball);
@@ -189,6 +202,42 @@ int nextTurn() {
 }
 
 void mousePressed() {
-  loop();
-  //balls.add(new Ball(mouseX, mouseY, 20, 2, "white"));
+  // only lock angle when cue is active
+  if (cue.getActive()) {
+    loop();
+    // lock the angle of the cue
+    cue.setLockAngle(true);
+
+    // setting up the starting position for resultant calculation
+    cue.setOriginalPosition();
+    xStart = mouseX;
+    yStart = mouseY;
+    // debug check
+    println("xStart: " + xStart);
+    println("yStart: " + yStart);
+  }
+  
+}
+
+// apply resultant to the ball when the mouse is released
+void mouseReleased() {
+  // only apply resultant when cue is active
+  if (cue.getActive()) {
+    PVector res = cue.getResultant();
+    cue_ball.applyForce(res.copy());
+    cue.setLockAngle(false);
+    cue.setActive(false);
+  }
+  
+}
+
+// check if all balls have stopped
+boolean checkAllBallStop() {
+  for (Ball b : balls) {
+    if (b.velocity.mag() != 0) {
+      println("b.velocity.mag()" + b.velocity.mag());
+      return false;
+    }
+  }
+  return true;
 }
