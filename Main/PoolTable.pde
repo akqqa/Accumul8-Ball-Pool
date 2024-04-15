@@ -123,6 +123,9 @@ final class PoolTable {
      if (p.pocketed(b)) {
        //b.velocity.setMag(p.position.copy().sub(b.position).mult(0.1).mag());
        b.velocity = p.position.copy().sub(b.position).mult(0.05);
+       if (b.velocity.mag() < 0.1) {
+        b.velocity.setMag(0);
+       }
        b.acceleration = new PVector(0, 0);
        return true;
      }

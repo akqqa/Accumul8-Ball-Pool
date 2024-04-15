@@ -103,6 +103,7 @@ public class Cue {
         fill(255);
         square(-cueLength/2, 0, 20);
         popMatrix();
+        findAngles();
     }
     
     // lock the angle for user to start adjusting the power
@@ -136,4 +137,123 @@ public class Cue {
         print("Set to" + String.valueOf(_b));
         this.active = _b;
     }
+
+    public void findAngles() {
+        PVector cueBallVector = cue_ball.position.copy();
+        float direction = 0;
+        if (lockAngle == false) {
+            direction = atan2(mouseY - cueBallVector.y, mouseX - cueBallVector.x);
+        } else {
+            direction = this.angle;
+        }
+        float lineEndX = cueBallVector.x + cos(direction + PI) * 1000;
+        float lineEndY = cueBallVector.y + sin(direction + PI) * 1000;
+        stroke(cue_ball.radius*2);
+        line(cueBallVector.x, cueBallVector.y, lineEndX, lineEndY);
+        // Check to see if any balls are colliding with the line:
+        Ball collidingBall = null;
+        float collidingDistance = 999999;
+        for (Ball b : balls) {
+            if (b != cue_ball){
+                if (lineCircle(cueBallVector.x, cueBallVector.y, lineEndX, lineEndY, b.position.x, b.position.y, b.radius + cue_ball.radius)) {
+                    float distance = dist(cueBallVector.x, cueBallVector.y, b.position.x, b.position.y);
+                    if (distance < collidingDistance) {
+                        collidingBall = b;
+                        collidingDistance = distance;
+                    }
+                }
+            }
+        }
+        // Calculate angles of collision between the two balls - perfect elastic collision
+        if (collidingBall != null) {
+        }
+        
+    }
+
+
+    // For finding the angles, simulate a collision between the cue ball and the ball it is found to be hitting.
+    // This method should taken the velocities and positions of each ball, and return final velocities for each
+    // The first ball should be constructed based on the position of the cue, and a large velocity based on the current angle
+    // the second ball should be constructed at the position of the other ball, and no velocity
+    // The angles can then be extracted from the velocity
+    // private void ballCollisionSimulation(Ball other) {
+    //     float distanceCorrection = (minDistance-distanceVectMag)/2.0;
+    //     PVector d = distanceVect.copy();
+    //     PVector correctionVector = d.normalize().mult(distanceCorrection);
+    //     other.position.add(correctionVector);
+    //     position.sub(correctionVector);
+  
+    //     // get angle of distanceVect
+    //     float theta  = distanceVect.heading();
+    //     // precalculate trig values
+    //     float sine = sin(theta);
+    //     float cosine = cos(theta);
+  
+    //     /* bTemp will hold rotated ball positions. You 
+    //      just need to worry about bTemp[1] position*/
+    //     PVector[] bTemp = {
+    //       new PVector(), new PVector()
+    //     };
+  
+    //     /* this ball's position is relative to the other
+    //      so you can use the vector between them (bVect) as the 
+    //      reference point in the rotation expressions.
+    //      bTemp[0].position.x and bTemp[0].position.y will initialize
+    //      automatically to 0.0, which is what you want
+    //      since b[1] will rotate around b[0] */
+    //     bTemp[1].x  = cosine * distanceVect.x + sine * distanceVect.y;
+    //     bTemp[1].y  = cosine * distanceVect.y - sine * distanceVect.x;
+  
+    //     // rotate Temporary velocities
+    //     PVector[] vTemp = {
+    //       new PVector(), new PVector()
+    //     };
+  
+    //     vTemp[0].x = cosine * velocity.x + sine * velocity.y;
+    //     vTemp[0].y = cosine * velocity.y - sine * velocity.x;
+    //     vTemp[1].x = cosine * other.velocity.x + sine * other.velocity.y;
+    //     vTemp[1].y = cosine * other.velocity.y - sine * other.velocity.x;
+  
+    //     /* Now that velocities are rotated, you can use 1D
+    //      conservation of momentum equations to calculate 
+    //      the final velocity along the x-axis. */
+    //     PVector[] vFinal = {  
+    //       new PVector(), new PVector()
+    //     };
+  
+    //     // final rotated velocity for b[0]
+    //     vFinal[0].x = ((mass - other.mass) * vTemp[0].x + 2 * other.mass * vTemp[1].x) / (mass + other.mass);
+    //     vFinal[0].y = vTemp[0].y;
+  
+    //     // final rotated velocity for b[0]
+    //     vFinal[1].x = ((other.mass - mass) * vTemp[1].x + 2 * mass * vTemp[0].x) / (mass + other.mass);
+    //     vFinal[1].y = vTemp[1].y;
+  
+    //     // hack to avoid clumping
+    //     bTemp[0].x += vFinal[0].x;
+    //     bTemp[1].x += vFinal[1].x;
+  
+    //     /* Rotate ball positions and velocities back
+    //      Reverse signs in trig expressions to rotate 
+    //      in the opposite direction */
+    //     // rotate balls
+    //     PVector[] bFinal = { 
+    //       new PVector(), new PVector()
+    //     };
+  
+    //     bFinal[0].x = cosine * bTemp[0].x - sine * bTemp[0].y;
+    //     bFinal[0].y = cosine * bTemp[0].y + sine * bTemp[0].x;
+    //     bFinal[1].x = cosine * bTemp[1].x - sine * bTemp[1].y;
+    //     bFinal[1].y = cosine * bTemp[1].y + sine * bTemp[1].x;
+  
+    //     // update balls to screen position
+    //     //other.position.x = position.x + bFinal[1].x + 1;
+    //     //other.position.y = position.y + bFinal[1].y + 1;
+        
+    //     // update velocities
+    //     velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
+    //     velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
+    //     other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
+    //     other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
+    // }
 }

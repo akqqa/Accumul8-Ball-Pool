@@ -9,7 +9,7 @@ public class Ball {
     public PVector velocity;
     public PVector acceleration;
     protected float invMass;
-    protected float diameter;
+    public float diameter;
     public float radius;
     protected float mass;
     protected color colour;

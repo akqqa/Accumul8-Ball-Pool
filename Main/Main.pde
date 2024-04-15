@@ -265,5 +265,11 @@ boolean checkAllBallStop() {
       return false;
     }
   }
+  for (Ball b : pocketed) {
+    if (b.velocity.mag() != 0) {
+      //println("b.velocity.mag()" + b.velocity.mag());
+      return false;
+    }
+  }
   return true;
 }
