@@ -95,11 +95,10 @@ public class Ball {
       position.add(velocity);
       acceleration.mult(0);
       
-      // forces slow balls to stop after 200 frames
-      if (velocity.mag() < 1) {
-        slow_count --;
-        if (slow_count == 0) velocity.setMag(0);
-      } else slow_count = slow_total;
+      // forces slow balls to stop
+      if (velocity.mag() < 0.1) {
+        velocity.setMag(0);
+      }
       
     }
     

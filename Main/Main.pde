@@ -14,6 +14,9 @@ int score = 0;
 int points_needed = 100;
 boolean finished = false;
 
+boolean moving = true;
+int shots = 5;
+
 Ball cue_ball;
 Cue cue;
 final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
@@ -45,12 +48,11 @@ void table_setup() {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
   table = new PoolTable(4, 450, new PVector(screen_width/2,screen_height/2), 225);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
-  cue_ball.applyForce(new PVector(0, -100));
+  //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
   setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
->>>>>>> PoolBallsBranch
 }
 
 
@@ -58,26 +60,48 @@ void draw() {
   renderHUD();
   frame += 1;
   if (frame % 1 == 0) {
-    //if (cue_ball_potted && nextTurn()) resetCueBall();
-    switch (nextTurn()) {
-      case (0):
-        if (cue_ball_potted) resetCueBall();
-        // reactivate cue stick here
-        break;
-      case (1):
-        if (points_needed <= 0) {
-          round_num ++;
-          table_setup();
-          points_needed = 0;
-          // reactivate cue stick here
-        } else
-          finished = true;
-        break;
-    }
+    //switch (nextTurn()) {
+    //  case (0):
+    //    if (cue_ball_potted) resetCueBall();
+    //    // reactivate cue stick here
+    //    cue.setActive(true);
+    //    break;
+    //  case (1):
+    //    if (points_needed <= 0) {
+    //      round_num ++;
+    //      table_setup();
+    //      points_needed = 0;
+    //      // reactivate cue stick here
+    //      cue.setActive(true);
+    //    } else
+    //      finished = true;
+    //    break;
+    //}
     if (finished) renderEnd();
     else {
       render();
       updateMovements();
+    }
+    //if (cue_ball_potted && nextTurn()) resetCueBall();
+    // If the balls are moving, and now the balls have stopped, handle logic for next shot
+    if (moving) {
+      if (checkAllBallStop()) {
+        if (shots == 0 && score < points_needed) {
+          finished = true;
+        } else if (score >= points_needed) {
+          round_num ++;
+          table_setup();
+          points_needed = 0;
+          if (cue_ball_potted) resetCueBall();
+          // reactivate cue stick here
+          cue.setActive(true);
+        } else {
+          if (cue_ball_potted) resetCueBall();
+          print("hi");
+          cue.setActive(true);
+        }
+        moving = false;
+      }
     }
   }
 }
@@ -121,8 +145,9 @@ void render() {
   }
   cue.update(cue_ball.position.copy());
 
-  if(cue.getActive()) {
+  if (cue.getActive()) {
     cue.display();
+  }
   for (Ball b : pocketed) {
     b.draw();
   }
@@ -213,8 +238,8 @@ void mousePressed() {
     xStart = mouseX;
     yStart = mouseY;
     // debug check
-    println("xStart: " + xStart);
-    println("yStart: " + yStart);
+    // println("xStart: " + xStart);
+    // println("yStart: " + yStart);
   }
   
 }
@@ -223,6 +248,7 @@ void mousePressed() {
 void mouseReleased() {
   // only apply resultant when cue is active
   if (cue.getActive()) {
+    moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
@@ -235,7 +261,7 @@ void mouseReleased() {
 boolean checkAllBallStop() {
   for (Ball b : balls) {
     if (b.velocity.mag() != 0) {
-      println("b.velocity.mag()" + b.velocity.mag());
+      //println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }

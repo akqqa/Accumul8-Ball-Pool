@@ -74,7 +74,6 @@ final class PoolTable {
     if (b.velocity.mag() > b.radius) {
       int iterations = (int) ((int)b.velocity.mag() / b.radius);
       for (int i = 1; i <= iterations; i++) {
-        print("e");
         pastPositions.add(b.position.copy().sub(b.velocity.copy().setMag(b.radius*i)));
       }
     }
@@ -90,11 +89,8 @@ final class PoolTable {
       for (Line line : this.lines) {
         if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, pos.x, pos.y, b.radius)) {
           collided = true;
-          println("colliding");
           // Calculate normal of line - https://stackoverflow.com/a/1243676
           PVector normalVector = new PVector((line.end.y-line.start.y), -(line.end.x-line.start.x));
-          print("normal");
-          println(normalVector);
           // Calculate components of balls velocity perpendicular and parallel to the line colliding with
           // https://stackoverflow.com/a/573206
           PVector u = normalVector.mult((b.velocity.copy().dot(normalVector) / normalVector.dot(normalVector)));
@@ -102,8 +98,6 @@ final class PoolTable {
 
           PVector newVelocity = w.sub(u.mult(elasticity));
           b.velocity = newVelocity.copy();
-          print("new velocity");
-          println(b.velocity);
 
           // Like with ball collisions, move ball away from the intersection between it and the wall (to prevent phasing?)
           // Using lineCircle() logic, calculate vector between center of circle and line
@@ -114,13 +108,8 @@ final class PoolTable {
               b.position = pos.sub(intersect.setMag(b.radius-intersect.mag() + 1)); // +1 as a small offset to prevent getting stuck in walls
             // else do with radius added to the above
             else {
-              print("change");
-              println(intersect.setMag(-b.radius-intersect.mag() - 1)); // -1 as a small offset to prevent getting stuck in walls
               b.position = pos.sub(intersect);
             }
-            print("intersect");
-            println(intersect);
-            println();
           }
         }
       }

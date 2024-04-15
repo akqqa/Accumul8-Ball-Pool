@@ -18,8 +18,6 @@ public class Cue {
     
     // update the cue position according to player's cursor events
     protected void update(PVector cueBallVector/* , float xStart, float yStart */) {
-        // check if all balls have stopped
-        active = checkAllBallStop();
         // only update if the cue is active
         if (active) {
             if (this.lockAngle == false) {
@@ -46,28 +44,25 @@ public class Cue {
                 }
                 
                 // debug check
-                println("mouseX - xStart "+ (mouseX - xStart));
-                println("mouseY - yStart "+ (mouseY - yStart));
-                println("vectorFromAngle.copy().dot(vectorFromMouseToStart.copy())"+vectorFromAngle.copy().dot(vectorFromMouseToStart.copy()));
-                println("dotProduct: ", dotProduct);
-                println("xStart: "+ xStart);
-                println("mouseX"+mouseX);
-                println("yStart: "+yStart);
-                println("mouseY: "+mouseY);
-                println("max_dot_product: "+ max_dot_product);
+                // println("mouseX - xStart "+ (mouseX - xStart));
+                // println("mouseY - yStart "+ (mouseY - yStart));
+                // println("vectorFromAngle.copy().dot(vectorFromMouseToStart.copy())"+vectorFromAngle.copy().dot(vectorFromMouseToStart.copy()));
+                // println("dotProduct: ", dotProduct);
+                // println("xStart: "+ xStart);
+                // println("mouseX"+mouseX);
+                // println("yStart: "+yStart);
+                // println("mouseY: "+mouseY);
+                // println("max_dot_product: "+ max_dot_product);
 
                 // set cue position according to the dot product
                 if (dotProduct > 0 && dotProduct <= max_dot_product) {
-                    println("1");
                     position.x = cueBallVector.copy().x + base_distance * cos(angle) + dotProduct * cos(angle);
                     position.y = cueBallVector.copy().y + base_distance* sin(angle) + dotProduct * sin(angle);
 
                 } else if (dotProduct >= max_dot_product) {
-                    println("2");
                     position.x = cueBallVector.copy().x + base_distance * cos(angle) + max_dot_product * cos(angle);
                     position.y = cueBallVector.copy().y + base_distance * sin(angle) + max_dot_product * sin(angle);
                 } else {
-                    println("3");
                     // reset the position and resultant when the dot product is <= 0
                     // xStart = mouseX;
                     // yStart = mouseY;
@@ -113,7 +108,6 @@ public class Cue {
     // lock the angle for user to start adjusting the power
     public void setLockAngle(boolean lock) {
         lockAngle = lock;
-        println("setLockAngle");
     }
 
     // set starting original position of the cue
@@ -139,6 +133,7 @@ public class Cue {
 
     // set the active state of the cue (i.e. all balls have stopped)
     public void setActive(boolean _b) {
+        print("Set to" + String.valueOf(_b));
         this.active = _b;
     }
 }
