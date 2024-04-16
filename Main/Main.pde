@@ -98,19 +98,22 @@ void draw() {
           table_setup();
           points_needed = 0;
           if (cue_ball_potted) resetCueBall();
+          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
           // reactivate cue stick here
           cue.setActive(true);
         } else {
           if (cue_ball_potted) resetCueBall();
-          println(inventory.selectedBallType());
+          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
           print("hi");
           cue.setActive(true);
         }
         moving = false;
       }
-    } else if (checkAllBallStop() && shots != 0 && score < points_needed) {
+    }
+    // check here in case ball is stationary to allow selection change
+    else if (checkAllBallStop() && shots != 0 && score < points_needed) {
           cue_ball.setColour(inventory.selectedBallType());
       }
   }
@@ -242,7 +245,7 @@ int nextTurn() {
 }
 
 void mousePressed() {
-  // check for mouse within inventory
+  // check for mouse within inventory first
   if (inventory.mouseInInventory()) {
     inventory.selectItem();
   }
