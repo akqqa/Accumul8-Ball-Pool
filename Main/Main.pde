@@ -11,11 +11,11 @@ final float max_dot_product = screen_height * 0.2;
 int round_num = 1;
 
 int score = 0;
-int points_needed = 80;
+int points_needed = 20;
+int points_per_ball = 10;
 boolean finished = false;
 
 boolean moving = true;
-int shots = 10;
 
 Ball cue_ball;
 Cue cue;
@@ -24,7 +24,8 @@ boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
 ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
-final float table_rad = 450;
+final float table_rad_4 = 450;
+final float table_rad_other = 325;
 Inventory inventory;
 int frame = 0;
 float xStart = 0;
@@ -43,14 +44,14 @@ void settings() {
 void setup() {
     frameRate(60);
     table_setup();
-    inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad*1.5, shots);
+    inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
     //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
 }
 
 
 void table_setup() {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
-  table = new PoolTable(4, table_rad, new PVector(screen_width/2,screen_height/2), 225);
+  table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
@@ -65,23 +66,6 @@ void draw() {
   renderHUD();
   frame += 1;
   if (frame % 1 == 0) {
-    //switch (nextTurn()) {
-    //  case (0):
-    //    if (cue_ball_potted) resetCueBall();
-    //    // reactivate cue stick here
-    //    cue.setActive(true);
-    //    break;
-    //  case (1):
-    //    if (points_needed <= 0) {
-    //      round_num ++;
-    //      table_setup();
-    //      points_needed = 0;
-    //      // reactivate cue stick here
-    //      cue.setActive(true);
-    //    } else
-    //      finished = true;
-    //    break;
-    //}
     if (finished) renderEnd();
     else {
       render();
@@ -91,31 +75,36 @@ void draw() {
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
     if (moving) {
       if (checkAllBallStop()) {
-        if (shots == 0 && score < points_needed) {
+        // Game over
+        if (inventory.getBallCount() == 0 && score < points_needed) {
           finished = true;
+        // Proceed to next round
         } else if (score >= points_needed) {
+          print("HERE");
+          inventory.resetBalls();
           round_num ++;
           table_setup();
-          points_needed = 0;
+          points_needed += 20;
+          score = 0;
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
           // reactivate cue stick here
           cue.setActive(true);
+        // Keep playing
         } else {
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
-          print("hi");
           cue.setActive(true);
         }
         moving = false;
       }
     }
     // check here in case ball is stationary to allow selection change
-    else if (checkAllBallStop() && shots != 0 && score < points_needed) {
-          cue_ball.setColour(inventory.selectedBallType());
-      }
+    else if (checkAllBallStop() && inventory.getBallCount() != 0 && score < points_needed) {
+      cue_ball.setColour(inventory.selectedBallType());
+    }
   }
 }
 
@@ -128,13 +117,14 @@ void renderHUD() {
   textAlign(CENTER);
   text("Round " + str(round_num), 4*screen_width/5.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Points Needed " + str(points_needed), 3*screen_width/5.0, -screen_height*0.02);
+  text("Points Needed: " + str(points_needed), 3*screen_width/5.0, -screen_height*0.02);
+  if (inventory.getBallCount() < 3) fill(0);
   textAlign(CENTER);
-  if (shots < 3) fill(255, 0, 0);
-  text("Shots Remaining " + str(shots), 2*screen_width/5.0, -screen_height*0.02);
-  if (shots < 3) fill(0);
+  text("Score: " + str(score), 2*screen_width/5.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Score " + str(score), 1*screen_width/5.0, -screen_height*0.02);
+  if (inventory.getBallCount() < 3) fill(255, 0, 0);
+  text("Shots Remaining: " + str(inventory.getBallCount()), 1*screen_width/5.0, -screen_height*0.02);
+  fill(0);
 }
 
 void renderEnd() {
@@ -202,11 +192,9 @@ void updateMovements() {
     pocketed.remove(b);
     if (b == cue_ball) {
       cue_ball_potted = true;
-      score -= 40;
-      points_needed += 40;
+      score -= 10;
     } else {
-      score += 20;
-      points_needed -= 20;
+      score += 10;
     }
   }
 }
@@ -277,7 +265,6 @@ void mouseReleased() {
     cue.setLockAngle(false);
     cue.setActive(false);
     inventory.useSelected();
-    shots --;
   }
   
 }

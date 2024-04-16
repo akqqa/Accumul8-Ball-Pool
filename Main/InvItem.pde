@@ -1,14 +1,16 @@
 public class InvItem {
   public Ball ball;
+  public int max;
   public int count;
   public int pos;
   public PVector position;
   boolean selected = false;
   boolean locked = true;
 
-  public InvItem(float x, float y, Ball ball, int count) {
+  public InvItem(float x, float y, Ball ball, int max) {
     this.ball = ball;
-    this.count= count;
+    this.max= max;
+    this.count = max;
     this.position = new PVector(x, y);
   }
   
@@ -56,7 +58,7 @@ public class InvItem {
   // Functions to toggle boolean flags for whether the current item is selected or locked
   public void select() { selected = true; }
   public void deselect() { selected = false; }
-  public void lock() { locked = true; count = -1;}
+  public void lock() { locked = true; }
   public void unlock() { locked = false; }
   
 }

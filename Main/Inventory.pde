@@ -97,6 +97,7 @@ public class Inventory {
     
     // if no balls left for that type...
     if (selected.count == 0) {
+      print("no balls left");
       
       // deselect and lock it
       selected.deselect();
@@ -112,5 +113,24 @@ public class Inventory {
         }
       } selected = null;
     }
+  }
+
+  public int getBallCount() {
+    int num = 0;
+    for (InvItem i : items) {
+      num += i.count;
+    }
+    return num;
+  }
+
+  public void resetBalls() {
+    for (InvItem i : items) {
+      if (i.max > 0) {
+        i.unlock();
+      }
+      i.count = i.max;
+    }
+    items.get(0).select();
+    selected = items.get(0);
   }
 }
