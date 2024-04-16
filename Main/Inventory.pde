@@ -125,6 +125,7 @@ public class Inventory {
 
   public void resetBalls() {
     for (InvItem i : items) {
+      i.deselect();
       if (i.max > 0) {
         i.unlock();
       }
