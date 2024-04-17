@@ -36,6 +36,10 @@ boolean cue_drag = false;
 
 //Pocket pocket;
 
+// sprites
+PImage flame;
+PImage bolt;
+
 
 void settings() {
     size(screen_width, screen_height);
@@ -47,13 +51,17 @@ void setup() {
     table_setup();
     inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
     //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
+    flame = loadImage("flame.png");
+    bolt = loadImage("bolt.png");
 }
 
 
 void table_setup() {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
   table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
-  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  //cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "yellow", screen_height/20, true, false);
+  cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", screen_height/10, false, true);
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
@@ -170,13 +178,18 @@ void updateMovements() {
   for (Ball b : balls) {
     b.move();
   }
+  if (cue_ball instanceof PowerBall) ((PowerBall) cue_ball).travelEffect();
   for (Ball b : pocketed) {
     b.move();
   }
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
-      balls.get(i).ballCollision(balls.get(j));
+      boolean res = balls.get(i).ballCollision(balls.get(j));
+      if (res) {
+        if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
+        else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
+      }
     }
   }
   for (Ball b : balls) {
