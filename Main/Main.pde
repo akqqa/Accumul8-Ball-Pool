@@ -61,7 +61,7 @@ void table_setup() {
   table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
   //cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "yellow", screen_height/20, true, false);
-  cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", screen_height/10, false, true);
+  cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 50, true, true);
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();

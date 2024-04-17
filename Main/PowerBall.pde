@@ -11,9 +11,24 @@ public abstract class PowerBall extends Ball{
     this.impact = impact;
   }
   
+  public void draw() {
+      stroke(0,0,0);
+      strokeWeight(1);
+      if (velocity.x != 0 || velocity.y != 0) {
+         noStroke();
+         fill(colour, 150);
+         circle (position.x, position.y, powerRadius*2);
+         stroke(0,0,0);
+      }
+      fill(colour);     
+      circle(position.x, position.y, diameter);
+      power(255);
+    }
+  
   // to be called after all moves occur
   public void travelEffect() {
     if (!travelling) return;
+    if (velocity.x == 0 && velocity.y == 0) return;
     for (Ball b : balls) {
       // if not the cue ball and the ball is within powerradius -> attack
       if (b != this && circleCircle(position.x, position.y, powerRadius, b.position.x, b.position.y, b.radius)) {
