@@ -32,6 +32,7 @@ float xStart = 0;
 float yStart = 0;
 
 boolean all_ball_stop = true;
+boolean cue_drag = false;
 
 //Pocket pocket;
 
@@ -248,6 +249,7 @@ void mousePressed() {
       cue.setOriginalPosition();
       xStart = mouseX;
       yStart = mouseY;
+      cue_drag = true;
       // debug check
       // println("xStart: " + xStart);
       // println("yStart: " + yStart);
@@ -258,13 +260,14 @@ void mousePressed() {
 // apply resultant to the ball when the mouse is released
 void mouseReleased() {
   // only apply resultant when cue is active
-  if (cue.getActive() && !inventory.mouseInInventory()) {
+  if (cue.getActive() && cue_drag) { // && !inventory.mouseInInventory()) {
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
     cue.setActive(false);
     inventory.useSelected();
+    cue_drag = false;
   }
   
 }
