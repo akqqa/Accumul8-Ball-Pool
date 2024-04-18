@@ -12,6 +12,7 @@ public class Ball {
     public float diameter;
     public float radius;
     protected float mass;
+    protected String colourString;
     protected color colour;
     
     protected int slow_count = slow_total;
@@ -29,6 +30,7 @@ public class Ball {
         this.acceleration = new PVector(0, 0);
         this.invMass = 1/mass;
         this.mass = mass;
+        this.colourString = colour;
         colourSpecific(colour);
     }
     
@@ -59,6 +61,9 @@ public class Ball {
           break;
         case "brown":
           this.colour = color(139,69,19);
+          break;
+        case "orange":
+          this.colour = color(235, 146, 52);
           break;
       }
     }

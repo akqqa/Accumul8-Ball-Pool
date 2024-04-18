@@ -34,6 +34,8 @@ float yStart = 0;
 boolean all_ball_stop = true;
 boolean cue_drag = false;
 
+InvItem currentSelectedItem = null;
+
 //Pocket pocket;
 
 // sprites
@@ -59,9 +61,9 @@ void setup() {
 void table_setup() {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
   table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
-  //cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
-  //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "yellow", screen_height/20, true, false);
-  cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 50, true, true);
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
+  //cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
@@ -89,22 +91,20 @@ void draw() {
           finished = true;
         // Proceed to next round
         } else if (score >= points_needed) {
-          print("HERE");
           inventory.resetBalls();
+          switchCueBalls();
           round_num ++;
           table_setup();
           points_needed += 20;
           score = 0;
           if (cue_ball_potted) resetCueBall();
-          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
-          cue_ball.setColour(inventory.selectedBallType());
           // reactivate cue stick here
           cue.setActive(true);
         // Keep playing
         } else {
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
-          cue_ball.setColour(inventory.selectedBallType());
+          if (currentSelectedItem != inventory.selected) switchCueBalls();
           cue.setActive(true);
         }
         moving = false;
@@ -112,9 +112,29 @@ void draw() {
     }
     // check here in case ball is stationary to allow selection change
     else if (checkAllBallStop() && inventory.getBallCount() != 0 && score < points_needed) {
-      cue_ball.setColour(inventory.selectedBallType());
+      if (currentSelectedItem != inventory.selected) switchCueBalls();
     }
   }
+}
+
+void switchCueBalls() {
+  // If the selected item has changed from the last frame, switch it out
+  if (inventory.selected instanceof FireItem) {
+    FireItem sel = (FireItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new FireBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    balls.add(cue_ball);
+  } else if (inventory.selected instanceof ShockItem) {
+    ShockItem sel = (ShockItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    balls.add(cue_ball);
+  } else {
+    balls.remove(cue_ball);
+    cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, ball_mass, inventory.selected.ball.colourString);
+    balls.add(cue_ball);
+  }
+  currentSelectedItem = inventory.selected;
 }
 
 void renderHUD() {
