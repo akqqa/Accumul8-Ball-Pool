@@ -3,13 +3,39 @@ final int screen_height = 720;
 final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
+// TODO: change the round end state number
+final int round_end_state = 12345;
+// the following are variables for menu testing
+final String[] elements = {"electricity", "fire", "ice", "gravity"};
+final int[] percentages = {10, 15, 20, 25};
+
+// electricity
+int num_of_electricity_ball = 0;
+float electricity_points = 1;
+float electricity_radius = 1;
+
+// fire
+int num_of_fire_ball = 0;
+float fire_points = 1;
+float fire_radius = 1;
+
+// ice
+int num_of_ice_ball = 0;
+float ice_points = 1;
+float ice_radius = 1;
+
+// gravity
+int num_of_gravity_ball = 0;
+float gravity_points = 1;
+float gravity_radius = 1;
 
 final int max_force = 100;
 final float base_distance = screen_height * 0.19/* 0.2 */;
 final float max_dot_product = screen_height * 0.2;
 
 int round_num = 1;
-
+// state of the game
+int state = 0;
 int score = 0;
 int points_needed = 100;
 boolean finished = false;
@@ -19,6 +45,8 @@ int shots = 5;
 
 Ball cue_ball;
 Cue cue;
+Menu menu;
+Button tempBut;
 final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
 boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
@@ -53,6 +81,11 @@ void table_setup() {
   balls.clear();
   balls.add(cue_ball);    
   setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+}
+
+void menu_setup() {
+  menu = new Menu(screen_width * 0.85, screen_height * 0.5, 300, 700);
+  tempBut = new Button(screen_width*0.85, screen_height*0.17, 100, 50, "Test", 30, 0, 20);
 }
 
 
@@ -90,11 +123,13 @@ void draw() {
           finished = true;
         } else if (score >= points_needed) {
           round_num ++;
+          state = round_end_state;
           table_setup();
+          menu_setup();
           points_needed = 0;
           if (cue_ball_potted) resetCueBall();
           // reactivate cue stick here
-          cue.setActive(true);
+          cue.setActive(false);
         } else {
           if (cue_ball_potted) resetCueBall();
           print("hi");
@@ -145,7 +180,11 @@ void render() {
   }
   cue.update(cue_ball.position.copy());
 
-  if (cue.getActive()) {
+  if (state == round_end_state) {
+    menu.display();
+    tempBut.display();
+  }
+  if (cue.getActive() && state != round_end_state) {
     cue.display();
   }
   for (Ball b : pocketed) {
