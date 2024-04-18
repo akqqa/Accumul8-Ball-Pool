@@ -14,6 +14,7 @@ public class Ball {
     protected float mass;
     protected String colourString;
     protected color colour;
+    public int effectDuration = 0;
     
     protected int slow_count = slow_total;
     public int pocket_counter = 0;
@@ -275,12 +276,13 @@ public class Ball {
     public void alight() {
       onFire = true;
       shocked = false;
+      this.effectDuration = fireDuration;
     }
     
     // ShockBall
     public void shock() {
       shocked = true;
       onFire = false;
-    }
-    
+      this.effectDuration = shockDuration;
+    }    
 }

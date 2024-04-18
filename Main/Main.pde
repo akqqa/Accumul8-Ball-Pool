@@ -36,6 +36,12 @@ boolean cue_drag = false;
 
 InvItem currentSelectedItem = null;
 
+// Global variables for status effects:
+int fireDuration = 1;
+int shockDuration = 1;
+float fireMultiplier = 0.5;
+float shockMultiplier = 1;
+
 //Pocket pocket;
 
 // sprites
@@ -86,6 +92,9 @@ void draw() {
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
     if (moving) {
       if (checkAllBallStop()) {
+        // HERE WE PERFORM THE END OF ROUND PHASE
+        handleEndOfRoundEffects();
+
         // Game over
         if (inventory.getBallCount() == 0 && score < points_needed) {
           finished = true;
@@ -135,6 +144,20 @@ void switchCueBalls() {
     balls.add(cue_ball);
   }
   currentSelectedItem = inventory.selected;
+}
+
+void handleEndOfRoundEffects() {
+  for (Ball b : balls) {
+    if (b != cue_ball) {
+      if (b.onFire) {
+        score += points_per_ball * fireMultiplier;
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.onFire = false;
+        }
+      }
+    }
+  }
 }
 
 void renderHUD() {
