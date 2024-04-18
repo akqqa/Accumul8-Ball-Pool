@@ -18,7 +18,11 @@ public class PointIcon {
             textSize(30);
             this.position.y -= 1;
             this.opacity -= 5;
-            fill(212, 175, 55, opacity);
+            if (value > 0) {
+                fill(212, 175, 55, opacity);
+            } else {
+                fill(139, 0, 0, opacity);
+            }
             text(str(value), position.x, position.y);
             frames -= 1;
         }

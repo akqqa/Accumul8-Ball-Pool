@@ -78,6 +78,12 @@ public class Ball {
       fill(colour);     
       circle(position.x, position.y, diameter);
       power(255);
+      // If shocked, draw raidius of shock
+      if (this.shocked) {
+        noStroke();
+        fill(255,255,0, 100);
+        circle(position.x, position.y, shockRadius*2);
+      }
     }
     
     public void draw(float opacity) {

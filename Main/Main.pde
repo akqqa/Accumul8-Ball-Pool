@@ -42,6 +42,7 @@ int fireDuration = 1;
 int shockDuration = 1;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
+float shockRadius = 200;
 
 //Pocket pocket;
 
@@ -168,6 +169,12 @@ void handleEndOfRoundEffects() {
           b.onFire = false;
         }
       }
+      if (b.shocked) {
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.shocked = false;
+        }
+      }
     }
   }
 }
@@ -263,15 +270,26 @@ void updateMovements() {
     balls.remove(b);
     if (table.ballFinished(b)) bin.add(b);
   }
+  // LOGIC FOR POTTED BALLS
   for (Ball b : bin) {
     pocketed.remove(b);
     if (b == cue_ball) {
       cue_ball_potted = true;
       score -= 10;
+      pointIcons.add(new PointIcon(b.position.copy(), 60, -10));
     } else {
       score += points_per_ball;
       // Display points as icon
       pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball));
+      // IF potted ball had shock status effect, chain points to nearby balls!
+      if (b.shocked) {
+        for (Ball nearbyBall : balls) {
+          if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < shockRadius && nearbyBall != b && nearbyBall != cue_ball) {
+            score += points_per_ball * shockMultiplier;
+            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball));
+          }
+        }
+      }
     }
   }
 }
