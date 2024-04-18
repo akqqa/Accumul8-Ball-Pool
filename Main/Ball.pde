@@ -11,6 +11,7 @@ public class Ball {
     public float diameter;
     public float radius;
     protected float mass;
+    protected float tempMass;
     protected String colourString;
     protected color colour;
     public int effectDuration = 0;
@@ -139,7 +140,8 @@ public class Ball {
     
     // movement
     public void move() {
-      if (!frozen && !powerBall) {
+      println(powerBall);
+      if (!(frozen && !powerBall)) {
         velocity.add(acceleration);
         position.add(velocity);
       }
@@ -308,10 +310,17 @@ public class Ball {
       this.effectDuration = shockDuration;
     }    
     
-    // ShockBall
+    // IceBall
     public void freeze() {
       powerReset();
       frozen = true;
       this.effectDuration = freezeDuration;
+      tempMass = mass;
+      mass = 1000000000;
     }    
+    
+    public void thaw() {
+      frozen = false;
+      mass = tempMass;
+    }   
 }

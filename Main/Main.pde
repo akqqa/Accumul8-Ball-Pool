@@ -40,7 +40,7 @@ InvItem currentSelectedItem = null;
 // Global variables for status effects:
 int fireDuration = 1;
 int shockDuration = 1;
-int freezeDuration = 120;
+int freezeDuration = 1;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
 int frozenMultiplier = 1;
@@ -187,7 +187,8 @@ void handleEndOfRoundEffects() {
       if (b.frozen) {
         b.effectDuration -= 1;
         if (b.effectDuration <= 0) {
-          b.frozen = false;
+          b.thaw();
+          
         }
       }
     }
