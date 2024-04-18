@@ -24,6 +24,8 @@ public class Ball {
     protected boolean frozen;
     protected boolean powerBall;
 
+    protected ArrayList<Ball> hitThisShot = new ArrayList<Ball>();
+
     public Ball(float x, float y, float diameter, float mass, String colour) {
         this.position = new PVector(x, y);
         this.diameter = diameter;
@@ -199,12 +201,33 @@ public class Ball {
       float minDistance = radius + other.radius;
   
       if (distanceVectMag < minDistance) {
+
+        //If this ball is frozen, and soemthing hits it, add points and handle accordingly
+        if (frozen && !powerBall) {
+          if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+            score += points_per_ball * frozenMultiplier;
+            pointIcons.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
+            hitThisShot.add(other);
+          }
+        }
+        // If the other ball is frozen, and this ball hits it, handle accordingly
+        if (other.frozen && !other.powerBall) {
+          if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+            score += points_per_ball * frozenMultiplier;
+            pointIcons.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
+            other.hitThisShot.add(this);
+          }
+        }
         
         float distanceCorrection = (minDistance-distanceVectMag)/2.0;
         PVector d = distanceVect.copy();
         PVector correctionVector = d.normalize().mult(distanceCorrection);
-        other.position.add(correctionVector);
-        position.sub(correctionVector);
+        if (!other.frozen && !other.powerBall) {
+          other.position.add(correctionVector);
+        }
+        if (!frozen && !powerBall) {
+          position.sub(correctionVector); // Only move in collisions if not frozen
+        }
   
         // get angle of distanceVect
         float theta  = distanceVect.heading();
@@ -275,10 +298,17 @@ public class Ball {
         
         // Simply update balls to be apart from each other in direction of intersection
         // intersection magnitude
-        float intersectMag = this.radius + other.radius - (distanceVect.mag());
-        PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
-        this.position.x = this.position.x - scaledDistanceVect.x/2;
-        this.position.y = this.position.y - scaledDistanceVect.y/2;
+        if (!frozen) {
+          float intersectMag = this.radius + other.radius - (distanceVect.mag());
+          PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
+          if (other.frozen && !other.powerBall) {
+            this.position.x = this.position.x - scaledDistanceVect.x;
+            this.position.y = this.position.y - scaledDistanceVect.y;
+          } else {
+            this.position.x = this.position.x - scaledDistanceVect.x/2;
+            this.position.y = this.position.y - scaledDistanceVect.y/2;
+          }
+        }
   
         position.add(bFinal[0]);
   

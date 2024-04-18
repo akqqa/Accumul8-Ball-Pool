@@ -38,9 +38,9 @@ boolean cue_drag = false;
 InvItem currentSelectedItem = null;
 
 // Global variables for status effects:
-int fireDuration = 1;
+int fireDuration = 5;
 int shockDuration = 1;
-int freezeDuration = 1;
+int freezeDuration = 5;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
 int frozenMultiplier = 1;
@@ -82,7 +82,7 @@ void table_setup() {
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 1, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2 - 100), 4, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -169,6 +169,7 @@ void switchCueBalls() {
 
 void handleEndOfRoundEffects() {
   for (Ball b : balls) {
+    b.hitThisShot.clear();
     if (b != cue_ball) {
       if (b.onFire) {
         score += points_per_ball * fireMultiplier;

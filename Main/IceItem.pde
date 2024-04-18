@@ -1,6 +1,6 @@
 public class IceItem extends InvItem {
 
-    public float effectRadius = 20;
+    public float effectRadius = ball_diameter/2+1;
     public boolean travelling = true;
     public boolean impact = false;
     public float diameter = ball_diameter;
