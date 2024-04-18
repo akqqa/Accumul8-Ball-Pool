@@ -111,7 +111,7 @@ public class Ball {
       }
       else if (frozen) {
         imageMode(CENTER);
-        image(frost, position.x, position.y, radius, radius * 1.75);
+        image(frost, position.x, position.y, radius*1.5, radius * 1.75);
       }
       
       
