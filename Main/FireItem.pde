@@ -10,5 +10,6 @@ public class FireItem extends InvItem {
     public FireItem(float x, float y, Ball ball, int max) {
         super(x, y, ball, max);
         this.ball = new Ball(x, y, ball_diameter*2, 0.1, "orange");
+        this.ball.onFire = true;
     }
 }
