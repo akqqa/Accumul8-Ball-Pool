@@ -14,7 +14,6 @@ public class InvItem {
     this.position = new PVector(x, y);
   }
   
-  
   public void draw() {
     // differences in appearance hinge on opacity
     
