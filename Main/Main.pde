@@ -8,10 +8,12 @@ final int max_force = 100;
 final float base_distance = screen_height * 0.19/* 0.2 */;
 final float max_dot_product = screen_height * 0.2;
 
-int round_num = 1;
+int round_num = 0;
+int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
+int tableSides = 4;
 
 int score = 0;
-int points_needed = 20;
+int points_needed = roundScores[0];
 int points_per_ball = 10;
 boolean finished = false;
 
@@ -35,7 +37,6 @@ boolean all_ball_stop = true;
 
 //Pocket pocket;
 
-
 void settings() {
     size(screen_width, screen_height);
 }
@@ -43,15 +44,19 @@ void settings() {
 
 void setup() {
     frameRate(60);
-    table_setup();
+    table_setup(tableSides);
     inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
     //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
 }
 
 
-void table_setup() {
+void table_setup(int sides) {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
-  table = new PoolTable(100, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
+  if (sides == 4) {
+    table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
+  } else {
+    table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
+  }
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
@@ -83,8 +88,12 @@ void draw() {
           print("HERE");
           inventory.resetBalls();
           round_num ++;
-          table_setup();
-          points_needed += 20;
+          if (round_num % 3 == 0 && round_num != 0) {
+            tableSides = int(random(3, 10));
+            print("tablesides set to" + str(tableSides));
+          }
+          table_setup(tableSides);
+          points_needed = roundScores[round_num];
           score = 0;
           //if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
@@ -115,7 +124,7 @@ void renderHUD() {
   fill(0);
   textSize(30);
   textAlign(CENTER);
-  text("Round " + str(round_num), 4*screen_width/5.0, -screen_height*0.02);
+  text("Round " + str(round_num + 1), 4*screen_width/5.0, -screen_height*0.02);
   textAlign(CENTER);
   text("Points Needed: " + str(points_needed), 3*screen_width/5.0, -screen_height*0.02);
   if (inventory.getBallCount() < 3) fill(0);
