@@ -3,7 +3,6 @@ public class Ball {
   
     protected final float K1 = 0.0315, //https://billiards.colostate.edu/faq/physics/physical-properties/
                           K2 = 0.0;
-    protected final int slow_total = 200;
 
     public PVector position;
     public PVector velocity;
@@ -16,7 +15,6 @@ public class Ball {
     protected color colour;
     public int effectDuration = 0;
     
-    protected int slow_count = slow_total;
     public int pocket_counter = 0;
 
     // power booleans

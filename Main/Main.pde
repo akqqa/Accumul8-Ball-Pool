@@ -14,6 +14,7 @@ int score = 0;
 int points_needed = 20;
 int points_per_ball = 10;
 boolean finished = false;
+ArrayList<PointIcon> pointIcons = new ArrayList<>();
 
 boolean moving = true;
 
@@ -47,6 +48,8 @@ float shockMultiplier = 1;
 // sprites
 PImage flame;
 PImage bolt;
+
+public boolean endChecksDone = false;
 
 
 void settings() {
@@ -93,8 +96,16 @@ void draw() {
     if (moving) {
       if (checkAllBallStop()) {
         // HERE WE PERFORM THE END OF ROUND PHASE
-        handleEndOfRoundEffects();
+        if (!endChecksDone) { // Performs end checks once per situation where previously balls were moving, and now all stopped
+          handleEndOfRoundEffects();
+          endChecksDone = true;
+          return;
+        }
+        if (!pointIcons.isEmpty()) { // the moving = false is not reached, so this will keep being reached until all pointicons have dissapeared. only then will the game move onto the next shot
+          return;
+        }
 
+        endChecksDone = false;
         // Game over
         if (inventory.getBallCount() == 0 && score < points_needed) {
           finished = true;
@@ -151,6 +162,7 @@ void handleEndOfRoundEffects() {
     if (b != cue_ball) {
       if (b.onFire) {
         score += points_per_ball * fireMultiplier;
+        pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball * fireMultiplier));
         b.effectDuration -= 1;
         if (b.effectDuration <= 0) {
           b.onFire = false;
@@ -204,6 +216,12 @@ void render() {
     b.draw();
   }
   cue.update(cue_ball.position.copy());
+  // Draw point icons
+  ArrayList<PointIcon> pointIconsCopy = new ArrayList<PointIcon>(pointIcons); // Copy to prevent concurrent modification exception
+  for (PointIcon p : pointIconsCopy) {
+    p.draw();
+    if (p.frames <= 0) pointIcons.remove(p);
+  }
 
   if (cue.getActive()) {
     cue.display();
@@ -251,7 +269,9 @@ void updateMovements() {
       cue_ball_potted = true;
       score -= 10;
     } else {
-      score += 10;
+      score += points_per_ball;
+      // Display points as icon
+      pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball));
     }
   }
 }
