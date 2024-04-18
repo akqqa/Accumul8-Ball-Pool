@@ -40,8 +40,10 @@ InvItem currentSelectedItem = null;
 // Global variables for status effects:
 int fireDuration = 1;
 int shockDuration = 1;
+int freezeDuration = 120;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
+int frozenMultiplier = 1;
 float shockRadius = 200;
 
 //Pocket pocket;
@@ -49,6 +51,7 @@ float shockRadius = 200;
 // sprites
 PImage flame;
 PImage bolt;
+PImage frost;
 
 public boolean endChecksDone = false;
 
@@ -65,6 +68,7 @@ void setup() {
     //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
     flame = loadImage("flame.png");
     bolt = loadImage("bolt.png");
+    frost = loadImage("frost.png");
 }
 
 
@@ -150,7 +154,12 @@ void switchCueBalls() {
     balls.remove(cue_ball);
     cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
-  } else {
+  } else if (inventory.selected instanceof IceItem) {
+    IceItem sel = (IceItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new IceBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    balls.add(cue_ball);
+  }else {
     balls.remove(cue_ball);
     cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, ball_mass, inventory.selected.ball.colourString);
     balls.add(cue_ball);
@@ -173,6 +182,12 @@ void handleEndOfRoundEffects() {
         b.effectDuration -= 1;
         if (b.effectDuration <= 0) {
           b.shocked = false;
+        }
+      }
+      if (b.frozen) {
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.frozen = false;
         }
       }
     }

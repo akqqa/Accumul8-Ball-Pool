@@ -5,6 +5,7 @@ public class FireBall extends PowerBall {
     // yellow with fire insignia will do electric as blue/black with yello thunder bolt
     colourSpecific("orange");
     onFire = true;
+    powerBall = true;
   }
   
   protected void applyEffect(Ball b) {

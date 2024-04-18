@@ -20,6 +20,8 @@ public class Ball {
     // power booleans
     protected boolean onFire;
     protected boolean shocked;
+    protected boolean frozen;
+    protected boolean powerBall;
 
     public Ball(float x, float y, float diameter, float mass, String colour) {
         this.position = new PVector(x, y);
@@ -64,6 +66,9 @@ public class Ball {
         case "orange":
           this.colour = color(235, 146, 52);
           break;
+        case "lightblue":
+          this.colour = color(173,216,230);
+          break;
       }
     }
     
@@ -91,7 +96,7 @@ public class Ball {
       strokeWeight(1);
       fill(colour, opacity);     
       circle(position.x, position.y, diameter);
-      power(0);
+      power(opacity);
     }
     
     protected void power(float opacity) {
@@ -103,6 +108,11 @@ public class Ball {
         imageMode(CENTER);
         image(bolt, position.x, position.y, radius, radius * 1.75);
       }
+      else if (frozen) {
+        imageMode(CENTER);
+        image(frost, position.x, position.y, radius, radius * 1.75);
+      }
+      
       
     }
     
@@ -129,8 +139,10 @@ public class Ball {
     
     // movement
     public void move() {
-      velocity.add(acceleration);
-      position.add(velocity);
+      if (!frozen && !powerBall) {
+        velocity.add(acceleration);
+        position.add(velocity);
+      }
       acceleration.mult(0);
       
       // forces slow balls to stop
@@ -276,17 +288,30 @@ public class Ball {
     
     // Power up functions here
     
+    protected void powerReset() {
+      frozen = false;
+      shocked = false;
+      onFire = false;
+    }
+    
     // FireBall
     public void alight() {
+      powerReset();
       onFire = true;
-      shocked = false;
       this.effectDuration = fireDuration;
     }
     
     // ShockBall
     public void shock() {
+      powerReset();
       shocked = true;
-      onFire = false;
       this.effectDuration = shockDuration;
+    }    
+    
+    // ShockBall
+    public void freeze() {
+      powerReset();
+      frozen = true;
+      this.effectDuration = freezeDuration;
     }    
 }

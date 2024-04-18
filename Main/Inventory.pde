@@ -30,7 +30,8 @@ public class Inventory {
     addItem("shock", 1);
     items.get(2).unlock();
     numBalls ++;
-    addItem("green", 0);
+    addItem("ice", 1);
+    items.get(3).unlock();
     numBalls ++;
     addItem("pink", 0);
     numBalls ++;
@@ -45,6 +46,8 @@ public class Inventory {
       items.add(new FireItem(position.x, y1, ball, count));
     } else if (colour.equals("shock")) {
       items.add(new ShockItem(position.x, y1, ball, count));
+    } else if (colour.equals("ice")) {
+      items.add(new IceItem(position.x, y1, ball, count));
     } else {
       items.add(new InvItem(position.x, y1, ball, count));
     }
