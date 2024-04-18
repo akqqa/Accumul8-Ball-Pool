@@ -51,7 +51,7 @@ void setup() {
 
 void table_setup() {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
-  table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
+  table = new PoolTable(100, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
@@ -86,7 +86,7 @@ void draw() {
           table_setup();
           points_needed += 20;
           score = 0;
-          if (cue_ball_potted) resetCueBall();
+          //if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
           // reactivate cue stick here
