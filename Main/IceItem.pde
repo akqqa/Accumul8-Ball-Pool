@@ -1,8 +1,8 @@
 public class IceItem extends InvItem {
 
-    public float effectRadius = 0;
-    public boolean travelling = false;
-    public boolean impact = true;
+    public float effectRadius = 20;
+    public boolean travelling = true;
+    public boolean impact = false;
     public float diameter = ball_diameter;
     public float mass = ball_mass;
     public String colour = "lightblue";

@@ -7,11 +7,11 @@ public class Ball {
     public PVector position;
     public PVector velocity;
     public PVector acceleration;
-    protected float invMass;
+    //protected float invMass;
     public float diameter;
     public float radius;
     protected float mass;
-    protected float tempMass;
+    protected float normalMass;
     protected String colourString;
     protected color colour;
     public int effectDuration = 0;
@@ -30,8 +30,9 @@ public class Ball {
         this.radius = diameter / 2;
         this.velocity = new PVector(0, 0);
         this.acceleration = new PVector(0, 0);
-        this.invMass = 1/mass;
+        //this.invMass = 1/mass;
         this.mass = mass;
+        this.normalMass = mass;
         this.colourString = colour;
         colourSpecific(colour);
     }
@@ -90,6 +91,9 @@ public class Ball {
         fill(255,255,0, 100);
         circle(position.x, position.y, shockRadius*2);
       }
+      if (!this.powerBall) {
+        println(this.mass);
+      }
     }
     
     public void draw(float opacity) {
@@ -119,7 +123,7 @@ public class Ball {
     
     
     public void applyForce(PVector force) { 
-      PVector f = PVector.mult(force, invMass);  // divide by the mass for a = f/m
+      PVector f = PVector.mult(force, 1/mass);  // divide by the mass for a = f/m
       acceleration.add(f);                       // adding the different accelerations contains the forces
     }
     
@@ -291,36 +295,43 @@ public class Ball {
     // Power up functions here
     
     protected void powerReset() {
-      frozen = false;
+      this.thaw();
       shocked = false;
       onFire = false;
     }
     
     // FireBall
     public void alight() {
-      powerReset();
-      onFire = true;
-      this.effectDuration = fireDuration;
+      if (!onFire) {
+        powerReset();
+        onFire = true;
+        this.effectDuration = fireDuration;
+      }
+      
     }
     
     // ShockBall
     public void shock() {
-      powerReset();
-      shocked = true;
-      this.effectDuration = shockDuration;
+      if (!shocked) {
+        powerReset();
+        shocked = true;
+        this.effectDuration = shockDuration;
+      } 
     }    
     
     // IceBall
     public void freeze() {
-      powerReset();
-      frozen = true;
-      this.effectDuration = freezeDuration;
-      tempMass = mass;
-      mass = 1000000000;
+      if (!frozen) {
+        powerReset();
+        frozen = true;
+        this.effectDuration = freezeDuration;
+        this.mass = 1000000000;
+      }
     }    
     
     public void thaw() {
       frozen = false;
-      mass = tempMass;
+      println("tempmass: " + str(this.normalMass));
+      this.mass = this.normalMass;
     }   
 }

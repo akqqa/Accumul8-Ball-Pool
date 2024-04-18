@@ -82,7 +82,7 @@ void table_setup() {
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 1, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -188,7 +188,6 @@ void handleEndOfRoundEffects() {
         b.effectDuration -= 1;
         if (b.effectDuration <= 0) {
           b.thaw();
-          
         }
       }
     }
