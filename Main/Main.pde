@@ -5,9 +5,11 @@ final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 // TODO: change the round end state number
 final int round_end_state = 12345;
+final int game_state= 56789;
 // the following are variables for menu testing
 final String[] elements = {"electricity", "fire", "ice", "gravity"};
 final int[] percentages = {10, 15, 20, 25};
+final String[] upgrade_types = {"points", "radius"};
 
 // electricity
 int num_of_electricity_ball = 0;
@@ -85,7 +87,7 @@ void table_setup() {
 
 void menu_setup() {
   menu = new Menu(screen_width * 0.85, screen_height * 0.5, 300, 700);
-  tempBut = new Button(screen_width*0.85, screen_height*0.17, 100, 50, "Test", 30, 0, 20);
+  // tempBut = new Button(screen_width*0.85, screen_height*0.3, 100, 50, "Test", 30, 0, 20);
 }
 
 
@@ -182,7 +184,8 @@ void render() {
 
   if (state == round_end_state) {
     menu.display();
-    tempBut.display();
+    // tempBut.update();
+    // tempBut.display();
   }
   if (cue.getActive() && state != round_end_state) {
     cue.display();
