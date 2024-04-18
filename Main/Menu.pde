@@ -9,6 +9,9 @@ public class Menu {
     Button[] upgrade_buttons = new Button[3];
     Button[] ball_buttons = new Button[2];
     Button confirmation_button;
+
+    Button selected_upgrade_button;
+    Button selected_ball_button;
     // instruction message
     String menu_message = "Please select 1 upgrade AND\n1 ball to add into inventory";
     public Menu (float _x, float _y, float _width, float _height) {
@@ -74,6 +77,7 @@ public class Menu {
         for (int i = 0; i < random_num_of_options; i++) {
             upgrade_buttons[i].update();
             if (upgrade_buttons[i].button_clicked) {
+                selected_upgrade_button = upgrade_buttons[i];
                 for (int j = 0; j < random_num_of_options; j++) {
                     if (j != i) {
                         upgrade_buttons[j].button_clicked = false;
@@ -91,6 +95,7 @@ public class Menu {
             Button ball_button = ball_buttons[k];
             ball_button.update();
             if (ball_button.button_clicked) {
+                selected_ball_button = ball_button;
                 for (int l = 0; l < ball_buttons.length; ++l) {
                     if(l != k) {
                         ball_buttons[l].button_clicked = false;
@@ -104,6 +109,21 @@ public class Menu {
             confirmation_button.update();
             confirmation_button.display();
             if (confirmation_button.button_clicked) {
+                // selected_upgrade_button.applyChanges();
+                // selected_ball_button.applyChanges();
+                for (int i = 0; i < ball_buttons.length; i++) {
+                    Button ball_button = ball_buttons[i];
+                    if (ball_button.button_clicked) {
+                        ball_button.applyChanges();
+                    }
+                }
+
+                for (int j = 0; j < random_num_of_options; j++) {
+                    Button upgrade_button = upgrade_buttons[j];
+                    if (upgrade_button.button_clicked) {
+                        upgrade_button.applyChanges();
+                    }
+                }
                 state = game_state;
                 points_needed = 100;
                 cue.setActive(true);

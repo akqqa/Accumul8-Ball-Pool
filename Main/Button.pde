@@ -64,6 +64,65 @@ public class Button {
     }
 
     // add the number of balls/ upgrade percentage to the respective fields
-    public void applyChanges() {}
+    public void applyChanges() {
+        if (this.button_type.equals("points")) {
+            if (this.button_element.equals("electricity")) {
+                electricity_points = electricity_points * (1 + this.button_amount/100.0);
+                
+                println("electricity_points: "+electricity_points);
+              
+                return;
+            } else if (this.button_element.equals("fire")) {
+                fire_points = fire_points * (1 + this.button_amount/ 100.0);
+                println("fire_points: "+fire_points);
+                return;
+            } else if (this.button_element.equals("ice")) {
+                ice_points = ice_points * (1 + this.button_amount/100.0);
+                println("ice_points: "+ice_points);
+                return;
+            } else if (this.button_element.equals("gravity")) {
+                gravity_points = gravity_points * (1 + this.button_amount/100.0);
+                println("gravity_points: "+gravity_points);
+                return;
+            }
+        } else if (this.button_type.equals("radius")) {
+            if (this.button_element.equals("electricity")) {
+                electricity_radius = electricity_radius * (1 + button_amount/100.0);
+                println("electricity_radius: "+electricity_radius);
+                return;
+            } else if (this.button_element.equals("fire")) {
+                fire_radius = fire_radius * (1 + button_amount/100.0);
+                println("fire_radius: "+fire_radius);
+                return;
+            } else if (this.button_element.equals("ice")) {
+                ice_radius = ice_radius * (1 + button_amount/100.0);
+                println("ice_radius: "+ice_radius);
+                return;
+            } else if (this.button_element.equals("gravity")) {
+                gravity_radius = gravity_radius * (1 + button_amount/100.0);
+                println("gravity_radius: "+gravity_radius);
+                return;
+            }
+        } else if (this.button_type.equals("ball")) {
+            // add ball
+            if (this.button_element.equals("electricity")) {
+                num_of_electricity_ball += this.button_amount;
+                println("num_of_electricity_ball: "+num_of_electricity_ball);
+                return;
+            } else if (this.button_element.equals("fire")) {
+                num_of_fire_ball += this.button_amount;
+                println("num_of_fire_ball: "+num_of_fire_ball);
+                return;
+            } else if (this.button_element.equals("ice")) {
+                num_of_ice_ball += this.button_amount;
+                println("num_of_ice_ball: "+num_of_ice_ball);
+                return;
+            } else if (this.button_element.equals("gravity")) {
+                num_of_gravity_ball += this.button_amount;
+                println("num_of_gravity_ball: "+num_of_gravity_ball);
+                return;
+            }
+        }
+    }
 
 }
