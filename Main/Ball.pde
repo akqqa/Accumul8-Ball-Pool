@@ -3,20 +3,28 @@ public class Ball {
   
     protected final float K1 = 0.0315, //https://billiards.colostate.edu/faq/physics/physical-properties/
                           K2 = 0.0;
-    protected final int slow_total = 200;
 
     public PVector position;
     public PVector velocity;
     public PVector acceleration;
-    protected float invMass;
-    protected float diameter;
+    //protected float invMass;
+    public float diameter;
     public float radius;
     protected float mass;
+    protected float normalMass;
+    protected String colourString;
     protected color colour;
+    public int effectDuration = 0;
     
-    protected int slow_count = slow_total;
     public int pocket_counter = 0;
 
+    // power booleans
+    protected boolean onFire;
+    protected boolean shocked;
+    protected boolean frozen;
+    protected boolean powerBall;
+
+    protected ArrayList<Ball> hitThisShot = new ArrayList<Ball>();
 
     public Ball(float x, float y, float diameter, float mass, String colour) {
         this.position = new PVector(x, y);
@@ -24,8 +32,10 @@ public class Ball {
         this.radius = diameter / 2;
         this.velocity = new PVector(0, 0);
         this.acceleration = new PVector(0, 0);
-        this.invMass = 1/mass;
+        //this.invMass = 1/mass;
         this.mass = mass;
+        this.normalMass = mass;
+        this.colourString = colour;
         colourSpecific(colour);
     }
     
@@ -57,7 +67,17 @@ public class Ball {
         case "brown":
           this.colour = color(139,69,19);
           break;
+        case "orange":
+          this.colour = color(235, 146, 52);
+          break;
+        case "lightblue":
+          this.colour = color(173,216,230);
+          break;
       }
+    }
+    
+    public void setColour(color colour) {
+      this.colour = colour;
     }
 
 
@@ -66,11 +86,46 @@ public class Ball {
       strokeWeight(1);
       fill(colour);     
       circle(position.x, position.y, diameter);
+      power(255);
+      // If shocked, draw raidius of shock
+      if (this.shocked) {
+        noStroke();
+        fill(255,255,0, 100);
+        circle(position.x, position.y, shockRadius*2);
+      }
+      if (!this.powerBall) {
+        println(this.mass);
+      }
+    }
+    
+    public void draw(float opacity) {
+      stroke(0,0,0, opacity);
+      strokeWeight(1);
+      fill(colour, opacity);     
+      circle(position.x, position.y, diameter);
+      power(opacity);
+    }
+    
+    protected void power(float opacity) {
+      if (onFire) {
+        imageMode(CENTER);
+        image(flame, position.x, position.y, radius, radius * 1.75);
+      }
+      else if (shocked) {
+        imageMode(CENTER);
+        image(bolt, position.x, position.y, radius, radius * 1.75);
+      }
+      else if (frozen) {
+        imageMode(CENTER);
+        image(frost, position.x, position.y, radius*1.5, radius * 1.75);
+      }
+      
+      
     }
     
     
     public void applyForce(PVector force) { 
-      PVector f = PVector.mult(force, invMass);  // divide by the mass for a = f/m
+      PVector f = PVector.mult(force, 1/mass);  // divide by the mass for a = f/m
       acceleration.add(f);                       // adding the different accelerations contains the forces
     }
     
@@ -91,15 +146,17 @@ public class Ball {
     
     // movement
     public void move() {
-      velocity.add(acceleration);
-      position.add(velocity);
+      println(powerBall);
+      if (!(frozen && !powerBall)) {
+        velocity.add(acceleration);
+        position.add(velocity);
+      }
       acceleration.mult(0);
       
       // forces slow balls to stop
       if (velocity.mag() < 0.1) {
         velocity.setMag(0);
       }
-      
     }
     
     
@@ -132,7 +189,7 @@ public class Ball {
     //  //other_ball.applyForce(new PVector(0, 0).sub(V2).add(V1));
     //}
     
-    public void ballCollision(Ball other) {  // collisions fomr https://processing.org/examples/circlecollision.html
+    public boolean ballCollision(Ball other) {  // collisions fomr https://processing.org/examples/circlecollision.html
   
       // Get distances between the balls components
       PVector distanceVect = PVector.sub(other.position, position);
@@ -144,12 +201,33 @@ public class Ball {
       float minDistance = radius + other.radius;
   
       if (distanceVectMag < minDistance) {
+
+        //If this ball is frozen, and soemthing hits it, add points and handle accordingly
+        if (frozen && !powerBall) {
+          if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+            score += points_per_ball * frozenMultiplier;
+            pointIcons.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
+            hitThisShot.add(other);
+          }
+        }
+        // If the other ball is frozen, and this ball hits it, handle accordingly
+        if (other.frozen && !other.powerBall) {
+          if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+            score += points_per_ball * frozenMultiplier;
+            pointIcons.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
+            other.hitThisShot.add(this);
+          }
+        }
         
         float distanceCorrection = (minDistance-distanceVectMag)/2.0;
         PVector d = distanceVect.copy();
         PVector correctionVector = d.normalize().mult(distanceCorrection);
-        other.position.add(correctionVector);
-        position.sub(correctionVector);
+        if (!other.frozen && !other.powerBall) {
+          other.position.add(correctionVector);
+        }
+        if (!frozen && !powerBall) {
+          position.sub(correctionVector); // Only move in collisions if not frozen
+        }
   
         // get angle of distanceVect
         float theta  = distanceVect.heading();
@@ -220,10 +298,17 @@ public class Ball {
         
         // Simply update balls to be apart from each other in direction of intersection
         // intersection magnitude
-        float intersectMag = this.radius + other.radius - (distanceVect.mag());
-        PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
-        this.position.x = this.position.x - scaledDistanceVect.x/2;
-        this.position.y = this.position.y - scaledDistanceVect.y/2;
+        if (!frozen) {
+          float intersectMag = this.radius + other.radius - (distanceVect.mag());
+          PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
+          if (other.frozen && !other.powerBall) {
+            this.position.x = this.position.x - scaledDistanceVect.x;
+            this.position.y = this.position.y - scaledDistanceVect.y;
+          } else {
+            this.position.x = this.position.x - scaledDistanceVect.x/2;
+            this.position.y = this.position.y - scaledDistanceVect.y/2;
+          }
+        }
   
         position.add(bFinal[0]);
   
@@ -232,143 +317,51 @@ public class Ball {
         velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
         other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
         other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
+        return true;
       }
+      return false;
     }
     
+    // Power up functions here
+    
+    protected void powerReset() {
+      this.thaw();
+      shocked = false;
+      onFire = false;
+    }
+    
+    // FireBall
+    public void alight() {
+      if (!onFire) {
+        powerReset();
+        onFire = true;
+        this.effectDuration = fireDuration;
+      }
+      
+    }
+    
+    // ShockBall
+    public void shock() {
+      if (!shocked) {
+        powerReset();
+        shocked = true;
+        this.effectDuration = shockDuration;
+      } 
+    }    
+    
+    // IceBall
+    public void freeze() {
+      if (!frozen) {
+        powerReset();
+        frozen = true;
+        this.effectDuration = freezeDuration;
+        this.mass = 1000000000;
+      }
+    }    
+    
+    public void thaw() {
+      frozen = false;
+      println("tempmass: " + str(this.normalMass));
+      this.mass = this.normalMass;
+    }   
 }
-
-//class Ball {
-//  PVector position;
-//  PVector velocity;
-
-//  float radius, m;
-
-//  Ball(float x, float y, float r_) {
-//    position = new PVector(x, y);
-//    velocity = PVector.random2D();
-//    velocity.mult(3);
-//    radius = r_;
-//    m = radius*.1;
-//  }
-
-//  void update() {
-//    position.add(velocity);
-//  }
-
-//  void checkBoundaryCollision() {
-//    if (position.x > width-radius) {
-//      position.x = width-radius;
-//      velocity.x *= -1;
-//    } else if (position.x < radius) {
-//      position.x = radius;
-//      velocity.x *= -1;
-//    } else if (position.y > height-radius) {
-//      position.y = height-radius;
-//      velocity.y *= -1;
-//    } else if (position.y < radius) {
-//      position.y = radius;
-//      velocity.y *= -1;
-//    }
-//  }
-
-//  void checkCollision(Ball other) {
-
-//    // Get distances between the balls components
-//    PVector distanceVect = PVector.sub(other.position, position);
-
-//    // Calculate magnitude of the vector separating the balls
-//    float distanceVectMag = distanceVect.mag();
-
-//    // Minimum distance before they are touching
-//    float minDistance = radius + other.radius;
-
-//    if (distanceVectMag < minDistance) {
-//      float distanceCorrection = (minDistance-distanceVectMag)/2.0;
-//      PVector d = distanceVect.copy();
-//      PVector correctionVector = d.normalize().mult(distanceCorrection);
-//      other.position.add(correctionVector);
-//      position.sub(correctionVector);
-
-//      // get angle of distanceVect
-//      float theta  = distanceVect.heading();
-//      // precalculate trig values
-//      float sine = sin(theta);
-//      float cosine = cos(theta);
-
-//      /* bTemp will hold rotated ball positions. You 
-//       just need to worry about bTemp[1] position*/
-//      PVector[] bTemp = {
-//        new PVector(), new PVector()
-//      };
-
-//      /* this ball's position is relative to the other
-//       so you can use the vector between them (bVect) as the 
-//       reference point in the rotation expressions.
-//       bTemp[0].position.x and bTemp[0].position.y will initialize
-//       automatically to 0.0, which is what you want
-//       since b[1] will rotate around b[0] */
-//      bTemp[1].x  = cosine * distanceVect.x + sine * distanceVect.y;
-//      bTemp[1].y  = cosine * distanceVect.y - sine * distanceVect.x;
-
-//      // rotate Temporary velocities
-//      PVector[] vTemp = {
-//        new PVector(), new PVector()
-//      };
-
-//      vTemp[0].x  = cosine * velocity.x + sine * velocity.y;
-//      vTemp[0].y  = cosine * velocity.y - sine * velocity.x;
-//      vTemp[1].x  = cosine * other.velocity.x + sine * other.velocity.y;
-//      vTemp[1].y  = cosine * other.velocity.y - sine * other.velocity.x;
-
-//      /* Now that velocities are rotated, you can use 1D
-//       conservation of momentum equations to calculate 
-//       the final velocity along the x-axis. */
-//      PVector[] vFinal = {  
-//        new PVector(), new PVector()
-//      };
-
-//      // final rotated velocity for b[0]
-//      vFinal[0].x = ((m - other.m) * vTemp[0].x + 2 * other.m * vTemp[1].x) / (m + other.m);
-//      vFinal[0].y = vTemp[0].y;
-
-//      // final rotated velocity for b[0]
-//      vFinal[1].x = ((other.m - m) * vTemp[1].x + 2 * m * vTemp[0].x) / (m + other.m);
-//      vFinal[1].y = vTemp[1].y;
-
-//      // hack to avoid clumping
-//      bTemp[0].x += vFinal[0].x;
-//      bTemp[1].x += vFinal[1].x;
-
-//      /* Rotate ball positions and velocities back
-//       Reverse signs in trig expressions to rotate 
-//       in the opposite direction */
-//      // rotate balls
-//      PVector[] bFinal = { 
-//        new PVector(), new PVector()
-//      };
-
-//      bFinal[0].x = cosine * bTemp[0].x - sine * bTemp[0].y;
-//      bFinal[0].y = cosine * bTemp[0].y + sine * bTemp[0].x;
-//      bFinal[1].x = cosine * bTemp[1].x - sine * bTemp[1].y;
-//      bFinal[1].y = cosine * bTemp[1].y + sine * bTemp[1].x;
-
-//      // update balls to screen position
-//      other.position.x = position.x + bFinal[1].x;
-//      other.position.y = position.y + bFinal[1].y;
-
-//      position.add(bFinal[0]);
-
-//      // update velocities
-//      velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
-//      velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
-//      other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
-//      other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
-//    }
-//  }
-
-//  void display() {
-//    noStroke();
-//    fill(204);
-//    ellipse(position.x, position.y, radius*2, radius*2);
-//  }
-//}
