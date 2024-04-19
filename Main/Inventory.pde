@@ -52,6 +52,30 @@ public class Inventory {
       items.add(new InvItem(position.x, y1, ball, count));
     }
   }
+
+  // Add ball to existing item
+  public void addBall(String type) {
+    for (InvItem i : items) {
+      if (type == "fire") {
+        if (i instanceof FireItem) {
+          i.max += 1;
+          i.count = i.max;
+        }
+      }
+      if (type == "shock") {
+        if (i instanceof ShockItem) {
+          i.max += 1;
+          i.count = i.max;
+        }
+      }
+      if (type == "ice") {
+        if (i instanceof IceItem) {
+          i.max += 1;
+          i.count = i.max;
+        }
+      }
+    }
+  }
   
   // calculate the y location an inventory item should display at based on the number of balls already stored
   // fills top down

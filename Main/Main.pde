@@ -70,13 +70,17 @@ boolean cue_drag = false;
 InvItem currentSelectedItem = null;
 
 // Global variables for status effects:
-int fireDuration = 5;
+int fireDuration = 1;
 int shockDuration = 1;
-int freezeDuration = 5;
+int freezeDuration = 1;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
-int frozenMultiplier = 1;
-float shockRadius = 200;
+float frozenMultiplier = 1;
+final float originalFireRadius = 40;
+float fireRadius = 40;
+final float originalShockRadius = 100;
+float shockRadius = 100;
+float freezeRadius = ball_diameter;
 
 //Pocket pocket;
 // sprites
@@ -116,7 +120,7 @@ void table_setup(int sides) {
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2 - 100), 4, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -160,12 +164,11 @@ void draw() {
           round_num ++;
           state = round_end_state;
           if (round_num % 3 == 0 && round_num != 0) {
-            tableSides = int(random(3, 10));
+            tableSides = int(random(4, 10));
             print("tablesides set to" + str(tableSides));
           }
           table_setup(tableSides);
           points_needed = roundScores[round_num];
-          
           // set up the menu
           menu_setup();
           // reactivate cue stick here
@@ -195,12 +198,12 @@ void switchCueBalls() {
   if (inventory.selected instanceof FireItem) {
     FireItem sel = (FireItem) inventory.selected;
     balls.remove(cue_ball);
-    cue_ball = new FireBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    cue_ball = new FireBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, fireRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
   } else if (inventory.selected instanceof ShockItem) {
     ShockItem sel = (ShockItem) inventory.selected;
     balls.remove(cue_ball);
-    cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, shockRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
   } else if (inventory.selected instanceof IceItem) {
     IceItem sel = (IceItem) inventory.selected;

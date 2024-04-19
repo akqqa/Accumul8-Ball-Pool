@@ -21,25 +21,51 @@ public class Menu {
         random_num_of_options = int(random(2, 4));
         // debug: random_num_of_options
         println("random_num_of_options: "+random_num_of_options);
-        for (int i = 0; i < random_num_of_options; ++i) {
-            int random_element = int(random(elements.length));
-            int random_percentage = int(random(percentages.length));
-            int random_upgrade_type = int(random(upgrade_types.length));
-
-            // check duplication
-            for (int j = 0; j < i;) {
-                if (upgrade_buttons[j].button_element.equals(elements[random_element]) && upgrade_buttons[j].button_type.equals(upgrade_types[random_upgrade_type])) {
-                    // generate the element and upgrade type again, and restart from index 0
-                    random_element = int(random(elements.length));
-                    random_upgrade_type = int(random(upgrade_types.length));
-                    j = 0;
-                } else {
-                    j++;
-                }
+        ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
+        for (InvItem i : inventory.items) {
+            if (i instanceof FireItem && i.max > 0) { // Player has fire balls unlocked
+                Object[] arr = {50, "fire", "points"};
+                possibleUpgrades.add(arr);
+                arr = new Object[]{50, "fire", "radius"};
+                possibleUpgrades.add(arr);
+            } else if (i instanceof ShockItem && i.max > 0) { // Player has shock balls unlocked
+                Object[] arr = {100, "electricity", "points"};
+                possibleUpgrades.add(arr);
+                arr = new Object[]{50, "electricity","radius"};
+                possibleUpgrades.add(arr);
+            } else if (i instanceof IceItem && i.max > 0) { // Player has shock balls unlocked
+                Object[] arr = {50, "ice", "points"};
+                possibleUpgrades.add(arr);
             }
+        }
+        for (int i = 0; i < random_num_of_options; ++i) {
+            // int random_element = int(random(elements.length));
+            // int random_percentage = int(random(percentages.length));
+            // int random_upgrade_type = int(random(upgrade_types.length));
+
+            // // check duplication
+            // for (int j = 0; j < i;) {
+            //     if (upgrade_buttons[j].button_element.equals(elements[random_element]) && upgrade_buttons[j].button_type.equals(upgrade_types[random_upgrade_type])) {
+            //         // generate the element and upgrade type again, and restart from index 0
+            //         random_element = int(random(elements.length));
+            //         random_upgrade_type = int(random(upgrade_types.length));
+            //         j = 0;
+            //     } else {
+            //         j++;
+            //     }
+            // }
+            // Pick upgrades to display
+            // Pick random upgrade from possibleUpgrades, and make button for it. If none left, dont make a button
+            if (possibleUpgrades.isEmpty()) {
+                continue;
+            }
+            int random_upgrade = int(random(possibleUpgrades.size()));
+            Object[] chosenUpgrade = possibleUpgrades.get(random_upgrade);
+            possibleUpgrades.remove(chosenUpgrade);
+
             // create the button with the respective upgrades and position set according to i
             // constructor Button (float _x, float _y, float _width, float _height, int _amount, String _element, String _type, int r, int g, int b)
-            Button button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, percentages[random_percentage], elements[random_element], upgrade_types[random_upgrade_type]/* , 30, 0, 20 */);
+            Button button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, (int) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
             // add the button into array
             upgrade_buttons[i] = button;
             if (i == random_num_of_options - 1) {
@@ -152,7 +178,6 @@ public class Menu {
                 // update the state, back to the game
                 state = game_state;
                 // TODO: currently hard set to 100, you might have other ways updating points required
-                points_needed = 100;
                 cue.setActive(true);
             }
         }
