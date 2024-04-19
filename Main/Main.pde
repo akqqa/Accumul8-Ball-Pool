@@ -382,6 +382,7 @@ void resetCueBall() {
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
   balls.add(cue_ball);
   cue_ball_potted = false;
+  switchCueBalls();
 }
 
 int nextTurn() {
