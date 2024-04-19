@@ -9,6 +9,7 @@ public class Menu {
     Button[] upgrade_buttons = new Button[3];
     Button[] ball_buttons = new Button[2];
     Button confirmation_button;
+    Button skip_button;
 
     Button selected_upgrade_button;
     Button selected_ball_button;
@@ -102,6 +103,7 @@ public class Menu {
 
         // create the confirmation button for the upgrades and ball addition
         confirmation_button = new Button(screen_width*0.85, last_ball_position_y + 50, this.menu_width * 0.8, 30, 0, "", "confirmation"/* , 0, 0, 150 */);
+        skip_button = new Button(screen_width*0.85, last_ball_position_y + 2 * 50, this.menu_width * 0.8, 30, 0, "", "skip"/* , 0, 0, 150 */);
     }
 
     // displaying the menu with the buttons in different parts
@@ -142,7 +144,14 @@ public class Menu {
         textSize(20);
         textAlign(CENTER, CENTER);
         text("AND", this.position.copy().x, upgrade_buttons[random_num_of_options-1].position.copy().y + 50);
-
+        
+        skip_button.update();
+        skip_button.display();
+        // continue to game if skip button is clicked
+        if (skip_button.button_clicked) {
+            state = game_state;
+            cue.setActive(true);
+        }
         // ball addition buttons
         for (int k = 0; k < ball_buttons.length; k++) {
             Button ball_button = ball_buttons[k];
@@ -159,16 +168,24 @@ public class Menu {
             }
             ball_button.display();
         }
-        // only show confirmation button when upgrade and ball are both selected
-        if (checkSelected(upgrade_buttons) && checkSelected(ball_buttons)) {
+        
+        
+        // only show confirmation button when either upgrade or ball is selected
+        if (checkSelected(upgrade_buttons) || checkSelected(ball_buttons)) {
             // check if cursor inside button or clicking button
             confirmation_button.update();
             confirmation_button.display();
             if (confirmation_button.button_clicked) {
-                // apply upgrade
-                selected_upgrade_button.applyChanges();
-                // apply ball addition
-                selected_ball_button.applyChanges();
+                // apply upgrade only if selected upgrade button is not null
+                if (selected_upgrade_button != null) {
+                    selected_upgrade_button.applyChanges();
+                }
+                
+                // apply ball addition only if selected ball button is not null
+                if (selected_ball_button != null) {
+                    selected_ball_button.applyChanges();
+                }
+                
                 // for (int i = 0; i < ball_buttons.length; i++) {
                 //     Button ball_button = ball_buttons[i];
                 //     if (ball_button.button_clicked) {
