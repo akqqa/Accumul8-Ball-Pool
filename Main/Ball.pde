@@ -9,7 +9,7 @@ public class Ball {
     public PVector velocity;
     public PVector acceleration;
     protected float invMass;
-    protected float diameter;
+    public float diameter;
     public float radius;
     protected float mass;
     protected color colour;
@@ -59,12 +59,23 @@ public class Ball {
           break;
       }
     }
+    
+    public void setColour(color colour) {
+      this.colour = colour;
+    }
 
 
     public void draw() {
       stroke(0,0,0);
       strokeWeight(1);
       fill(colour);     
+      circle(position.x, position.y, diameter);
+    }
+    
+    public void draw(float opacity) {
+      stroke(0,0,0, opacity);
+      strokeWeight(1);
+      fill(colour, opacity);     
       circle(position.x, position.y, diameter);
     }
     
