@@ -3,11 +3,39 @@ final int screen_height = 720;
 final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
+// TODO: change the round end state number
+final int round_end_state = 12345;
+final int game_state= 56789;
+// the following are variables for menu testing
+final String[] elements = {"electricity", "fire", "ice", "gravity"};
+final int[] percentages = {10, 15, 20, 25};
+final String[] upgrade_types = {"points", "radius"};
+
+// electricity
+int num_of_electricity_ball = 0;
+float electricity_points = 1;
+float electricity_radius = 1;
+
+// fire
+int num_of_fire_ball = 0;
+float fire_points = 1;
+float fire_radius = 1;
+
+// ice
+int num_of_ice_ball = 0;
+float ice_points = 1;
+float ice_radius = 1;
+
+// gravity
+int num_of_gravity_ball = 0;
+float gravity_points = 1;
+float gravity_radius = 1;
 
 final int max_force = 100;
 final float base_distance = screen_height * 0.19/* 0.2 */;
 final float max_dot_product = screen_height * 0.2;
 
+int state = 0;
 int round_num = 0;
 int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
@@ -22,6 +50,8 @@ boolean moving = true;
 
 Ball cue_ball;
 Cue cue;
+Menu menu;
+Button tempBut;
 final PVector cue_ball_start = new PVector(screen_width/2,screen_height/2 + 100);
 boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
@@ -90,6 +120,11 @@ void table_setup(int sides) {
   //shots = 5 * round_num+1;
 }
 
+void menu_setup() {
+  menu = new Menu(screen_width * 0.85, screen_height * 0.5, 300, 700);
+  // tempBut = new Button(screen_width*0.85, screen_height*0.3, 100, 50, "Test", 30, 0, 20);
+}
+
 
 void draw() {
   renderHUD();
@@ -123,19 +158,22 @@ void draw() {
           inventory.resetBalls();
           switchCueBalls();
           round_num ++;
+          state = round_end_state;
           if (round_num % 3 == 0 && round_num != 0) {
             tableSides = int(random(3, 10));
             print("tablesides set to" + str(tableSides));
           }
           table_setup(tableSides);
           points_needed = roundScores[round_num];
+          
+          // set up the menu
+          menu_setup();
+          // reactivate cue stick here
+          cue.setActive(false);
           score = 0;
           //if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
-          // reactivate cue stick here
-          cue.setActive(true);
-        // Keep playing
         } else {
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
@@ -256,7 +294,12 @@ void render() {
     if (p.frames <= 0) pointIcons.remove(p);
   }
 
-  if (cue.getActive()) {
+  if (state == round_end_state) {
+    menu.display();
+    // tempBut.update();
+    // tempBut.display();
+  }
+  if (cue.getActive() && state != round_end_state) {
     cue.display();
   }
   for (Ball b : pocketed) {
