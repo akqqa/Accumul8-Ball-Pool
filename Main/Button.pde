@@ -87,10 +87,11 @@ public class Button {
     public void applyChanges() {
         // checks the upgrade type of the button
         if (this.button_type.equals("points")) {
-            // points upgrade
+            // points upgrade (nf is used for correcting to 2 decimal places)
             if (this.button_element.equals("electricity")) {
                 // electricity points * 1.xx
                 electricity_points = electricity_points * (1 + this.button_amount/100.0);
+                electricity_points = float(nf(electricity_points, 0, 2));
                 
                 println("electricity_points: "+electricity_points);
               
@@ -98,16 +99,19 @@ public class Button {
             } else if (this.button_element.equals("fire")) {
                 // fire points * 1.xx
                 fire_points = fire_points * (1 + this.button_amount/ 100.0);
+                fire_points = float(nf(fire_points, 0, 2));
                 println("fire_points: "+fire_points);
                 return;
             } else if (this.button_element.equals("ice")) {
                 // ice points * 1.xx
                 ice_points = ice_points * (1 + this.button_amount/100.0);
+                ice_points = float(nf(ice_points, 0, 2));
                 println("ice_points: "+ice_points);
                 return;
             } else if (this.button_element.equals("gravity")) {
                 // gravity points * 1.xx
                 gravity_points = gravity_points * (1 + this.button_amount/100.0);
+                gravity_points = float(nf(gravity_points, 0, 2));
                 println("gravity_points: "+gravity_points);
                 return;
             }
@@ -116,21 +120,25 @@ public class Button {
             if (this.button_element.equals("electricity")) {
                 // electricity radius * 1.xx
                 electricity_radius = electricity_radius * (1 + button_amount/100.0);
+                electricity_radius = float(nf(electricity_radius, 0, 2));
                 println("electricity_radius: "+electricity_radius);
                 return;
             } else if (this.button_element.equals("fire")) {
                 // fire radius * 1.xx
                 fire_radius = fire_radius * (1 + button_amount/100.0);
+                fire_radius = float(nf(fire_radius, 0, 2));
                 println("fire_radius: "+fire_radius);
                 return;
             } else if (this.button_element.equals("ice")) {
                 // ice radius * 1.xx
                 ice_radius = ice_radius * (1 + button_amount/100.0);
+                ice_radius = float(nf(ice_radius, 0, 2));
                 println("ice_radius: "+ice_radius);
                 return;
             } else if (this.button_element.equals("gravity")) {
                 // gravity radius * 1.xx
                 gravity_radius = gravity_radius * (1 + button_amount/100.0);
+                gravity_radius = float(nf(gravity_radius, 0, 2));
                 println("gravity_radius: "+gravity_radius);
                 return;
             }
