@@ -82,6 +82,7 @@ public class Ball {
 
 
     public void draw() {
+      //text(mass, position.x, position.y);
       stroke(0,0,0);
       strokeWeight(1);
       fill(colour);     
@@ -222,12 +223,12 @@ public class Ball {
         float distanceCorrection = (minDistance-distanceVectMag)/2.0;
         PVector d = distanceVect.copy();
         PVector correctionVector = d.normalize().mult(distanceCorrection);
-        if (!other.frozen && !other.powerBall) {
+        //if (!other.frozen && !other.powerBall) {
           other.position.add(correctionVector);
-        }
-        if (!frozen && !powerBall) {
+        //}
+        //if (!frozen && !powerBall) {
           position.sub(correctionVector); // Only move in collisions if not frozen
-        }
+        // }
   
         // get angle of distanceVect
         float theta  = distanceVect.heading();
@@ -302,8 +303,8 @@ public class Ball {
           float intersectMag = this.radius + other.radius - (distanceVect.mag());
           PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
           if (other.frozen && !other.powerBall) {
-            this.position.x = this.position.x - scaledDistanceVect.x;
-            this.position.y = this.position.y - scaledDistanceVect.y;
+            this.position.x = this.position.x - scaledDistanceVect.x*2;
+            this.position.y = this.position.y - scaledDistanceVect.y*2;
           } else {
             this.position.x = this.position.x - scaledDistanceVect.x/2;
             this.position.y = this.position.y - scaledDistanceVect.y/2;

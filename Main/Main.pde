@@ -3,6 +3,7 @@ final int screen_height = 720;
 final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
+final float cue_ball_mass = ball_mass + 0.5;
 // TODO: change the round end state number
 final int round_end_state = 12345;
 final int game_state= 56789;
@@ -37,7 +38,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {2000, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
 int score = 0;
@@ -72,7 +73,7 @@ InvItem currentSelectedItem = null;
 // Global variables for status effects:
 int fireDuration = 1;
 int shockDuration = 1;
-int freezeDuration = 1;
+int freezeDuration = 5;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
 float frozenMultiplier = 1;
@@ -113,7 +114,7 @@ void table_setup(int sides) {
   } else {
     table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
   }
-  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
   //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
   //cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
   //cue_ball.applyForce(new PVector(0, -100));
@@ -212,7 +213,7 @@ void switchCueBalls() {
     balls.add(cue_ball);
   }else {
     balls.remove(cue_ball);
-    cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, ball_mass, inventory.selected.ball.colourString);
+    cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, cue_ball_mass, inventory.selected.ball.colourString);
     balls.add(cue_ball);
   }
   currentSelectedItem = inventory.selected;
@@ -378,7 +379,7 @@ void setupTriangle(PVector bottom, int rows, float diameter, float mass) {
 }
 
 void resetCueBall() {
-  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
   balls.add(cue_ball);
   cue_ball_potted = false;
 }
