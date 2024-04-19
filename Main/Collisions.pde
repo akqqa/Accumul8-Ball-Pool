@@ -103,6 +103,23 @@ boolean linePoint(float x1, float y1, float x2, float y2, float px, float py) {
   return false;
 }
 
+// CIRCLE/CIRCLE
+boolean circleCircle(float c1x, float c1y, float c1r, float c2x, float c2y, float c2r) {
+
+  // get distance between the circle's centers
+  // use the Pythagorean Theorem to compute the distance
+  float distX = c1x - c2x;
+  float distY = c1y - c2y;
+  float distance = sqrt( (distX*distX) + (distY*distY) );
+
+  // if the distance is less than the sum of the circle's
+  // radii, the circles are touching!
+  if (distance <= c1r+c2r) {
+    return true;
+  }
+  return false;
+}
+
 
 boolean centreInsideTable(float x_centre, float y_centre, float x_intersect, float y_intersect, float x_point, float y_point) {
   // distance from centre to intersect > than from centre to point means point in table

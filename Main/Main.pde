@@ -16,6 +16,7 @@ int score = 0;
 int points_needed = roundScores[0];
 int points_per_ball = 10;
 boolean finished = false;
+ArrayList<PointIcon> pointIcons = new ArrayList<>();
 
 boolean moving = true;
 
@@ -34,8 +35,26 @@ float xStart = 0;
 float yStart = 0;
 
 boolean all_ball_stop = true;
+boolean cue_drag = false;
+
+InvItem currentSelectedItem = null;
+
+// Global variables for status effects:
+int fireDuration = 5;
+int shockDuration = 1;
+int freezeDuration = 5;
+float fireMultiplier = 0.5;
+float shockMultiplier = 1;
+int frozenMultiplier = 1;
+float shockRadius = 200;
 
 //Pocket pocket;
+// sprites
+PImage flame;
+PImage bolt;
+PImage frost;
+
+public boolean endChecksDone = false;
 
 void settings() {
     size(screen_width, screen_height);
@@ -47,6 +66,9 @@ void setup() {
     table_setup(tableSides);
     inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
     //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
+    flame = loadImage("flame.png");
+    bolt = loadImage("bolt.png");
+    frost = loadImage("frost.png");
 }
 
 
@@ -58,11 +80,13 @@ void table_setup(int sides) {
     table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
   }
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
+  //cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2 - 100), 4, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -80,13 +104,24 @@ void draw() {
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
     if (moving) {
       if (checkAllBallStop()) {
+        // HERE WE PERFORM THE END OF ROUND PHASE
+        if (!endChecksDone) { // Performs end checks once per situation where previously balls were moving, and now all stopped
+          handleEndOfRoundEffects();
+          endChecksDone = true;
+          return;
+        }
+        if (!pointIcons.isEmpty()) { // the moving = false is not reached, so this will keep being reached until all pointicons have dissapeared. only then will the game move onto the next shot
+          return;
+        }
+
+        endChecksDone = false;
         // Game over
         if (inventory.getBallCount() == 0 && score < points_needed) {
           finished = true;
         // Proceed to next round
         } else if (score >= points_needed) {
-          print("HERE");
           inventory.resetBalls();
+          switchCueBalls();
           round_num ++;
           if (round_num % 3 == 0 && round_num != 0) {
             tableSides = int(random(3, 10));
@@ -104,7 +139,7 @@ void draw() {
         } else {
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
-          cue_ball.setColour(inventory.selectedBallType());
+          if (currentSelectedItem != inventory.selected) switchCueBalls();
           cue.setActive(true);
         }
         moving = false;
@@ -112,7 +147,60 @@ void draw() {
     }
     // check here in case ball is stationary to allow selection change
     else if (checkAllBallStop() && inventory.getBallCount() != 0 && score < points_needed) {
-      cue_ball.setColour(inventory.selectedBallType());
+      if (currentSelectedItem != inventory.selected) switchCueBalls();
+    }
+  }
+}
+
+void switchCueBalls() {
+  // If the selected item has changed from the last frame, switch it out
+  if (inventory.selected instanceof FireItem) {
+    FireItem sel = (FireItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new FireBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    balls.add(cue_ball);
+  } else if (inventory.selected instanceof ShockItem) {
+    ShockItem sel = (ShockItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    balls.add(cue_ball);
+  } else if (inventory.selected instanceof IceItem) {
+    IceItem sel = (IceItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new IceBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
+    balls.add(cue_ball);
+  }else {
+    balls.remove(cue_ball);
+    cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, ball_mass, inventory.selected.ball.colourString);
+    balls.add(cue_ball);
+  }
+  currentSelectedItem = inventory.selected;
+}
+
+void handleEndOfRoundEffects() {
+  for (Ball b : balls) {
+    b.hitThisShot.clear();
+    if (b != cue_ball) {
+      if (b.onFire) {
+        score += points_per_ball * fireMultiplier;
+        pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball * fireMultiplier));
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.onFire = false;
+        }
+      }
+      if (b.shocked) {
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.shocked = false;
+        }
+      }
+      if (b.frozen) {
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.thaw();
+        }
+      }
     }
   }
 }
@@ -161,6 +249,12 @@ void render() {
     b.draw();
   }
   cue.update(cue_ball.position.copy());
+  // Draw point icons
+  ArrayList<PointIcon> pointIconsCopy = new ArrayList<PointIcon>(pointIcons); // Copy to prevent concurrent modification exception
+  for (PointIcon p : pointIconsCopy) {
+    p.draw();
+    if (p.frames <= 0) pointIcons.remove(p);
+  }
 
   if (cue.getActive()) {
     cue.display();
@@ -178,13 +272,18 @@ void updateMovements() {
   for (Ball b : balls) {
     b.move();
   }
+  if (cue_ball instanceof PowerBall) ((PowerBall) cue_ball).travelEffect();
   for (Ball b : pocketed) {
     b.move();
   }
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
-      balls.get(i).ballCollision(balls.get(j));
+      boolean res = balls.get(i).ballCollision(balls.get(j));
+      if (res) {
+        if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
+        else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
+      }
     }
   }
   for (Ball b : balls) {
@@ -197,13 +296,26 @@ void updateMovements() {
     balls.remove(b);
     if (table.ballFinished(b)) bin.add(b);
   }
+  // LOGIC FOR POTTED BALLS
   for (Ball b : bin) {
     pocketed.remove(b);
     if (b == cue_ball) {
       cue_ball_potted = true;
       score -= 10;
+      pointIcons.add(new PointIcon(b.position.copy(), 60, -10));
     } else {
-      score += 10;
+      score += points_per_ball;
+      // Display points as icon
+      pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball));
+      // IF potted ball had shock status effect, chain points to nearby balls!
+      if (b.shocked) {
+        for (Ball nearbyBall : balls) {
+          if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < shockRadius && nearbyBall != b && nearbyBall != cue_ball) {
+            score += points_per_ball * shockMultiplier;
+            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball));
+          }
+        }
+      }
     }
   }
 }
@@ -257,6 +369,7 @@ void mousePressed() {
       cue.setOriginalPosition();
       xStart = mouseX;
       yStart = mouseY;
+      cue_drag = true;
       // debug check
       // println("xStart: " + xStart);
       // println("yStart: " + yStart);
@@ -267,13 +380,14 @@ void mousePressed() {
 // apply resultant to the ball when the mouse is released
 void mouseReleased() {
   // only apply resultant when cue is active
-  if (cue.getActive() && !inventory.mouseInInventory()) {
+  if (cue.getActive() && cue_drag) { // && !inventory.mouseInInventory()) {
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
     cue.setActive(false);
     inventory.useSelected();
+    cue_drag = false;
   }
   
 }

@@ -24,13 +24,14 @@ public class Inventory {
     selected = items.get(0);
     items.get(0).unlock();
     numBalls ++;
-    addItem("brown", 1);
+    addItem("fire", 1);
     items.get(1).unlock();
     numBalls ++;
-    addItem("blue", 1);
+    addItem("shock", 1);
     items.get(2).unlock();
     numBalls ++;
-    addItem("green", 0);
+    addItem("ice", 1);
+    items.get(3).unlock();
     numBalls ++;
     addItem("pink", 0);
     numBalls ++;
@@ -41,7 +42,15 @@ public class Inventory {
   private void addItem(String colour, int count) {
     float y1 = calcHeight();
     Ball ball = new Ball(position.x, y1, ball_diameter*2, ball_mass+0.5, colour);
-    items.add(new InvItem(position.x, y1, ball, count));
+    if (colour.equals("fire")) {
+      items.add(new FireItem(position.x, y1, ball, count));
+    } else if (colour.equals("shock")) {
+      items.add(new ShockItem(position.x, y1, ball, count));
+    } else if (colour.equals("ice")) {
+      items.add(new IceItem(position.x, y1, ball, count));
+    } else {
+      items.add(new InvItem(position.x, y1, ball, count));
+    }
   }
   
   // calculate the y location an inventory item should display at based on the number of balls already stored
