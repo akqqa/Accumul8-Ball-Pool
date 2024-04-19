@@ -38,7 +38,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {2000, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
 int score = 0;
@@ -73,7 +73,7 @@ InvItem currentSelectedItem = null;
 // Global variables for status effects:
 int fireDuration = 1;
 int shockDuration = 1;
-int freezeDuration = 5;
+int freezeDuration = 1;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
 float frozenMultiplier = 1;
