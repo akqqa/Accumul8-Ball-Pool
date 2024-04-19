@@ -125,10 +125,13 @@ void draw() {
           finished = true;
         } else if (score >= points_needed) {
           round_num ++;
+          // set state to round end state
           state = round_end_state;
           table_setup();
-          menu_setup();
+          
           points_needed = 0;
+          // set up the menu
+          menu_setup();
           if (cue_ball_potted) resetCueBall();
           // reactivate cue stick here
           cue.setActive(false);
