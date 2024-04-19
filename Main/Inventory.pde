@@ -24,14 +24,14 @@ public class Inventory {
     selected = items.get(0);
     items.get(0).unlock();
     numBalls ++;
-    addItem("fire", 1);
-    items.get(1).unlock();
+    addItem("fire", 0);
+    //items.get(1).unlock();
     numBalls ++;
-    addItem("shock", 1);
-    items.get(2).unlock();
+    addItem("shock", 0);
+    //items.get(2).unlock();
     numBalls ++;
-    addItem("ice", 1);
-    items.get(3).unlock();
+    addItem("ice", 0);
+    //items.get(3).unlock();
     numBalls ++;
     addItem("pink", 0);
     numBalls ++;
@@ -58,18 +58,21 @@ public class Inventory {
     for (InvItem i : items) {
       if (type == "fire") {
         if (i instanceof FireItem) {
+          i.unlock();
           i.max += 1;
           i.count = i.max;
         }
       }
       if (type == "shock") {
         if (i instanceof ShockItem) {
+          i.unlock();
           i.max += 1;
           i.count = i.max;
         }
       }
       if (type == "ice") {
         if (i instanceof IceItem) {
+          i.unlock();
           i.max += 1;
           i.count = i.max;
         }

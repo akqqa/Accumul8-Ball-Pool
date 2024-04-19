@@ -27,9 +27,11 @@ public class Button {
         } else if (this.button_type.equals("ball")) {
             // type for elemental ball addition
             this.button_text = "+" + button_amount + " " + this.button_element + " "+ this.button_type;
-        } else {
+        } else if (this.button_type.equals("confirmation")) {
             // confirmation button
             this.button_text = "Confirm";
+        } else {
+            this.button_text = "null";
         }
         
 
