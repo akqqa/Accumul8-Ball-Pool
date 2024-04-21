@@ -353,7 +353,12 @@ void updateMovements() {
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
-      boolean res = balls.get(j).ballCollision(balls.get(i));
+      boolean res;
+      if (balls.get(balls.size()-1) == cue_ball) { // If the final ball is the cue ball, must switch the order of collisions. Otherwise the cue ball is slightly less accurate, leading to incorrect aim lines
+        res = balls.get(j).ballCollision(balls.get(i));
+      } else {
+        res = balls.get(i).ballCollision(balls.get(j));
+      }
       if (res) {
         if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
         else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
