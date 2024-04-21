@@ -394,7 +394,7 @@ void updateMovements() {
         for (Ball nearbyBall : balls) {
           if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < shockRadius && nearbyBall != b && nearbyBall != cue_ball) {
             score += points_per_ball * shockMultiplier;
-            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball));
+            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball*shockMultiplier));
           }
         }
       }
