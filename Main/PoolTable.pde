@@ -8,6 +8,7 @@ final class PoolTable {
   protected ArrayList<Line> lines = new ArrayList<Line>();
   protected ArrayList<Pocket> pockets = new ArrayList<Pocket>();
   protected PShape shape;
+  protected PShape boundary;
   protected float elasticity = 0.5;
   
   public PoolTable(int sides, float scale, PVector position, float maxX) {
@@ -17,6 +18,13 @@ final class PoolTable {
     this.interior_angle = ((sides-2) * 180) / sides;
     this.shape = polygon(this.position.x, this.position.y, this.scale, this.sides, (this.interior_angle/2*PI)/180); // Rotate by half the size of the interior angle of the shape being drawn to make it upright  
     this.shape = scaleShape(this.position.x, this.position.y, this.shape, maxX);
+    float scaleFactor = 1;
+    if (this.sides == 4) {
+      scaleFactor = 1.3;
+    }
+    this.boundary = polygon(this.position.x, this.position.y, this.scale + (pocket_diameter * scaleFactor), this.sides, (this.interior_angle/2*PI)/180);
+    this.boundary = scaleShape(this.position.x, this.position.y, this.boundary, maxX + (pocket_diameter));
+    this.boundary.setFill(color(139,69,19));
     
     // Create list of lines for collisions
     for (int i = 0; i < this.shape.getVertexCount() - 1; i++) {
@@ -32,10 +40,12 @@ final class PoolTable {
   }
   
   void draw() {
+    // Draw boundary first
+    shape(this.boundary);
     shape(this.shape);
     for (Line line : this.lines) {
-      stroke(200,0,0);
-      strokeWeight(5);
+      stroke(0,0,0);
+      strokeWeight(1);
       line(line.start.x, line.start.y, line.end.x, line.end.y);
     }
     for (Pocket p : pockets) {
@@ -88,6 +98,7 @@ final class PoolTable {
       boolean collided = false;
       for (Line line : this.lines) {
         if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, pos.x, pos.y, b.radius)) {
+          wallHit.trigger();
           collided = true;
           // Calculate normal of line - https://stackoverflow.com/a/1243676
           PVector normalVector = new PVector((line.end.y-line.start.y), -(line.end.x-line.start.x));
@@ -118,6 +129,7 @@ final class PoolTable {
       }
     }
   }
+
   boolean ballInPocket(Ball b) {
     for (Pocket p : pockets) {
      if (p.pocketed(b)) {

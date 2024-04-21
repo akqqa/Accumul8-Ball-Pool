@@ -203,6 +203,9 @@ public class Ball {
   
       if (distanceVectMag < minDistance) {
 
+        // Play ballhit sound
+        ballHit.trigger();
+
         //If this ball is frozen, and soemthing hits it, add points and handle accordingly
         if (frozen && !powerBall) {
           if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
@@ -220,7 +223,7 @@ public class Ball {
           }
         }
         
-        float distanceCorrection = (minDistance-distanceVectMag)/2.0;
+        float distanceCorrection = ((minDistance-distanceVectMag)+1)/2.0;
         PVector d = distanceVect.copy();
         PVector correctionVector = d.normalize().mult(distanceCorrection);
         //if (!other.frozen && !other.powerBall) {

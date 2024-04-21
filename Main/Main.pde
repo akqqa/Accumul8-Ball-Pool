@@ -1,3 +1,10 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 final int screen_width = 1280;
 final int screen_height = 720;
 final float ball_diameter = 720/25;
@@ -91,6 +98,16 @@ PImage frost;
 
 public boolean endChecksDone = false;
 
+// Minim - sound effects
+Minim minim;
+AudioSample ballHit;
+AudioSample fireSelect;
+AudioSample shockSelect;
+AudioSample iceSelect;
+AudioSample wallHit;
+AudioSample pointGain;
+AudioSample pointLoss;
+
 void settings() {
     size(screen_width, screen_height);
 }
@@ -104,6 +121,16 @@ void setup() {
     flame = loadImage("flame.png");
     bolt = loadImage("bolt.png");
     frost = loadImage("frost.png");
+
+    // Minim
+    minim = new Minim(this);
+    ballHit = minim.loadSample("sfx/ballHit.mp3");
+    fireSelect = minim.loadSample("sfx/fireSelect.mp3");
+    shockSelect = minim.loadSample("sfx/shockSelect.mp3");
+    iceSelect = minim.loadSample("sfx/iceSelect.mp3");
+    wallHit = minim.loadSample("sfx/wallHit.mp3");
+    pointGain = minim.loadSample("sfx/pointGain.mp3");
+    pointLoss = minim.loadSample("sfx/pointLoss.wav");
 }
 
 
@@ -201,16 +228,19 @@ void switchCueBalls() {
     balls.remove(cue_ball);
     cue_ball = new FireBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, fireRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
+    fireSelect.trigger();
   } else if (inventory.selected instanceof ShockItem) {
     ShockItem sel = (ShockItem) inventory.selected;
     balls.remove(cue_ball);
     cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, shockRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
+    shockSelect.trigger();
   } else if (inventory.selected instanceof IceItem) {
     IceItem sel = (IceItem) inventory.selected;
     balls.remove(cue_ball);
     cue_ball = new IceBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
+    iceSelect.trigger();
   }else {
     balls.remove(cue_ball);
     cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, cue_ball_mass, inventory.selected.ball.colourString);
