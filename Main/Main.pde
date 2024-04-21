@@ -148,7 +148,7 @@ void table_setup(int sides) {
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 5, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -159,11 +159,11 @@ void menu_setup() {
 
 
 void draw() {
-  renderHUD();
   frame += 1;
   if (frame % 1 == 0) {
     if (finished) renderEnd();
     else {
+      renderHUD();
       render();
       updateMovements();
     }
@@ -346,9 +346,6 @@ void updateMovements() {
   for (Ball b : balls) {
     b.applyDrag();
   }
-  for (Ball b : balls) {
-    b.move();
-  }
   if (cue_ball instanceof PowerBall) ((PowerBall) cue_ball).travelEffect();
   for (Ball b : pocketed) {
     b.move();
@@ -356,12 +353,15 @@ void updateMovements() {
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
-      boolean res = balls.get(i).ballCollision(balls.get(j));
+      boolean res = balls.get(j).ballCollision(balls.get(i));
       if (res) {
         if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
         else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
       }
     }
+  }
+  for (Ball b : balls) {
+    b.move();
   }
   for (Ball b : balls) {
     // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
