@@ -414,6 +414,7 @@ void setupTriangle(PVector bottom, int rows, float diameter, float mass) {
 }
 
 void resetCueBall() {
+  balls.remove(cue_ball);
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
   balls.add(cue_ball);
   cue_ball_potted = false;
