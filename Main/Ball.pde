@@ -23,6 +23,7 @@ public class Ball {
     protected boolean shocked;
     protected boolean frozen;
     protected boolean gravity;
+    protected PVector pullVelocity = new PVector(0,0);
     protected boolean powerBall;
 
     protected ArrayList<Ball> hitThisShot = new ArrayList<Ball>();
@@ -152,9 +153,11 @@ public class Ball {
       if (!(frozen && !powerBall)) {
         velocity.add(acceleration);
         position.add(velocity);
+        position.add(pullVelocity);
+        pullVelocity.setMag(0);
       }
       acceleration.mult(0);
-      
+     
       // forces slow balls to stop
       if (velocity.mag() < 0.1) {
         velocity.setMag(0);
@@ -372,7 +375,15 @@ public class Ball {
     // GravityBall
     public void pull(Ball towards) {
       gravity = true;
-      PVector direction = towards.position.copy().sub(position);
-      velocity = velocity.add(direction.setMag(0.05));
+      // case of general movement
+      if (!(this.position.dist(cue_ball.position) < this.diameter) && balls.contains(cue_ball)) {
+        PVector direction = towards.position.copy().sub(position);
+        pullVelocity = direction.setMag(1);
+      }
+      // case of pocketed
+      else if (!balls.contains(cue_ball)) {
+        PVector direction = towards.position.copy().sub(position);
+        velocity = velocity.add(direction.setMag(0.075));
+      }
     }
 }
