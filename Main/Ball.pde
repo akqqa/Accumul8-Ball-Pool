@@ -96,9 +96,9 @@ public class Ball {
         fill(255,255,0, 100);
         circle(position.x, position.y, shockRadius*2);
       }
-      if (!this.powerBall) {
-        println(this.mass);
-      }
+      //if (!this.powerBall) {
+      //  println(this.mass);
+      //}
     }
     
     public void draw(float opacity) {
@@ -149,7 +149,7 @@ public class Ball {
     
     // movement
     public void move() {
-      println(powerBall);
+      //println(powerBall);
       if (!(frozen && !powerBall)) {
         velocity.add(acceleration);
         position.add(velocity);
@@ -368,7 +368,7 @@ public class Ball {
     
     public void thaw() {
       frozen = false;
-      println("tempmass: " + str(this.normalMass));
+      //println("tempmass: " + str(this.normalMass));
       this.mass = this.normalMass;
     }   
     

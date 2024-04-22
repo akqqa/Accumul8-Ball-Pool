@@ -453,9 +453,6 @@ void mouseReleased() {
   }
 }
 
-//void keyPressed() {
-//  score = points_needed; 
-//}
 
 // check if all balls have stopped
 boolean checkAllBallStop() {
