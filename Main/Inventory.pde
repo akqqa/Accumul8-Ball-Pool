@@ -33,7 +33,7 @@ public class Inventory {
     addItem("ice", 0);
     //items.get(3).unlock();
     numBalls ++;
-    addItem("pink", 0);
+    addItem("gravity", 0);
     numBalls ++;
     addItem("yellow", 0);
   }
@@ -48,7 +48,9 @@ public class Inventory {
       items.add(new ShockItem(position.x, y1, ball, count));
     } else if (colour.equals("ice")) {
       items.add(new IceItem(position.x, y1, ball, count));
-    } else {
+    } else if (colour.equals("gravity")) {
+      items.add(new GravityItem(position.x, y1, ball, count));
+    }else {
       items.add(new InvItem(position.x, y1, ball, count));
     }
   }
@@ -72,6 +74,13 @@ public class Inventory {
       }
       if (type == "ice") {
         if (i instanceof IceItem) {
+          i.unlock();
+          i.max += 1;
+          i.count = i.max;
+        }
+      }
+      if (type == "gravity") {
+        if (i instanceof GravityItem) {
           i.unlock();
           i.max += 1;
           i.count = i.max;

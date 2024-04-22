@@ -29,6 +29,10 @@ public abstract class PowerBall extends Ball{
   public void travelEffect() {
     if (!travelling) return;
     if (velocity.x == 0 && velocity.y == 0) return;
+    radialEffect();
+  }
+  
+  private void radialEffect() {
     for (Ball b : balls) {
       // if not the cue ball and the ball is within powerradius -> attack
       if (b != this && circleCircle(position.x, position.y, powerRadius, b.position.x, b.position.y, b.radius)) {
@@ -42,6 +46,11 @@ public abstract class PowerBall extends Ball{
     if (!impact) return;
     applyEffect(b);
     travelEffect();
+  }
+  
+  // to be called when pocketed
+  public void pocketEffect() {
+    radialEffect();
   }
   
   protected abstract void applyEffect(Ball b);

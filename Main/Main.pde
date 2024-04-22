@@ -330,6 +330,10 @@ void updateMovements() {
       if (res) {
         if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
         else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
+        else if (balls.get(i).isShocked() || balls.get(j).isShocked()) {
+          balls.get(i).shock();
+          balls.get(j).shock();
+        }
       }
     }
   }
@@ -340,6 +344,9 @@ void updateMovements() {
   }
   ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : pocketed) {
+    if (b == cue_ball && cue_ball instanceof GravityBall) {
+      ((PowerBall) b).pocketEffect();
+    }
     balls.remove(b);
     if (table.ballFinished(b)) bin.add(b);
   }

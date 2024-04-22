@@ -22,6 +22,7 @@ public class Ball {
     protected boolean onFire;
     protected boolean shocked;
     protected boolean frozen;
+    protected boolean gravity;
     protected boolean powerBall;
 
     protected ArrayList<Ball> hitThisShot = new ArrayList<Ball>();
@@ -348,7 +349,9 @@ public class Ball {
         shocked = true;
         this.effectDuration = shockDuration;
       } 
-    }    
+    }   
+    
+    public boolean isShocked() { return shocked; }
     
     // IceBall
     public void freeze() {
@@ -365,4 +368,11 @@ public class Ball {
       println("tempmass: " + str(this.normalMass));
       this.mass = this.normalMass;
     }   
+    
+    // GravityBall
+    public void pull(Ball towards) {
+      gravity = true;
+      PVector direction = towards.position.copy().sub(position);
+      acceleration = direction;
+    }
 }
