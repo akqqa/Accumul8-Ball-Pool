@@ -211,7 +211,12 @@ void switchCueBalls() {
     balls.remove(cue_ball);
     cue_ball = new IceBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
-  }else {
+  } else if (inventory.selected instanceof GravityItem) {
+    GravityItem sel = (GravityItem) inventory.selected;
+    balls.remove(cue_ball);
+    cue_ball = new GravityBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling, sel.impact);
+    balls.add(cue_ball);
+  } else {
     balls.remove(cue_ball);
     cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, cue_ball_mass, inventory.selected.ball.colourString);
     balls.add(cue_ball);

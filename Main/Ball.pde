@@ -373,6 +373,6 @@ public class Ball {
     public void pull(Ball towards) {
       gravity = true;
       PVector direction = towards.position.copy().sub(position);
-      acceleration = direction;
+      velocity = velocity.add(direction.setMag(0.05));
     }
 }

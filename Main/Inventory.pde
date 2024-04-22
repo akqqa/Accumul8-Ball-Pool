@@ -27,13 +27,14 @@ public class Inventory {
     addItem("fire", 0);
     //items.get(1).unlock();
     numBalls ++;
-    addItem("shock", 0);
-    //items.get(2).unlock();
+    addItem("shock",3);
+    items.get(2).unlock();
     numBalls ++;
     addItem("ice", 0);
     //items.get(3).unlock();
     numBalls ++;
-    addItem("gravity", 0);
+    addItem("gravity", 3);
+    items.get(4).unlock();
     numBalls ++;
     addItem("yellow", 0);
   }
