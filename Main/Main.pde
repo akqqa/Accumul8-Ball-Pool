@@ -360,8 +360,10 @@ void updateMovements() {
     pocketed.remove(b);
     if (b == cue_ball) {
       cue_ball_potted = true;
-      score -= 10;
-      pointIcons.add(new PointIcon(b.position.copy(), 60, -10));
+      if (! (b instanceof GravityBall)) {
+        score -= 10;
+        pointIcons.add(new PointIcon(b.position.copy(), 60, -10));
+      }
     } else {
       score += points_per_ball;
       // Display points as icon
@@ -449,8 +451,11 @@ void mouseReleased() {
     inventory.useSelected();
     cue_drag = false;
   }
-  
 }
+
+//void keyPressed() {
+//  score = points_needed; 
+//}
 
 // check if all balls have stopped
 boolean checkAllBallStop() {

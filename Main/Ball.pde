@@ -381,9 +381,10 @@ public class Ball {
         pullVelocity = direction.setMag(1);
       }
       // case of pocketed
-      else if (!balls.contains(cue_ball)) {
+      else if (pocketed.contains(cue_ball)) {
         PVector direction = towards.position.copy().sub(position);
         velocity = velocity.add(direction.setMag(0.075));
+        gravity = false;
       }
     }
 }

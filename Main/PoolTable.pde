@@ -44,11 +44,19 @@ final class PoolTable {
   }
   
   void spawnPockets() {
+    boolean sides_or_corners = (int) random(0, 1) == 0;
+    int count = 1;
     for (Line l : lines) {
-      // corners
-      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
-      // lines
-      pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+      if (sides == 4) {
+        // corners
+        pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+        // lines
+        if (count++ % 2 == 0)
+          pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+      } else {
+        if (sides_or_corners) pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+        else pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+      }
     }
   }
   
