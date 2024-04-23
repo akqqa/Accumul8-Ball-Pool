@@ -53,12 +53,61 @@ final class PoolTable {
     }
   }
   
+  //void spawnPockets() {
+  //  boolean sides_or_corners = (int) random(0, 1) == 0;
+  //  int count = 1;
+  //  for (Line l : lines) {
+  //    if (sides == 4) {
+  //      // corners
+  //      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+  //      // lines
+  //      if (count++ % 2 == 0)
+  //        pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+  //    } else {
+  //      if (sides_or_corners) pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+  //      else pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+  //    }
+  //  }
+  //}
+  
   void spawnPockets() {
+    println("spanwing pockets");
+    int count = 0;
+    int pocket_num = 0;
     for (Line l : lines) {
-      // corners
-      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
-      // lines
-      pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+      if (sides == 4) {
+        // corners
+        pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+        // lines
+        if (count++ % 2 == 1)
+          pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+      } else if (sides < 7) {
+        pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+      } else {
+        // even sided
+        if (sides % 2 == 0) {
+          if ((((count - (3 + (sides/3)*pocket_num) == 0) && pocket_num < 3) ||
+                ((count - (sides + 1 + (sides/3)*(pocket_num-2)) == 0) && pocket_num > 2)) && count < sides*2) {
+            println(count, (sides + 1 + (sides/3)*(pocket_num-2)));
+            pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+            pocket_num ++;
+          }
+          count ++;
+          if ((((count - (3 + (sides/3)*pocket_num) == 0) && pocket_num < 3) ||
+                ((count - (sides + 1 + (sides/3)*(pocket_num-2)) == 0) && pocket_num > 2)) && count < sides*2) {
+            println(count, (sides + 1 + (sides/3)*(pocket_num-2)));
+            pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+            pocket_num ++;
+          }
+          count ++; 
+        }
+        // odd sided
+        else {
+          if (count != sides + 1 && count >= (sides-7)*2) pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
+          count += 2;
+        }
+
+      }
     }
   }
   

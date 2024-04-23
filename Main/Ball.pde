@@ -22,6 +22,8 @@ public class Ball {
     protected boolean onFire;
     protected boolean shocked;
     protected boolean frozen;
+    protected boolean gravity;
+    protected PVector pullVelocity = new PVector(0,0);
     protected boolean powerBall;
 
     protected ArrayList<Ball> hitThisShot = new ArrayList<Ball>();
@@ -89,14 +91,14 @@ public class Ball {
       circle(position.x, position.y, diameter);
       power(255);
       // If shocked, draw raidius of shock
-      if (this.shocked) {
-        noStroke();
-        fill(255,255,0, 100);
-        circle(position.x, position.y, shockRadius*2);
-      }
-      if (!this.powerBall) {
-        println(this.mass);
-      }
+      // if (this.shocked) {
+      //   noStroke();
+      //   fill(255,255,0, 100);
+      //   circle(position.x, position.y, shockRadius*2);
+      // }
+      //if (!this.powerBall) {
+      //  println(this.mass);
+      //}
     }
     
     public void draw(float opacity) {
@@ -147,13 +149,15 @@ public class Ball {
     
     // movement
     public void move() {
-      println(powerBall);
+      //println(powerBall);
       if (!(frozen && !powerBall)) {
         velocity.add(acceleration);
         position.add(velocity);
+        position.add(pullVelocity);
+        pullVelocity.setMag(0);
       }
       acceleration.mult(0);
-      
+     
       // forces slow balls to stop
       if (velocity.mag() < 0.1) {
         velocity.setMag(0);
@@ -223,25 +227,23 @@ public class Ball {
         if (distanceVectMag < minDistance) {
           //circle(this.position.x, this.position.y, 25);
 
-          // Play ballhit sound
-          ballHit.trigger();
-
-          //If this ball is frozen, and soemthing hits it, add points and handle accordingly
-          if (frozen && !powerBall) {
-            if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
-              score += points_per_ball * frozenMultiplier;
-              pointIcons.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
-              hitThisShot.add(other);
-            }
+        // Play ballhit sound
+        ballHit.trigger();
+          
+        //If this ball is frozen, and soemthing hits it, add points and handle accordingly
+        if (frozen && !powerBall) {
+          if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+            score += points_per_ball * frozenMultiplier;
+            animations.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
+            hitThisShot.add(other);
           }
-          // If the other ball is frozen, and this ball hits it, handle accordingly
-          if (other.frozen && !other.powerBall) {
-            if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
-              score += points_per_ball * frozenMultiplier;
-              pointIcons.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
-              other.hitThisShot.add(this);
-            }
-          }
+        }
+        // If the other ball is frozen, and this ball hits it, handle accordingly
+        if (other.frozen && !other.powerBall) {
+          if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+            score += points_per_ball * frozenMultiplier;
+            animations.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
+            other.hitThisShot.add(this);
           
           float distanceCorrection = ((minDistance-distanceVectMag)+1)/2.0;
           PVector d = distanceVect.copy();
@@ -372,7 +374,9 @@ public class Ball {
         shocked = true;
         this.effectDuration = shockDuration;
       } 
-    }    
+    }   
+    
+    public boolean isShocked() { return shocked; }
     
     // IceBall
     public void freeze() {
@@ -386,7 +390,23 @@ public class Ball {
     
     public void thaw() {
       frozen = false;
-      println("tempmass: " + str(this.normalMass));
+      //println("tempmass: " + str(this.normalMass));
       this.mass = this.normalMass;
     }   
+    
+    // GravityBall
+    public void pull(Ball towards) {
+      gravity = true;
+      // case of general movement
+      if (!(this.position.dist(cue_ball.position) < this.diameter * 2) && balls.contains(cue_ball)) {
+        PVector direction = towards.position.copy().sub(position);
+        pullVelocity = direction.setMag(1);
+      }
+      // case of pocketed
+      else if (pocketed.contains(cue_ball)) {
+        PVector direction = towards.position.copy().sub(position);
+        velocity = velocity.add(direction.setMag(0.075));
+        gravity = false;
+      }
+    }
 }

@@ -1,14 +1,12 @@
-public class PointIcon {
+public class PointIcon extends Animation {
 
     public PVector position;
-    public int frames;
     public float value;
     private int opacity = 255;
 
     public PointIcon(PVector position, int frames, float value) {
-        // ADD POINT TYPE = SFX FOR POTTING, SFX FOR FIRE POINTS, ICE, ETC
+        super(frames);
         this.position = position;
-        this.frames = frames;
         this.value = value;
         this.opacity = 255;
         if (value < 0) {

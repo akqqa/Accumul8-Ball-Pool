@@ -37,6 +37,11 @@ public class Menu {
             } else if (i instanceof IceItem && i.max > 0) { // Player has shock balls unlocked
                 Object[] arr = {50, "ice", "points"};
                 possibleUpgrades.add(arr);
+            } else if (i instanceof GravityItem && i.max > 0) { // Player has shock balls unlocked
+                Object[] arr = {100, "gravity", "points"};
+                possibleUpgrades.add(arr);
+                arr = new Object[]{50, "gravity","radius"};
+                possibleUpgrades.add(arr);
             }
         }
         for (int i = 0; i < random_num_of_options; ++i) {
