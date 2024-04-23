@@ -340,10 +340,16 @@ public class Ball {
           position.add(bFinal[0]);
     
           // update velocities
-          velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
-          velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
-          other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
-          other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
+          if (!this.frozen || this.equals(cue_ball)) {
+            velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
+            velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
+          }
+          if (!other.frozen) {
+            other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
+            other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
+          }
+          
+          
           return true;
         }
       }

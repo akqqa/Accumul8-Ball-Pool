@@ -30,8 +30,8 @@ public class Inventory {
     addItem("shock",3);
     items.get(2).unlock();
     numBalls ++;
-    addItem("ice", 0);
-    //items.get(3).unlock();
+    addItem("ice", 5);
+    items.get(3).unlock();
     numBalls ++;
     addItem("gravity", 3);
     items.get(4).unlock();
