@@ -71,7 +71,7 @@ final class PoolTable {
   //}
   
   void spawnPockets() {
-    println("spanwing pockets");
+    println("spawning pockets");
     int count = 0;
     int pocket_num = 0;
     for (Line l : lines) {

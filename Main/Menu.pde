@@ -14,7 +14,7 @@ public class Menu {
     Button selected_upgrade_button;
     Button selected_ball_button;
     // instruction message
-    String menu_message = "Please select 1 upgrade AND\n1 ball to add into inventory\nthat you like\nskip if there is nothing suitable";
+    String menu_message = "Please select 1 upgrade AND\n1 ball to add into inventory\nthat you like\nskip if there is nothing\nsuitable";
     public Menu (float _x, float _y, float _width, float _height) {
         position = new PVector(_x, _y);
         this.menu_width = _width;
@@ -136,11 +136,11 @@ public class Menu {
         
         // show the menu title at the center top (of the right part of the screen)
         fill(0);
-        textSize(36);
+        textSize(30);
         text(this.menu_title, this.position.copy().x, this.position.copy().y - this.menu_height/2 + 50);
 
         // the following is the instruction message for players to select the upgrades and ball addition
-        textSize(20);
+        textSize(14);
         text(this.menu_message, this.position.copy().x, this.position.copy().y - this.menu_height/3);
 
         // upgrade buttons
@@ -166,7 +166,7 @@ public class Menu {
 
         // text to separate the upgrades and the ball addition buttons
         if (!checkAllButtonNull(upgrade_buttons)) {
-            textSize(20);
+            textSize(15);
             textAlign(CENTER, CENTER);
             text("AND", this.position.copy().x, upgrade_buttons[random_num_of_options-1].position.copy().y + 50);
         }

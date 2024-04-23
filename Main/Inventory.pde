@@ -24,17 +24,17 @@ public class Inventory {
     selected = items.get(0);
     items.get(0).unlock();
     numBalls ++;
-    addItem("fire", 0);
+    addItem("fire", 1);
     //items.get(1).unlock();
     numBalls ++;
     addItem("shock",3);
-    items.get(2).unlock();
+    //items.get(2).unlock();
     numBalls ++;
     addItem("ice", 5);
-    items.get(3).unlock();
+    //items.get(3).unlock();
     numBalls ++;
     addItem("gravity", 3);
-    items.get(4).unlock();
+    //items.get(4).unlock();
     numBalls ++;
     addItem("yellow", 0);
   }
@@ -164,7 +164,7 @@ public class Inventory {
   public int getBallCount() {
     int num = 0;
     for (InvItem i : items) {
-      num += i.count;
+      if (!i.locked) num += i.count;
     }
     return num;
   }

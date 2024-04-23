@@ -44,7 +44,7 @@ public class InvItem {
       textSize(100);
       textAlign(CENTER, CENTER);
       fill(255,0,0, 200);
-      text("x", position.x, position.y-10);
+      text("x", position.x, position.y);
     }
   }
   

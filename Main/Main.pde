@@ -53,6 +53,9 @@ float score = 0;
 int points_needed = roundScores[0];
 int points_per_ball = 10;
 boolean finished = false;
+boolean start_menu = true;
+boolean win = false;
+int flash_count = 0;
 ArrayList<Animation> animations = new ArrayList<>();
 
 boolean moving = true;
@@ -66,6 +69,7 @@ boolean cue_ball_potted = false;
 ArrayList<Ball> balls = new ArrayList<>();
 ArrayList<Ball> pocketed = new ArrayList<>();
 PoolTable table;
+PoolTable menu_table;
 final float table_rad_4 = 450;
 final float table_rad_other = 325;
 Inventory inventory;
@@ -110,6 +114,9 @@ AudioSample wallHit;
 AudioSample pointGain;
 AudioSample pointLoss;
 
+// Font
+PFont font;
+
 void settings() {
     size(screen_width, screen_height);
 }
@@ -133,6 +140,10 @@ void setup() {
     wallHit = minim.loadSample("sfx/wallHit.mp3");
     pointGain = minim.loadSample("sfx/pointGain.mp3");
     pointLoss = minim.loadSample("sfx/pointLoss.wav");
+    
+    menu_table = new PoolTable(4, table_rad_4*1.9, new PVector(screen_height/2,screen_width/2), 321);
+    font = createFont("retro_computer_personal_use.ttf", 20);
+    textFont(font);
 }
 
 
@@ -163,60 +174,18 @@ void menu_setup() {
 void draw() {
   frame += 1;
   if (frame % 1 == 0) {
-    if (finished) renderEnd();
-    else {
       renderHUD();
-      render();
-      updateMovements();
-    }
+      if (finished) renderEnd();
+      else if (start_menu) renderStart();
+      else {
+        render();
+        updateMovements();
+      }
     //if (cue_ball_potted && nextTurn()) resetCueBall();
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
     if (moving) {
       if (checkAllBallStop()) {
-        // HERE WE PERFORM THE END OF ROUND PHASE
-        if (!endChecksDone) { // Performs end checks once per situation where previously balls were moving, and now all stopped
-          handleEndOfRoundEffects();
-          endChecksDone = true;
-          return;
-        }
-        if (!animations.isEmpty()) { // the moving = false is not reached, so this will keep being reached until all animations have dissapeared. only then will the game move onto the next shot
-          return;
-        }
-
-        endChecksDone = false;
-        // Game over
-        if (inventory.getBallCount() == 0 && score < points_needed) {
-          finished = true;
-        // Proceed to next round
-        } else if (score >= points_needed) {
-          inventory.resetBalls();
-          switchCueBalls();
-          round_num ++;
-          state = round_end_state;
-          if (round_num % 3 == 0 && round_num != 0) {
-            tableSides = int(random(4, 10));
-            print("tablesides set to" + str(tableSides));
-          }
-          table_setup(tableSides);
-          points_needed = roundScores[round_num];
-          // set up the menu
-          menu_setup();
-          // reactivate cue stick here
-          cue.setActive(false);
-          score = 0;
-          //if (cue_ball_potted) resetCueBall();
-          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
-          cue_ball.setColour(inventory.selectedBallType());
-        // Game over if 0 non-cue balls are left
-        } else if ((cue_ball_potted && balls.size() == 0) || (!cue_ball_potted &&  balls.size() == 1)) {
-          finished = true;
-        } else {
-          if (cue_ball_potted) resetCueBall();
-          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
-          if (currentSelectedItem != inventory.selected) switchCueBalls();
-          cue.setActive(true);
-        }
-        moving = false;
+        endOfRound();
       }
     }
     // check here in case ball is stationary to allow selection change
@@ -224,6 +193,69 @@ void draw() {
       if (currentSelectedItem != inventory.selected) switchCueBalls();
     }
   }
+}
+
+void endOfRound() {
+  // HERE WE PERFORM THE END OF ROUND PHASE
+  // Performs end checks once per situation where previously balls were moving, and now all stopped
+  if (!endChecksDone) {
+    handleEndOfRoundEffects();
+    endChecksDone = true;
+    return;
+  }
+  
+  // the moving = false is not reached, so this will keep being reached until all animations have dissapeared. only then will the game move onto the next shot
+  if (!animations.isEmpty()) {
+    return;
+  }
+  
+  endChecksDone = false;
+  
+  // Game over
+  if (inventory.getBallCount() == 0 && score < points_needed) {
+    finished = true;
+  }
+  
+  // Proceed to next round
+  else if (score >= points_needed) {
+    if (round_num < 9)
+      nextRoundProcedure();
+    else {
+      finished = true;
+      win = true;
+    }
+  } 
+  // Game over if 0 non-cue balls are left
+  else if ((cue_ball_potted && balls.size() == 0) || (!cue_ball_potted &&  balls.size() == 1)) {
+    finished = true;
+    win = false;
+  } 
+  else {
+    if (cue_ball_potted) resetCueBall();
+    // set the cue colour to that of the selected ball in the inventory (swap to powerups)
+    if (currentSelectedItem != inventory.selected) switchCueBalls();
+    cue.setActive(true);
+  }
+  moving = false;
+}
+
+void nextRoundProcedure() {
+  inventory.resetBalls();
+  switchCueBalls();
+  round_num ++;
+  state = round_end_state;
+  if (round_num % 3 == 0 && round_num != 0) {
+    tableSides = int(random(4, 10));
+    print("tablesides set to" + str(tableSides));
+  }
+  table_setup(tableSides);
+  points_needed = roundScores[round_num];
+  menu_setup();
+  // reactivate cue stick here
+  cue.setActive(false);
+  score = 0;
+  // set the cue colour to that of the selected ball in the inventory (swap to powerups)
+  //cue_ball.setColour(inventory.selectedBallType());
 }
 
 void switchCueBalls() {
@@ -287,12 +319,32 @@ void handleEndOfRoundEffects() {
   }
 }
 
+void renderStart() {
+  translate(screen_width, 0);
+  rotate(HALF_PI);
+  menu_table.draw();
+  rotate(HALF_PI);
+  rotate(PI);
+  translate(-screen_width, 0);
+  textAlign(CENTER);
+  fill(255);
+  if (flash_count < 50) {
+    textSize(40);
+    text("LEFT MOUSE click to start", screen_width/2, 2.5*screen_height/5);
+    textSize(30);
+    text("TURN ON THE VOLUME", screen_width/2, 3*screen_height/5);
+  } else if (flash_count > 100) flash_count = 0;
+  textSize(55);
+  text("Accumul8-ball Pool", screen_width/2, 2*screen_height/5);
+  flash_count ++;
+}
+
 void renderHUD() {
   background(58, 181, 3);
   scale(0.98, 0.925);
   translate(2*screen_width/200, 6*screen_height/100);
   fill(0);
-  textSize(30);
+  textSize(20);
   textAlign(CENTER);
   text("Round " + str(round_num + 1), 4*screen_width/5.0, -screen_height*0.02);
   textAlign(CENTER);
@@ -307,11 +359,23 @@ void renderHUD() {
 }
 
 void renderEnd() {
-  render();
-  fill(255, 0, 0);
-  textSize(150);
+  translate(screen_width, 0);
+  rotate(HALF_PI);
+  menu_table.draw();
+  rotate(HALF_PI);
+  rotate(PI);
+  translate(-screen_width, 0);
   textAlign(CENTER);
-  text("GAME OVER", screen_width/2.0, screen_height/2.0);
+  fill(255);
+  if (flash_count < 50) {
+    textSize(40);
+    text("LEFT MOUSE click to restart", screen_width/2, 3*screen_height/5);
+  } else if (flash_count > 100) flash_count = 0;
+  textSize(55);
+  text("GAME OVER", screen_width/2, 2*screen_height/5);
+  if (win) text("PLAYER WINS", screen_width/2, 2.5*screen_height/5);
+  else text("PLAYER LOSES", screen_width/2, 2.5*screen_height/5);
+  flash_count ++;
 }
 
 void render() {
@@ -323,10 +387,8 @@ void render() {
   stroke(200, 0, 0);
   rect(0, 0, screen_width, screen_height, 5);
   popMatrix();
-  // background(255);
   table.draw();
   inventory.draw();
-  //pocket.draw();
   for (Ball b : balls) {
     b.draw();
   }
@@ -524,6 +586,15 @@ int nextTurn() {
 }
 
 void mousePressed() {
+  if (finished) {
+    finished = false;
+    start_menu = true;
+    return;
+  }
+  if (start_menu) {
+    start_menu = false;
+    return;
+  }
   // check for mouse within inventory first
   if (inventory.mouseInInventory()) {
     inventory.selectItem();

@@ -87,7 +87,7 @@ public class Button {
 
         // text for the button
         textAlign(CENTER, CENTER);
-        textSize(20);
+        textSize(13);
         text(this.button_text, this.position.copy().x, this.position.copy().y);
     }
 
