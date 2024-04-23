@@ -91,11 +91,11 @@ public class Ball {
       circle(position.x, position.y, diameter);
       power(255);
       // If shocked, draw raidius of shock
-      if (this.shocked) {
-        noStroke();
-        fill(255,255,0, 100);
-        circle(position.x, position.y, shockRadius*2);
-      }
+      // if (this.shocked) {
+      //   noStroke();
+      //   fill(255,255,0, 100);
+      //   circle(position.x, position.y, shockRadius*2);
+      // }
       //if (!this.powerBall) {
       //  println(this.mass);
       //}
@@ -211,7 +211,7 @@ public class Ball {
         if (frozen && !powerBall) {
           if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
             score += points_per_ball * frozenMultiplier;
-            pointIcons.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
+            animations.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
             hitThisShot.add(other);
           }
         }
@@ -219,7 +219,7 @@ public class Ball {
         if (other.frozen && !other.powerBall) {
           if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
             score += points_per_ball * frozenMultiplier;
-            pointIcons.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
+            animations.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
             other.hitThisShot.add(this);
           }
         }
@@ -376,7 +376,7 @@ public class Ball {
     public void pull(Ball towards) {
       gravity = true;
       // case of general movement
-      if (!(this.position.dist(cue_ball.position) < this.diameter) && balls.contains(cue_ball)) {
+      if (!(this.position.dist(cue_ball.position) < this.diameter * 2) && balls.contains(cue_ball)) {
         PVector direction = towards.position.copy().sub(position);
         pullVelocity = direction.setMag(1);
       }

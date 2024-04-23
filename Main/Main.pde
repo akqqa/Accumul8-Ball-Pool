@@ -45,7 +45,7 @@ int score = 0;
 int points_needed = roundScores[0];
 int points_per_ball = 10;
 boolean finished = false;
-ArrayList<PointIcon> pointIcons = new ArrayList<>();
+ArrayList<Animation> animations = new ArrayList<>();
 
 boolean moving = true;
 
@@ -73,14 +73,15 @@ InvItem currentSelectedItem = null;
 // Global variables for status effects:
 int fireDuration = 1;
 int shockDuration = 1;
+int shockChains = 4;
 int freezeDuration = 1;
 float fireMultiplier = 0.5;
 float shockMultiplier = 1;
 float frozenMultiplier = 1;
 final float originalFireRadius = 40;
 float fireRadius = 40;
-final float originalShockRadius = 100;
-float shockRadius = 100;
+final float originalShockRadius = 125;
+float shockRadius = 125;
 float freezeRadius = ball_diameter;
 
 //Pocket pocket;
@@ -121,7 +122,7 @@ void table_setup(int sides) {
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 5, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -150,7 +151,7 @@ void draw() {
           endChecksDone = true;
           return;
         }
-        if (!pointIcons.isEmpty()) { // the moving = false is not reached, so this will keep being reached until all pointicons have dissapeared. only then will the game move onto the next shot
+        if (!animations.isEmpty()) { // the moving = false is not reached, so this will keep being reached until all animations have dissapeared. only then will the game move onto the next shot
           return;
         }
 
@@ -230,7 +231,7 @@ void handleEndOfRoundEffects() {
     if (b != cue_ball) {
       if (b.onFire) {
         score += points_per_ball * fireMultiplier;
-        pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball * fireMultiplier));
+        animations.add(new PointIcon(b.position.copy(), 60, points_per_ball * fireMultiplier));
         b.effectDuration -= 1;
         if (b.effectDuration <= 0) {
           b.onFire = false;
@@ -297,10 +298,10 @@ void render() {
   }
   cue.update(cue_ball.position.copy());
   // Draw point icons
-  ArrayList<PointIcon> pointIconsCopy = new ArrayList<PointIcon>(pointIcons); // Copy to prevent concurrent modification exception
-  for (PointIcon p : pointIconsCopy) {
+  ArrayList<Animation> animationsCopy = new ArrayList<Animation>(animations); // Copy to prevent concurrent modification exception
+  for (Animation p : animationsCopy) {
     p.draw();
-    if (p.frames <= 0) pointIcons.remove(p);
+    if (p.frames <= 0) animations.remove(p);
   }
 
   if (state == round_end_state) {
@@ -335,10 +336,10 @@ void updateMovements() {
       if (res) {
         if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
         else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
-        else if (balls.get(i).isShocked() || balls.get(j).isShocked()) {
-          balls.get(i).shock();
-          balls.get(j).shock();
-        }
+        // else if (balls.get(i).isShocked() || balls.get(j).isShocked()) {
+        //   balls.get(i).shock();
+        //   balls.get(j).shock();
+        // }
       }
     }
   }
@@ -362,23 +363,82 @@ void updateMovements() {
       cue_ball_potted = true;
       if (! (b instanceof GravityBall)) {
         score -= 10;
-        pointIcons.add(new PointIcon(b.position.copy(), 60, -10));
+        animations.add(new PointIcon(b.position.copy(), 60, -10));
       }
     } else {
       score += points_per_ball;
       // Display points as icon
-      pointIcons.add(new PointIcon(b.position.copy(), 60, points_per_ball));
-      // IF potted ball had shock status effect, chain points to nearby balls!
+      animations.add(new PointIcon(b.position.copy(), 60, points_per_ball));
+      // Handle shock effect
       if (b.shocked) {
-        for (Ball nearbyBall : balls) {
-          if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < shockRadius && nearbyBall != b && nearbyBall != cue_ball) {
-            score += points_per_ball * shockMultiplier;
-            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball));
-          }
-        }
+        handleShockChain(b);
       }
     }
   }
+}
+
+void handleShockChain(Ball ball) {
+  ArrayList<Ball> ballsToHandleShock = new ArrayList<Ball>();
+  ArrayList<Ball> newBallsToHandleShock = new ArrayList<Ball>();
+  ballsToHandleShock.add(ball);
+  ArrayList<Ball> shockedBalls = new ArrayList<Ball>();
+  shockedBalls.add(ball);
+  for (int i = 0; i < shockChains; i++) {
+    ArrayList<Ball> candidateBalls = new ArrayList<Ball>();
+    for (Ball b : ballsToHandleShock) {
+      int ballsShocked = 0;
+      for (Ball nearbyBall : balls) {
+        if (ballsShocked == 2) {
+          break;
+        }
+        if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < (shockRadius - nearbyBall.diameter) && nearbyBall != b && nearbyBall != cue_ball && !shockedBalls.contains(nearbyBall)) {
+          // Add to list
+          candidateBalls.add(nearbyBall);
+        }
+      }
+      // Chain to closes candidate ball, then second closest
+      if (candidateBalls.isEmpty()) {
+        continue;
+      }
+      ArrayList<Ball> closestBalls = new ArrayList<Ball>();
+      Ball closestBall = candidateBalls.get(0);
+      for (Ball cBall : candidateBalls) {
+        if (dist(b.position.x, b.position.y, cBall.position.x, cBall.position.y) < dist(b.position.x, b.position.y, closestBall.position.x, closestBall.position.y)) {
+          closestBall = cBall;
+        }
+      }
+      closestBalls.add(closestBall);
+      candidateBalls.remove(closestBall);
+      if (!candidateBalls.isEmpty()) {
+        closestBall = candidateBalls.get(0);
+        for (Ball cBall : candidateBalls) {
+          if (dist(b.position.x, b.position.y, cBall.position.x, cBall.position.y) < dist(b.position.x, b.position.y, closestBall.position.x, closestBall.position.y)) {
+            closestBall = cBall;
+          }
+        }
+        closestBalls.add(closestBall);
+      }
+      // These two closest balls are the ones that get shocked
+      for (Ball closeBall : closestBalls) {
+          // Extra check for shocklist as sometimes it doesnt seem to check properly
+          if (shockedBalls.contains(closeBall)) {
+            continue;
+          }
+          // Draw a line between the two balls
+          animations.add(new LineAnimation(b.position.copy(), closeBall.position.copy(), 60));
+          score += points_per_ball * shockMultiplier * pow(0.5, i);
+          animations.add(new PointIcon(closeBall.position.copy(), 60, points_per_ball * shockMultiplier * pow(0.5, i)));
+          // Add ball to both lists
+          newBallsToHandleShock.add(closeBall);
+          shockedBalls.add(closeBall);
+          ballsShocked += 1;
+      }
+    }
+    ballsToHandleShock = new ArrayList<Ball>(newBallsToHandleShock);
+    newBallsToHandleShock = new ArrayList<Ball>();
+  }
+  
+  
 }
 
 // Takes in bottom ball of triangle, constructs rows rows of balls of radius radius

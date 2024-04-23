@@ -1,13 +1,12 @@
-public class PointIcon {
+public class PointIcon extends Animation {
 
     public PVector position;
-    public int frames;
     public float value;
     private int opacity = 255;
 
     public PointIcon(PVector position, int frames, float value) {
+        super(frames);
         this.position = position;
-        this.frames = frames;
         this.value = value;
         this.opacity = 255;
     }
