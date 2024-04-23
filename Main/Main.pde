@@ -10,6 +10,7 @@ final int screen_height = 720;
 final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
+final int button_time = 1000;
 final float cue_ball_mass = ball_mass + 0.5;
 // TODO: change the round end state number
 final int round_end_state = 12345;
