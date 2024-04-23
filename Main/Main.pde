@@ -569,13 +569,13 @@ void mouseReleased() {
 boolean checkAllBallStop() {
   for (Ball b : balls) {
     if (b.velocity.mag() != 0) {
-      //println("b.velocity.mag()" + b.velocity.mag());
+      println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }
   for (Ball b : pocketed) {
     if (b.velocity.mag() != 0) {
-      //println("b.velocity.mag()" + b.velocity.mag());
+      println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }

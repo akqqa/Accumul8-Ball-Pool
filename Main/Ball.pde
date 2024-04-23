@@ -15,6 +15,8 @@ public class Ball {
     protected String colourString;
     protected color colour;
     public int effectDuration = 0;
+
+    float elastic_constant = 0.9;
     
     public int pocket_counter = 0;
 
@@ -99,6 +101,10 @@ public class Ball {
       //if (!this.powerBall) {
       //  println(this.mass);
       //}
+      // If frozen, keep setting velocity to zero! hacky but to fix a bug
+      if (this.frozen && !this.equals(cue_ball)) {
+        this.velocity = new PVector(0,0);
+      }
     }
     
     public void draw(float opacity) {
@@ -340,15 +346,16 @@ public class Ball {
           position.add(bFinal[0]);
     
           // update velocities
-          if (!this.frozen || this.equals(cue_ball)) {
+          //if (!this.frozen || this.equals(cue_ball)) {
             velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
             velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
-          }
-          if (!other.frozen) {
+          //}
+          //if (!other.frozen) {
             other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
             other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
-          }
-          
+          //}
+          velocity.setMag(velocity.mag() * elastic_constant);
+          other.velocity.setMag(other.velocity.mag() * elastic_constant);
           
           return true;
         }
