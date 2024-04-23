@@ -285,6 +285,12 @@ void handleEndOfRoundEffects() {
           b.thaw();
         }
       }
+      if (b.gravity) {
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.gravity = false;
+        }
+      }
     }
   }
 }
