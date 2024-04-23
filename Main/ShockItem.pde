@@ -4,7 +4,7 @@ public class ShockItem extends InvItem {
     public boolean travelling = false;
     public boolean impact = true;
     public float diameter = ball_diameter;
-    public float mass = ball_mass;
+    public float mass = cue_ball_mass;
     public String colour = "blue";
 
     public ShockItem(float x, float y, Ball ball, int max) {

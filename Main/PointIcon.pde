@@ -6,10 +6,16 @@ public class PointIcon {
     private int opacity = 255;
 
     public PointIcon(PVector position, int frames, float value) {
+        // ADD POINT TYPE = SFX FOR POTTING, SFX FOR FIRE POINTS, ICE, ETC
         this.position = position;
         this.frames = frames;
         this.value = value;
         this.opacity = 255;
+        if (value < 0) {
+            pointLoss.trigger();
+        } else {
+            pointGain.trigger();
+        }
     }
 
     public void draw() {
