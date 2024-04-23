@@ -99,6 +99,7 @@ public class Button {
             if (this.button_element.equals("electricity")) {
                 // electricity points * 1.xx
                 shockMultiplier = shockMultiplier + (this.button_amount/100.0);
+                print(shockMultiplier);
                 electricity_points = float(nf(electricity_points, 0, 2));
                 
                 println("electricity_points: "+electricity_points);

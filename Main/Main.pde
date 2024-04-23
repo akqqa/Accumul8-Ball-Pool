@@ -1,9 +1,17 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 final int screen_width = 1280;
 final int screen_height = 720;
 final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 final int button_time = 1000;
+final float cue_ball_mass = ball_mass + 0.5;
 // TODO: change the round end state number
 final int round_end_state = 12345;
 final int game_state= 56789;
@@ -91,6 +99,16 @@ PImage frost;
 
 public boolean endChecksDone = false;
 
+// Minim - sound effects
+Minim minim;
+AudioSample ballHit;
+AudioSample fireSelect;
+AudioSample shockSelect;
+AudioSample iceSelect;
+AudioSample wallHit;
+AudioSample pointGain;
+AudioSample pointLoss;
+
 void settings() {
     size(screen_width, screen_height);
 }
@@ -104,6 +122,16 @@ void setup() {
     flame = loadImage("flame.png");
     bolt = loadImage("bolt.png");
     frost = loadImage("frost.png");
+
+    // Minim
+    minim = new Minim(this);
+    ballHit = minim.loadSample("sfx/ballHit.mp3");
+    fireSelect = minim.loadSample("sfx/fireSelect.mp3");
+    shockSelect = minim.loadSample("sfx/shockSelect.mp3");
+    iceSelect = minim.loadSample("sfx/iceSelect.mp3");
+    wallHit = minim.loadSample("sfx/wallHit.mp3");
+    pointGain = minim.loadSample("sfx/pointGain.mp3");
+    pointLoss = minim.loadSample("sfx/pointLoss.wav");
 }
 
 
@@ -114,14 +142,14 @@ void table_setup(int sides) {
   } else {
     table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
   }
-  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
   //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
   //cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
   //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 4, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 1, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -132,11 +160,11 @@ void menu_setup() {
 
 
 void draw() {
-  renderHUD();
   frame += 1;
   if (frame % 1 == 0) {
     if (finished) renderEnd();
     else {
+      renderHUD();
       render();
       updateMovements();
     }
@@ -178,6 +206,9 @@ void draw() {
           //if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
+        // Game over if 0 non-cue balls are left
+        } else if ((cue_ball_potted && balls.size() == 0) || (!cue_ball_potted &&  balls.size() == 1)) {
+          finished = true;
         } else {
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
@@ -201,19 +232,22 @@ void switchCueBalls() {
     balls.remove(cue_ball);
     cue_ball = new FireBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, fireRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
+    fireSelect.trigger();
   } else if (inventory.selected instanceof ShockItem) {
     ShockItem sel = (ShockItem) inventory.selected;
     balls.remove(cue_ball);
     cue_ball = new ShockBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, shockRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
+    shockSelect.trigger();
   } else if (inventory.selected instanceof IceItem) {
     IceItem sel = (IceItem) inventory.selected;
     balls.remove(cue_ball);
     cue_ball = new IceBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling,sel.impact);
     balls.add(cue_ball);
+    iceSelect.trigger();
   }else {
     balls.remove(cue_ball);
-    cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, ball_mass, inventory.selected.ball.colourString);
+    cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, cue_ball_mass, inventory.selected.ball.colourString);
     balls.add(cue_ball);
   }
   currentSelectedItem = inventory.selected;
@@ -316,9 +350,6 @@ void updateMovements() {
   for (Ball b : balls) {
     b.applyDrag();
   }
-  for (Ball b : balls) {
-    b.move();
-  }
   if (cue_ball instanceof PowerBall) ((PowerBall) cue_ball).travelEffect();
   for (Ball b : pocketed) {
     b.move();
@@ -326,12 +357,25 @@ void updateMovements() {
   // check all pairs of balls for collision
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
-      boolean res = balls.get(i).ballCollision(balls.get(j));
+      boolean res;
+      // if (balls.get(i).velocity.mag() >= balls.get(j).velocity.mag()) {
+      //   res = balls.get(i).ballCollision(balls.get(j));
+      // } else {
+      //   res = balls.get(j).ballCollision(balls.get(i));
+      // }
+      if (balls.get(balls.size()-1) == cue_ball) { // If the final ball is the cue ball, must switch the order of collisions. Otherwise the cue ball is slightly less accurate, leading to incorrect aim lines
+        res = balls.get(j).ballCollision(balls.get(i));
+      } else {
+        res = balls.get(i).ballCollision(balls.get(j));
+      }
       if (res) {
         if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
         else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
       }
     }
+  }
+  for (Ball b : balls) {
+    b.move();
   }
   for (Ball b : balls) {
     // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
@@ -359,7 +403,7 @@ void updateMovements() {
         for (Ball nearbyBall : balls) {
           if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < shockRadius && nearbyBall != b && nearbyBall != cue_ball) {
             score += points_per_ball * shockMultiplier;
-            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball));
+            pointIcons.add(new PointIcon(nearbyBall.position.copy(), 60, points_per_ball*shockMultiplier));
           }
         }
       }
@@ -379,9 +423,11 @@ void setupTriangle(PVector bottom, int rows, float diameter, float mass) {
 }
 
 void resetCueBall() {
-  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "white");
+  balls.remove(cue_ball);
+  cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
   balls.add(cue_ball);
   cue_ball_potted = false;
+  switchCueBalls();
 }
 
 int nextTurn() {
@@ -427,13 +473,16 @@ void mousePressed() {
 // apply resultant to the ball when the mouse is released
 void mouseReleased() {
   // only apply resultant when cue is active
-  if (cue.getActive() && cue_drag) { // && !inventory.mouseInInventory()) {
+  if (cue.getActive() && cue_drag && cue.getResultant().mag() != 0) { // && !inventory.mouseInInventory()) {
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
     cue.setActive(false);
     inventory.useSelected();
+    cue_drag = false;
+  } else if (cue.getActive() && cue_drag) {
+    cue.setLockAngle(false);
     cue_drag = false;
   }
   

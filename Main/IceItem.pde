@@ -4,7 +4,7 @@ public class IceItem extends InvItem {
     public boolean travelling = true;
     public boolean impact = false;
     public float diameter = ball_diameter;
-    public float mass = ball_mass;
+    public float mass = cue_ball_mass;
     public String colour = "lightblue";
 
     public IceItem(float x, float y, Ball ball, int max) {

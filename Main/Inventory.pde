@@ -41,7 +41,7 @@ public class Inventory {
   // add a ball to the inventory
   private void addItem(String colour, int count) {
     float y1 = calcHeight();
-    Ball ball = new Ball(position.x, y1, ball_diameter*2, ball_mass+0.5, colour);
+    Ball ball = new Ball(position.x, y1, ball_diameter*2, cue_ball_mass, colour);
     if (colour.equals("fire")) {
       items.add(new FireItem(position.x, y1, ball, count));
     } else if (colour.equals("shock")) {

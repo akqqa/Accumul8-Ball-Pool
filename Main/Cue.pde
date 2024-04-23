@@ -134,7 +134,6 @@ public class Cue {
 
     // set the active state of the cue (i.e. all balls have stopped)
     public void setActive(boolean _b) {
-        print("Set to" + String.valueOf(_b));
         this.active = _b;
     }
 
