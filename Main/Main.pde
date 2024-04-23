@@ -148,7 +148,7 @@ void table_setup(int sides) {
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
-  setupTriangle(new PVector(screen_width/2,screen_height/2), 5, ball_diameter, ball_mass);
+  setupTriangle(new PVector(screen_width/2,screen_height/2), 1, ball_diameter, ball_mass);
   //shots = 5 * round_num+1;
 }
 
@@ -205,6 +205,9 @@ void draw() {
           //if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
           cue_ball.setColour(inventory.selectedBallType());
+        // Game over if 0 non-cue balls are left
+        } else if ((cue_ball_potted && balls.size() == 0) || (!cue_ball_potted &&  balls.size() == 1)) {
+          finished = true;
         } else {
           if (cue_ball_potted) resetCueBall();
           // set the cue colour to that of the selected ball in the inventory (swap to powerups)
@@ -354,6 +357,11 @@ void updateMovements() {
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
       boolean res;
+      // if (balls.get(i).velocity.mag() >= balls.get(j).velocity.mag()) {
+      //   res = balls.get(i).ballCollision(balls.get(j));
+      // } else {
+      //   res = balls.get(j).ballCollision(balls.get(i));
+      // }
       if (balls.get(balls.size()-1) == cue_ball) { // If the final ball is the cue ball, must switch the order of collisions. Otherwise the cue ball is slightly less accurate, leading to incorrect aim lines
         res = balls.get(j).ballCollision(balls.get(i));
       } else {
@@ -464,13 +472,16 @@ void mousePressed() {
 // apply resultant to the ball when the mouse is released
 void mouseReleased() {
   // only apply resultant when cue is active
-  if (cue.getActive() && cue_drag) { // && !inventory.mouseInInventory()) {
+  if (cue.getActive() && cue_drag && cue.getResultant().mag() != 0) { // && !inventory.mouseInInventory()) {
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
     cue.setLockAngle(false);
     cue.setActive(false);
     inventory.useSelected();
+    cue_drag = false;
+  } else if (cue.getActive() && cue_drag) {
+    cue.setLockAngle(false);
     cue_drag = false;
   }
   
