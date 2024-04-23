@@ -5,6 +5,8 @@ import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
 
+public int frameDivider = 1;
+
 final int screen_width = 1280;
 final int screen_height = 720;
 final float ball_diameter = 720/25;
@@ -46,7 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {2000, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
 float score = 0;
@@ -99,6 +101,7 @@ PImage bolt;
 PImage frost;
 
 public boolean endChecksDone = false;
+public boolean firstFrameOfShot = false;
 
 // Minim - sound effects
 Minim minim;
@@ -162,12 +165,13 @@ void menu_setup() {
 
 void draw() {
   frame += 1;
-  if (frame % 1 == 0) {
+  if (frame % frameDivider == 0) {
     if (finished) renderEnd();
     else {
       renderHUD();
       render();
       updateMovements();
+      firstFrameOfShot = false;
     }
     //if (cue_ball_potted && nextTurn()) resetCueBall();
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
@@ -176,6 +180,8 @@ void draw() {
         // HERE WE PERFORM THE END OF ROUND PHASE
         if (!endChecksDone) { // Performs end checks once per situation where previously balls were moving, and now all stopped
           handleEndOfRoundEffects();
+          firstFrameOfShot = true; // Extremely hacky way to prevent balls already touching ice balls at the start of a shot from giving more points
+
           endChecksDone = true;
           return;
         }
@@ -385,12 +391,11 @@ void updateMovements() {
     }
   }
   for (Ball b : balls) {
-    b.move();
-  }
-  for (Ball b : balls) {
-    // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
    table.boundaryCollision(b);
    if (table.ballInPocket(b)) pocketed.add(b);
+  }
+  for (Ball b : balls) {
+    b.move();
   }
   ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : pocketed) {
@@ -523,6 +528,14 @@ int nextTurn() {
   return 1;
 }
 
+void keyPressed() {
+
+  if (key == ' ') {
+    frameDivider = 20;
+  }
+
+}
+
 void mousePressed() {
   // check for mouse within inventory first
   if (inventory.mouseInInventory()) {
@@ -569,13 +582,13 @@ void mouseReleased() {
 boolean checkAllBallStop() {
   for (Ball b : balls) {
     if (b.velocity.mag() != 0) {
-      println("b.velocity.mag()" + b.velocity.mag());
+      //println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }
   for (Ball b : pocketed) {
     if (b.velocity.mag() != 0) {
-      println("b.velocity.mag()" + b.velocity.mag());
+      //println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }
