@@ -41,7 +41,7 @@ int round_num = 0;
 int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
-int score = 0;
+float score = 0;
 int points_needed = roundScores[0];
 int points_per_ball = 10;
 boolean finished = false;
@@ -383,20 +383,23 @@ void handleShockChain(Ball ball) {
   ballsToHandleShock.add(ball);
   ArrayList<Ball> shockedBalls = new ArrayList<Ball>();
   shockedBalls.add(ball);
+  // Repeat for number of chains the player has unlocked
   for (int i = 0; i < shockChains; i++) {
     ArrayList<Ball> candidateBalls = new ArrayList<Ball>();
+    // Iterate through each ball that should be handled. Every iteration of chain means new balls are handled
     for (Ball b : ballsToHandleShock) {
       int ballsShocked = 0;
       for (Ball nearbyBall : balls) {
         if (ballsShocked == 2) {
           break;
         }
-        if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < (shockRadius - nearbyBall.diameter) && nearbyBall != b && nearbyBall != cue_ball && !shockedBalls.contains(nearbyBall)) {
+        // If within radius, add to a list of candidate balls. of which the two balls closest to the ball will be chosen
+        if (dist(b.position.x, b.position.y, nearbyBall.position.x, nearbyBall.position.y) < (shockRadius + nearbyBall.radius) && nearbyBall != b && nearbyBall != cue_ball && !shockedBalls.contains(nearbyBall)) {
           // Add to list
           candidateBalls.add(nearbyBall);
         }
       }
-      // Chain to closes candidate ball, then second closest
+      // Hacky way of getting the two closest balls from the candidate balls
       if (candidateBalls.isEmpty()) {
         continue;
       }
