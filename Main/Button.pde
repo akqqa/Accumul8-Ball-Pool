@@ -9,6 +9,7 @@ public class Button {
     protected color button_color;
     protected boolean button_clicked;
     protected boolean button_over;
+    protected int startTime = 0;
 
     // button constructor, taking in x, y coordinates, width, height, amount (for upgrade or ball addition), element, type(points, radius, upgrade or confirmation)
     public Button (float _x, float _y, float _width, float _height, int _amount, String _element, String _type/* , int _r, int _g, int _b */) {
@@ -30,6 +31,9 @@ public class Button {
         } else if (this.button_type.equals("confirmation")) {
             // confirmation button
             this.button_text = "Confirm";
+        } else if (this.button_type.equals("skip")) {
+            // skip button
+            this.button_text = "Skip";
         } else {
             this.button_text = "null";
         }
@@ -49,9 +53,11 @@ public class Button {
             // cursor is outside the button
             this.button_over = false;
         }
-        if (this.button_over && mousePressed) {
+        if (this.button_over && mousePressed && (millis() - startTime > button_time)) {
             // user clicks the button
-            this.button_clicked = true;
+            this.button_clicked = !this.button_clicked;
+            // introduce timing so that the boolean won't be changing too often
+            startTime = millis();
         }
     }
     // this will display the button in accordance to the parameters
@@ -93,6 +99,7 @@ public class Button {
             if (this.button_element.equals("electricity")) {
                 // electricity points * 1.xx
                 shockMultiplier = shockMultiplier + (this.button_amount/100.0);
+                print(shockMultiplier);
                 electricity_points = float(nf(electricity_points, 0, 2));
                 
                 println("electricity_points: "+electricity_points);

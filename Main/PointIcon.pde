@@ -9,6 +9,11 @@ public class PointIcon extends Animation {
         this.position = position;
         this.value = value;
         this.opacity = 255;
+        if (value < 0) {
+            pointLoss.trigger();
+        } else {
+            pointGain.trigger();
+        }
     }
 
     public void draw() {
