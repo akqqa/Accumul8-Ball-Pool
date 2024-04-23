@@ -97,6 +97,7 @@ float freezeRadius = ball_diameter;
 PImage flame;
 PImage bolt;
 PImage frost;
+PImage grav_arrow;
 
 public boolean endChecksDone = false;
 
@@ -123,6 +124,7 @@ void setup() {
     flame = loadImage("flame.png");
     bolt = loadImage("bolt.png");
     frost = loadImage("frost.png");
+    grav_arrow = loadImage("gravity.png");
 
     // Minim
     minim = new Minim(this);
