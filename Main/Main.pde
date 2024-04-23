@@ -472,7 +472,7 @@ void handleShockChain(Ball ball) {
             continue;
           }
           // Draw a line between the two balls
-          animations.add(new LineAnimation(b.position.copy(), closeBall.position.copy(), 60));
+          animations.add(new LineAnimation(b, closeBall, 60));
           score += points_per_ball * shockMultiplier * pow(0.5, i);
           animations.add(new PointIcon(closeBall.position.copy(), 60, points_per_ball * shockMultiplier * pow(0.5, i)));
           // Add ball to both lists

@@ -1,10 +1,10 @@
 public class LineAnimation extends Animation {
 
-    public PVector start;
-    public PVector end;
+    public Ball start;
+    public Ball end;
     private int opacity = 255;
 
-    public LineAnimation(PVector start, PVector end, int frames) {
+    public LineAnimation(Ball start, Ball end, int frames) {
         super(frames);
         this.start = start;
         this.end = end;
@@ -15,7 +15,7 @@ public class LineAnimation extends Animation {
         if (frames > 0) {
             strokeWeight(2);
             stroke(color(255, 219, 0, opacity));
-            line(start.x, start.y, end.x, end.y);
+            line(start.position.x, start.position.y, end.position.x, end.position.y);
             this.opacity -= 5;
             frames -= 1;
         }

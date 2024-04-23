@@ -226,8 +226,7 @@ public class Ball {
     
         if (distanceVectMag < minDistance) {
           //circle(this.position.x, this.position.y, 25);
-
-        // Play ballhit sound
+        
         ballHit.trigger();
           
         //If this ball is frozen, and soemthing hits it, add points and handle accordingly
@@ -244,6 +243,8 @@ public class Ball {
             score += points_per_ball * frozenMultiplier;
             animations.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
             other.hitThisShot.add(this);
+          }
+        }
           
           float distanceCorrection = ((minDistance-distanceVectMag)+1)/2.0;
           PVector d = distanceVect.copy();
