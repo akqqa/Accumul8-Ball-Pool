@@ -233,34 +233,45 @@ public class Ball {
         if (distanceVectMag < minDistance) {
           //circle(this.position.x, this.position.y, 25);
         
-        ballHit.trigger();
-          
-        //If this ball is frozen, and soemthing hits it, add points and handle accordingly
-        if (frozen && !powerBall) {
-          if (!hitThisShot.contains(other)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
-            score += points_per_ball * frozenMultiplier;
-            animations.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
-            hitThisShot.add(other);
+          ballHit.trigger();
+            
+          //If this ball is frozen, and soemthing hits it, add points and handle accordingly
+          if (frozen && !powerBall) {
+            if (firstFrameOfShot) { // HACK to prevent first round balls from adding extra ice points
+              hitThisShot.add(other);
+            } else if (!hitThisShot.contains(other) && (other.frozen == false || other.equals(cue_ball))) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+              score += points_per_ball * frozenMultiplier;
+              animations.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
+              hitThisShot.add(other);
+            }
           }
-        }
-        // If the other ball is frozen, and this ball hits it, handle accordingly
-        if (other.frozen && !other.powerBall) {
-          if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
-            score += points_per_ball * frozenMultiplier;
-            animations.add(new PointIcon(other.position.copy(), 60, points_per_ball * frozenMultiplier));
-            other.hitThisShot.add(this);
+          // If the other ball is frozen, and this ball hits it, handle accordingly
+          if (other.frozen && (!this.frozen || this.powerBall)) {
+            if (firstFrameOfShot) { // HACK to prevent first round balls from adding extra ice points
+              other.hitThisShot.add(this);
+            } else if (!other.hitThisShot.contains(this)) { // Ensures each ball can only score once when hitting - to prevent many collisions being overpowered
+              score += points_per_ball * frozenMultiplier;
+              animations.add(new PointIcon(this.position.copy(), 60, points_per_ball * frozenMultiplier));
+              other.hitThisShot.add(this);
+            }
           }
-        }
           
-          float distanceCorrection = ((minDistance-distanceVectMag)+1)/2.0;
+          float distanceCorrection = ((minDistance-distanceVectMag) + 1)/2.0;
           PVector d = distanceVect.copy();
           PVector correctionVector = d.normalize().mult(distanceCorrection);
-          //if (!other.frozen && !other.powerBall) {
+
+          // If other is frozen and this is not, move this twice as much
+          // If this is frozen and other is not, move other twice as much
+          // If neither frozen, move both by correction vector
+          if (this.frozen && !this.equals(cue_ball) && (!other.frozen || other.powerBall)) {
+            other.position.add(correctionVector.mult(2));
+          } else if (other.frozen && !other.equals(cue_ball) && (!this.frozen || this.powerBall)) {
+            this.position.sub(correctionVector.mult(2));
+          }
+          else {
             other.position.add(correctionVector);
-          //}
-          //if (!frozen && !powerBall) {
-            position.sub(correctionVector); // Only move in collisions if not frozen
-          // }
+            this.position.sub(correctionVector);
+          }
     
           // get angle of distanceVect
           float theta  = distanceVect.heading();
@@ -325,23 +336,43 @@ public class Ball {
           bFinal[1].x = cosine * bTemp[1].x - sine * bTemp[1].y;
           bFinal[1].y = cosine * bTemp[1].y + sine * bTemp[1].x;
     
+          // ALL OF THIS WAS NOT ONLY UNNECCESARY BUT CAUSED THE BALLS TO PHASE THROUGH EACH OTHER (still happens now but less)
+
           // update balls to screen position
           //other.position.x = position.x + bFinal[1].x + 1;
           //other.position.y = position.y + bFinal[1].y + 1;
           
-          // Simply update balls to be apart from each other in direction of intersection
-          // intersection magnitude
-          if (!frozen) {
-            float intersectMag = this.radius + other.radius - (distanceVect.mag());
-            PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
-            if (other.frozen && !other.powerBall) {
-              this.position.x = this.position.x - scaledDistanceVect.x*2;
-              this.position.y = this.position.y - scaledDistanceVect.y*2;
-            } else {
-              this.position.x = this.position.x - scaledDistanceVect.x/2;
-              this.position.y = this.position.y - scaledDistanceVect.y/2;
-            }
-          }
+          // // Simply update balls to be apart from each other in direction of intersection
+          // // intersection magnitude
+          // if (!frozen) {
+          //   float intersectMag = this.radius + other.radius - (distanceVect.mag());
+          //   PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
+          //   if (other.frozen && !other.powerBall) {
+          //     this.position.x = this.position.x - scaledDistanceVect.x*2;
+          //     this.position.y = this.position.y - scaledDistanceVect.y*2;
+          //   } else {
+          //     this.position.x = this.position.x - scaledDistanceVect.x/2;
+          //     this.position.y = this.position.y - scaledDistanceVect.y/2;
+          //   }
+          // }
+
+          // float intersectMag = this.radius + other.radius - (distanceVect.mag());
+          // PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
+          // if (this.frozen && !this.equals(cue_ball) && !other.frozen) {
+          //   scaledDistanceVect.mult(1.1);
+          //   other.position.x = other.position.x - scaledDistanceVect.x;
+          //   other.position.y = other.position.y - scaledDistanceVect.y + 10;
+          // } else if (other.frozen && !other.equals(cue_ball) && !this.frozen) {
+          //   scaledDistanceVect.mult(1.1);
+          //   this.position.x = this.position.x + scaledDistanceVect.x - 10;
+          //   this.position.y = this.position.y + scaledDistanceVect.y - 10;
+          // }
+          // else {
+          //   other.position.x = other.position.x + scaledDistanceVect.x/4;
+          //   other.position.y = other.position.y + scaledDistanceVect.y/4;
+          //   this.position.x = this.position.x - scaledDistanceVect.x/4;
+          //   this.position.y = this.position.y - scaledDistanceVect.y/4;
+          // }
     
           position.add(bFinal[0]);
     
@@ -360,6 +391,8 @@ public class Ball {
           return true;
         }
       }
+      // Neither ball is touching each other in this case.
+      // So if either ball is on the others hit list, they can be removed, as they are no longer touching - ONLY if a round has passed
       return false;
     }
     
@@ -411,16 +444,15 @@ public class Ball {
     // GravityBall
     public void pull(Ball towards) {
       gravity = true;
-      // case of general movement
-      if (!(this.position.dist(cue_ball.position) < this.diameter * 2) && balls.contains(cue_ball)) {
-        PVector direction = towards.position.copy().sub(position);
-        pullVelocity = direction.setMag(1);
-      }
-      // case of pocketed
-      else if (pocketed.contains(cue_ball)) {
+      if (pocketed.contains(cue_ball)) {
         PVector direction = towards.position.copy().sub(position);
         velocity = velocity.add(direction.setMag(0.075));
         gravity = false;
+      }
+      // case of general movement
+      else if (!(this.position.dist(cue_ball.position) < this.diameter * 2) && balls.contains(cue_ball)) {
+        PVector direction = towards.position.copy().sub(position);
+        pullVelocity = direction.setMag(1);
       }
     }
 }
