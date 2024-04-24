@@ -121,6 +121,41 @@ void settings() {
     size(screen_width, screen_height);
 }
 
+void reset() {
+  num_of_electricity_ball = 0;
+  electricity_points = 1;
+  electricity_radius = 1;
+  
+  // fire
+  num_of_fire_ball = 0;
+  fire_points = 1;
+  fire_radius = 1;
+  
+  // ice
+  num_of_ice_ball = 0;
+  ice_points = 1;
+  ice_radius = 1;
+  
+  // gravity
+  num_of_gravity_ball = 0;
+  gravity_points = 1;
+  gravity_radius = 1;
+  
+  state = 0;
+  round_num = 0;
+  roundScores = new int[] {20, 40, 60, 90, 120, 150, 190, 230, 270};
+  tableSides = 4;
+  
+  score = 0;
+  points_needed = roundScores[0];
+  points_per_ball = 10;
+  finished = false;
+  win = false;
+  flash_count = 0;
+  animations = new ArrayList<>();
+
+  inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
+}
 
 void setup() {
     frameRate(60);
@@ -218,7 +253,7 @@ void endOfRound() {
   
   // Proceed to next round
   else if (score >= points_needed) {
-    if (round_num < 9)
+    if (round_num < 8)
       nextRoundProcedure();
     else {
       finished = true;
@@ -311,9 +346,9 @@ void handleEndOfRoundEffects() {
       }
       if (b.frozen) {
         b.effectDuration -= 1;
-        if (b.effectDuration <= 0) {
+        //if (b.effectDuration <= 0) {
           b.thaw();
-        }
+        //}
       }
     }
   }
@@ -593,6 +628,7 @@ void mousePressed() {
   }
   if (start_menu) {
     start_menu = false;
+    reset();
     return;
   }
   // check for mouse within inventory first

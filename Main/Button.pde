@@ -99,23 +99,23 @@ public class Button {
             if (this.button_element.equals("electricity")) {
                 // electricity points * 1.xx
                 shockMultiplier = shockMultiplier + (this.button_amount/100.0);
-                print(shockMultiplier);
+                //print(shockMultiplier);
                 electricity_points = float(nf(electricity_points, 0, 2));
                 
-                println("electricity_points: "+electricity_points);
+                //println("electricity_points: "+electricity_points);
               
                 return;
             } else if (this.button_element.equals("fire")) {
                 // fire points * 1.xx
                 fireMultiplier = fireMultiplier + (this.button_amount/ 100.0);
                 fire_points = float(nf(fire_points, 0, 2));
-                println("fire_points: "+fire_points);
+                //println("fire_points: "+fire_points);
                 return;
             } else if (this.button_element.equals("ice")) {
                 // ice points * 1.xx
                 frozenMultiplier = frozenMultiplier + (this.button_amount/100.0);
                 ice_points = float(nf(ice_points, 0, 2));
-                println("ice_points: "+ice_points);
+                //println("ice_points: "+ice_points);
                 return;
             }
             // } else if (this.button_element.equals("gravity")) {
@@ -131,13 +131,13 @@ public class Button {
                 // electricity radius * 1.xx
                 shockRadius = shockRadius + (originalShockRadius * (button_amount/100.0));
                 electricity_radius = float(nf(electricity_radius, 0, 2));
-                println("electricity_radius: "+electricity_radius);
+                //println("electricity_radius: "+electricity_radius);
                 return;
             } else if (this.button_element.equals("fire")) {
                 // fire radius * 1.xx
                 fireRadius = fireRadius + (originalFireRadius * (button_amount/100.0));
                 fire_radius = float(nf(fire_radius, 0, 2));
-                println("fire_radius: "+fire_radius);
+                //println("fire_radius: "+fire_radius);
                 return;
             }
             // } else if (this.button_element.equals("ice")) {
@@ -146,40 +146,39 @@ public class Button {
             //     ice_radius = float(nf(ice_radius, 0, 2));
             //     println("ice_radius: "+ice_radius);
             //     return;
-            // } else if (this.button_element.equals("gravity")) {
-            //     // gravity radius * 1.xx
-            //     gravity_radius = gravity_radius * (1 + button_amount/100.0);
-            //     gravity_radius = float(nf(gravity_radius, 0, 2));
-            //     println("gravity_radius: "+gravity_radius);
-            //     return;
-            // }
+              else if (this.button_element.equals("gravity")) {
+                 // gravity radius * 1.xx
+                 gravity_radius = gravity_radius * (1 + button_amount/100.0);
+                 gravity_radius = float(nf(gravity_radius, 0, 2));
+                 println("gravity_radius: "+gravity_radius);
+                 return;
+             }
         } else if (this.button_type.equals("ball")) {
             // add ball
             if (this.button_element.equals("electricity")) {
                 inventory.addBall("shock");
                 // electricity ball + number of balls to add
                 num_of_electricity_ball += this.button_amount;
-                println("num_of_electricity_ball: "+num_of_electricity_ball);
+                //println("num_of_electricity_ball: "+num_of_electricity_ball);
                 return;
             } else if (this.button_element.equals("fire")) {
                 inventory.addBall("fire");
                 // fire ball + number of balls to add
                 num_of_fire_ball += this.button_amount;
-                println("num_of_fire_ball: "+num_of_fire_ball);
+                //println("num_of_fire_ball: "+num_of_fire_ball);
                 return;
             } else if (this.button_element.equals("ice")) {
                 inventory.addBall("ice");
                 // ice ball + number of balls to add
                 num_of_ice_ball += this.button_amount;
-                println("num_of_ice_ball: "+num_of_ice_ball);
+                //println("num_of_ice_ball: "+num_of_ice_ball);
                 return;
+            } else if (this.button_element.equals("gravity")) {
+               // gravity ball + number of balls to add
+               num_of_gravity_ball += this.button_amount;
+               println("num_of_gravity_ball: "+num_of_gravity_ball);
+               return;
             }
-            // } else if (this.button_element.equals("gravity")) {
-            //     // gravity ball + number of balls to add
-            //     num_of_gravity_ball += this.button_amount;
-            //     println("num_of_gravity_ball: "+num_of_gravity_ball);
-            //     return;
-            // }
         }
     }
 

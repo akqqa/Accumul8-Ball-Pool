@@ -13,6 +13,8 @@ public class Menu {
 
     Button selected_upgrade_button;
     Button selected_ball_button;
+    
+    
     // instruction message
     String menu_message = "Please select 1 upgrade AND\n1 ball to add into inventory\nthat you like\nskip if there is nothing\nsuitable";
     public Menu (float _x, float _y, float _width, float _height) {
@@ -21,7 +23,7 @@ public class Menu {
         this.menu_height = _height;
         random_num_of_options = int(random(2, 4));
         // debug: random_num_of_options
-        println("random_num_of_options: "+random_num_of_options);
+        //println("random_num_of_options: "+random_num_of_options);
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
         for (InvItem i : inventory.items) {
             if (i instanceof FireItem && i.max > 0) { // Player has fire balls unlocked
@@ -90,7 +92,7 @@ public class Menu {
 
         // reset last upgrade position if all upgrades are null
         if (checkAllButtonNull(upgrade_buttons)) {
-            menu_message = "Please select a ball to add into inventory\nthat you like or skip";
+            menu_message = "Please select a ball\nto add into inventory\nthat you like or skip";
             last_upgrade_position_y = screen_height * 0.3;
         }
 

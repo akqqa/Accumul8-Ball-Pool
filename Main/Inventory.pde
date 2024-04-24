@@ -24,16 +24,16 @@ public class Inventory {
     selected = items.get(0);
     items.get(0).unlock();
     numBalls ++;
-    addItem("fire", 1);
+    addItem("fire", 0);
     //items.get(1).unlock();
     numBalls ++;
-    addItem("shock",3);
+    addItem("shock",0);
     //items.get(2).unlock();
     numBalls ++;
-    addItem("ice", 5);
+    addItem("ice", 0);
     //items.get(3).unlock();
     numBalls ++;
-    addItem("gravity", 3);
+    addItem("gravity", 0);
     //items.get(4).unlock();
     numBalls ++;
     addItem("yellow", 0);
@@ -176,6 +176,7 @@ public class Inventory {
         i.unlock();
       }
       i.count = i.max;
+      println(i.max);
     }
     items.get(0).select();
     selected = items.get(0);
