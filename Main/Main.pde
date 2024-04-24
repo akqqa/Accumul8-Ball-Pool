@@ -177,7 +177,7 @@ void setup() {
     pointLoss = minim.loadSample("sfx/pointLoss.wav");
     
     menu_table = new PoolTable(4, table_rad_4*1.9, new PVector(screen_height/2,screen_width/2), 321);
-    font = createFont("retro_computer_personal_use.ttf", 20);
+    font = createFont("joystix monospace.otf", 20);
     textFont(font);
 }
 
