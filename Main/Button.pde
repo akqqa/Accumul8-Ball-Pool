@@ -174,6 +174,7 @@ public class Button {
                 //println("num_of_ice_ball: "+num_of_ice_ball);
                 return;
             } else if (this.button_element.equals("gravity")) {
+                inventory.addBall("gravity");
                // gravity ball + number of balls to add
                num_of_gravity_ball += this.button_amount;
                println("num_of_gravity_ball: "+num_of_gravity_ball);
