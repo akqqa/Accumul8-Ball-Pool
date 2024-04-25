@@ -27,14 +27,14 @@ public class Inventory {
     addItem("fire", 0);
     //items.get(1).unlock();
     numBalls ++;
-    addItem("shock",3);
-    items.get(2).unlock();
+    addItem("shock",0);
+    //items.get(2).unlock();
     numBalls ++;
-    addItem("ice", 5);
-    items.get(3).unlock();
+    addItem("ice", 0);
+    //items.get(3).unlock();
     numBalls ++;
-    addItem("gravity", 3);
-    items.get(4).unlock();
+    addItem("gravity", 0);
+    //items.get(4).unlock();
     numBalls ++;
     addItem("yellow", 0);
   }
@@ -100,9 +100,34 @@ public class Inventory {
     fill(200, 0, 0, 128);
     rect(position.x, position.y, width, height, 5);
     fill(0);
+    textSize(20);
+    textAlign(CENTER);
     text("Inventory", position.x, position.y - 9*height/20);
     for (InvItem item : items) {
       item.draw();
+    }
+    for (InvItem item : items) {
+      if (item.hovered()) {
+        if (item instanceof FireItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "fire");
+          tooltip.draw();
+        }
+        else if (item instanceof ShockItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "shock");
+          tooltip.draw();
+        }
+        else if (item instanceof IceItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "ice");
+          tooltip.draw();
+        }
+        else if (item instanceof GravityItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "gravity");
+          tooltip.draw();
+        } else {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "regular");
+          tooltip.draw();
+        }
+      }
     }
   }
   
@@ -164,7 +189,7 @@ public class Inventory {
   public int getBallCount() {
     int num = 0;
     for (InvItem i : items) {
-      num += i.count;
+      if (!i.locked) num += i.count;
     }
     return num;
   }
@@ -176,6 +201,7 @@ public class Inventory {
         i.unlock();
       }
       i.count = i.max;
+      println(i.max);
     }
     items.get(0).select();
     selected = items.get(0);
