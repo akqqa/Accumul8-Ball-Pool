@@ -196,13 +196,13 @@ void setup() {
 
     // Minim
     minim = new Minim(this);
-    ballHit = minim.loadSample("sfx/ballHit.mp3");
-    fireSelect = minim.loadSample("sfx/fireSelect.mp3");
-    shockSelect = minim.loadSample("sfx/shockSelect.mp3");
-    iceSelect = minim.loadSample("sfx/iceSelect.mp3");
-    wallHit = minim.loadSample("sfx/wallHit.mp3");
-    pointGain = minim.loadSample("sfx/pointGain.mp3");
-    pointLoss = minim.loadSample("sfx/pointLoss.wav");
+    ballHit = minim.loadSample("data/sfx/ballHit.mp3");
+    fireSelect = minim.loadSample("data/sfx/fireSelect.mp3");
+    shockSelect = minim.loadSample("data/sfx/shockSelect.mp3");
+    iceSelect = minim.loadSample("data/sfx/iceSelect.mp3");
+    wallHit = minim.loadSample("data/sfx/wallHit.mp3");
+    pointGain = minim.loadSample("data/sfx/pointGain.mp3");
+    pointLoss = minim.loadSample("data/sfx/pointLoss.wav");
     
     menu_table = new PoolTable(4, table_rad_4*1.9, new PVector(screen_height/2,screen_width/2), 321);
     font = createFont("joystix monospace.otf", 20);
@@ -238,6 +238,7 @@ void draw() {
   frame += 1;
   if (frame % frameDivider == 0) {
     if (finished) renderEnd();
+    else if (start_menu) renderStart();
     else {
       renderHUD();
       render();
