@@ -11,9 +11,14 @@ public class Tooltip {
     public void draw() {
         // Draw a box
         rectMode(CORNER);
-        rect(position.x, position.y, 200, 100);
+        fill(255,255,255);
+        rect(mouseX, mouseY, 200, 100);
         if (ballType.equals("fire")) {
-            text("Points: " + fireMultiplier*points_per_ball + " ( "+ fireMultiplierMax*points_per_ball+" max)", position.x+5, position.y + 5);
+            textSize(10);
+            textAlign(LEFT);
+            fill(0,0,0);
+            text("Points: " + fireMultiplier*points_per_ball + " ( "+ fireMultiplierMax*points_per_ball+" max)", mouseX+10, mouseY + 10);
         }
+        rectMode(CENTER);
     }
 }
