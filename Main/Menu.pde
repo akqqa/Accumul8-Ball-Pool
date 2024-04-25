@@ -25,43 +25,41 @@ public class Menu {
         // debug: random_num_of_options
         //println("random_num_of_options: "+random_num_of_options);
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
-        for (InvItem i : inventory.items) {
-            if (i instanceof FireItem && i.max > 0) { // Player has fire balls unlocked
-                Object[] arr = {50, "fire", "points"};
-                possibleUpgrades.add(arr);
-                arr = new Object[]{50, "fire", "radius"};
-                possibleUpgrades.add(arr);
-            } else if (i instanceof ShockItem && i.max > 0) { // Player has shock balls unlocked
-                Object[] arr = {100, "electricity", "points"};
-                possibleUpgrades.add(arr);
-                arr = new Object[]{50, "electricity","radius"};
-                possibleUpgrades.add(arr);
-            } else if (i instanceof IceItem && i.max > 0) { // Player has shock balls unlocked
-                Object[] arr = {50, "ice", "points"};
-                possibleUpgrades.add(arr);
-            } else if (i instanceof GravityItem && i.max > 0) { // Player has shock balls unlocked
-                Object[] arr = {100, "gravity", "points"};
-                possibleUpgrades.add(arr);
-                arr = new Object[]{50, "gravity","radius"};
-                possibleUpgrades.add(arr);
-            }
+        Object[] arr;
+        if (fireMultiplier < fireMultiplierMax) {
+            arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + "fire points"};
+            possibleUpgrades.add(arr);
         }
-        for (int i = 0; i < random_num_of_options; ++i) {
-            // int random_element = int(random(elements.length));
-            // int random_percentage = int(random(percentages.length));
-            // int random_upgrade_type = int(random(upgrade_types.length));
+        if (fireRadius < fireRadiusMax) {
+            arr = new Object[]{fireRadiusIncrement, "fire", "radius", "Increase fire radius"};
+            possibleUpgrades.add(arr);
+        }
+        if (shockMultiplier < shockMultiplierMax) {
+            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + "shock points"};
+            possibleUpgrades.add(arr);
+        }
+        if (shockChains < shockChainsMax) {
+            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChains) + "shock chain"};
+            possibleUpgrades.add(arr);
+        }
+        if (frozenMultiplier < frozenMultiplierMax) {
+            arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + "freeze points"};
+            possibleUpgrades.add(arr);
+        }
+        if (freezeDuration < freezeDurationMax) {
+            arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + "shots balls stay frozen"};
+            possibleUpgrades.add(arr);
+        }
+        if (gravityMultiplier < gravityMultiplierMax) {
+            arr = new Object[]{gravityMultiplierIncrement, "gravity", "points", "+" + str(gravityMultiplierIncrement*points_per_ball) + "gravity points"};
+            possibleUpgrades.add(arr);
+        }
+        if (gravityRadius < gravityRadiusMax) {
+            arr = new Object[]{gravityRadiusIncrement, "gravity", "radius", "Increase gravity radius"};
+            possibleUpgrades.add(arr);
+        }
 
-            // // check duplication
-            // for (int j = 0; j < i;) {
-            //     if (upgrade_buttons[j].button_element.equals(elements[random_element]) && upgrade_buttons[j].button_type.equals(upgrade_types[random_upgrade_type])) {
-            //         // generate the element and upgrade type again, and restart from index 0
-            //         random_element = int(random(elements.length));
-            //         random_upgrade_type = int(random(upgrade_types.length));
-            //         j = 0;
-            //     } else {
-            //         j++;
-            //     }
-            // }
+        for (int i = 0; i < random_num_of_options; ++i) {
             // Pick upgrades to display
             // Pick random upgrade from possibleUpgrades, and make button for it. If none left, dont make a button
             Object[] chosenUpgrade = null;
@@ -80,7 +78,8 @@ public class Menu {
             if (chosenUpgrade == null) {
                 button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, 0, "", ""/* , 30, 0, 20 */);
             } else {
-                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, (int) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
+                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, (float) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
+                button.setText((String) chosenUpgrade[3]);
             }
             // add the button into array
             upgrade_buttons[i] = button;

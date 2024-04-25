@@ -46,6 +46,12 @@ public class InvItem {
       fill(255,0,0, 200);
       text("x", position.x, position.y);
     }
+
+    // Draw tooltip if hovered
+    if (hovered()) {
+      Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "fire");
+      tooltip.draw();
+    }
   }
   
   // Function to check whether the mouse is within the item's boundary circle

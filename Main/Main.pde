@@ -83,18 +83,43 @@ boolean cue_drag = false;
 InvItem currentSelectedItem = null;
 
 // Global variables for status effects:
+// Fire = radius and points, Shock = chains and points, Ice = duration and points, gravity = radius + points
+// TODO - make uneditable ones final
+// Duration of effect (shots)
 int fireDuration = 1;
 int shockDuration = 1;
-int shockChains = 4;
-int freezeDuration = 5;
-float fireMultiplier = 0.5;
-float shockMultiplier = 1;
-float frozenMultiplier = 1;
-final float originalFireRadius = 40;
-float fireRadius = 40;
-final float originalShockRadius = 125;
-float shockRadius = 125;
+int freezeDuration = 1;
+int freezeDurationIncrement = 1;
+int freezeDurationMax = 4;
+// Multiplier (each ball is worth a default of 10)
+float fireMultiplier = 0.25; // Each fire ball worth 2.5 points
+float fireMultiplierIncrement = 0.25;
+float fireMultiplierMax = 1;
+float shockMultiplier = 1; // Each shocked ball worth 10 points
+float shockMultiplierIncrement = 0.5;
+float shockMultiplierMax = 2.5;
+float frozenMultiplier = 0.5; // Each frozen ball worth 5 points
+float frozenMultiplierIncrement = 0.5;
+float frozenMultiplierMax = 2;
+float gravityMultiplier = 1; // Each ball pulled into a hole by gravity is worth its default amount to start
+float gravityMultiplierIncrement = 0.5;
+float gravityMultiplierMax = 2.5;
+// Radius while moving
+final float originalFireRadius = 20;
+float fireRadius = 30;
+float fireRadiusIncrement = 10;
+float fireRadiusMax = 60;
+final float originalShockRadius = 100;
+float shockRadius = 100;
 float freezeRadius = ball_diameter;
+float gravityRadius = 50;
+float gravityRadiusIncrement = 25;
+float gravityRadiusMax = 125;
+// Chains for shock ball
+int shockChains = 1;
+int shockChainsIncrement = 1;
+int shockChainsMax = 4;
+
 
 //Pocket pocket;
 // sprites
@@ -316,7 +341,7 @@ void switchCueBalls() {
   } else if (inventory.selected instanceof GravityItem) {
     GravityItem sel = (GravityItem) inventory.selected;
     balls.remove(cue_ball);
-    cue_ball = new GravityBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, sel.effectRadius, sel.travelling, sel.impact);
+    cue_ball = new GravityBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, gravityRadius, sel.travelling, sel.impact);
     balls.add(cue_ball);
   } else {
     balls.remove(cue_ball);
@@ -346,9 +371,9 @@ void handleEndOfRoundEffects() {
       }
       if (b.frozen) {
         b.effectDuration -= 1;
-        //if (b.effectDuration <= 0) {
+        if (b.effectDuration <= 0) {
           b.thaw();
-        //}
+        }
       }
     }
   }

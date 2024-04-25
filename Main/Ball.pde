@@ -391,6 +391,7 @@ public class Ball {
         powerReset();
         frozen = true;
         this.effectDuration = freezeDuration;
+        println("freeze duration" + freezeDuration);
         this.mass = 1000000000;
       }
     }    
