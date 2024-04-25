@@ -5,6 +5,8 @@ import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
 
+public int frameDivider = 1;
+
 final int screen_width = 1280;
 final int screen_height = 720;
 final float ball_diameter = 720/25;
@@ -46,7 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {2000, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
 float score = 0;
@@ -128,6 +130,7 @@ PImage bolt;
 PImage frost;
 
 public boolean endChecksDone = false;
+public boolean firstFrameOfShot = false;
 
 // Minim - sound effects
 Minim minim;
@@ -233,19 +236,64 @@ void menu_setup() {
 
 void draw() {
   frame += 1;
-  if (frame % 1 == 0) {
+  if (frame % frameDivider == 0) {
+    if (finished) renderEnd();
+    else {
       renderHUD();
-      if (finished) renderEnd();
-      else if (start_menu) renderStart();
-      else {
-        render();
-        updateMovements();
-      }
+      render();
+      updateMovements();
+      firstFrameOfShot = false;
+    }
     //if (cue_ball_potted && nextTurn()) resetCueBall();
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
     if (moving) {
       if (checkAllBallStop()) {
-        endOfRound();
+        // HERE WE PERFORM THE END OF ROUND PHASE
+        if (!endChecksDone) { // Performs end checks once per situation where previously balls were moving, and now all stopped
+          handleEndOfRoundEffects();
+          firstFrameOfShot = true; // Extremely hacky way to prevent balls already touching ice balls at the start of a shot from giving more points
+
+          endChecksDone = true;
+          return;
+        }
+        if (!animations.isEmpty()) { // the moving = false is not reached, so this will keep being reached until all animations have dissapeared. only then will the game move onto the next shot
+          return;
+        }
+
+        endChecksDone = false;
+        // Game over
+        if (inventory.getBallCount() == 0 && score < points_needed) {
+          finished = true;
+        // Proceed to next round
+        } else if (score >= points_needed) {
+          inventory.resetBalls();
+          switchCueBalls();
+          round_num ++;
+          state = round_end_state;
+          if (round_num % 3 == 0 && round_num != 0) {
+            tableSides = int(random(4, 10));
+            print("tablesides set to" + str(tableSides));
+          }
+          table_setup(tableSides);
+          points_needed = roundScores[round_num];
+          // set up the menu
+          menu_setup();
+          // reactivate cue stick here
+          cue.setActive(false);
+          score = 0;
+          //if (cue_ball_potted) resetCueBall();
+          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
+          cue_ball.setColour(inventory.selectedBallType());
+        // Game over if 0 non-cue balls are left
+        } else if ((cue_ball_potted && balls.size() == 0) || (!cue_ball_potted &&  balls.size() == 1)) {
+          finished = true;
+        } else {
+          if (cue_ball_potted) resetCueBall();
+          // set the cue colour to that of the selected ball in the inventory (swap to powerups)
+          if (currentSelectedItem != inventory.selected) switchCueBalls();
+          cue.setActive(true);
+        }
+        moving = false;
       }
     }
     // check here in case ball is stationary to allow selection change
@@ -507,12 +555,11 @@ void updateMovements() {
     }
   }
   for (Ball b : balls) {
-    b.move();
-  }
-  for (Ball b : balls) {
-    // Slight logical error here - since ball velocity can be changed by a collision, the method of going back using velocity isnt quite correct. only fix this if there is an actual error with balls phasing out of table in the game
    table.boundaryCollision(b);
    if (table.ballInPocket(b)) pocketed.add(b);
+  }
+  for (Ball b : balls) {
+    b.move();
   }
   ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : pocketed) {
@@ -643,6 +690,14 @@ int nextTurn() {
    }
   if (reds_remain) return 0;
   return 1;
+}
+
+void keyPressed() {
+
+  if (key == ' ') {
+    frameDivider = 20;
+  }
+
 }
 
 void mousePressed() {
