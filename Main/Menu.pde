@@ -5,7 +5,7 @@ public class Menu {
     float menu_width;
     float menu_height;
     String menu_title = "Upgrade Menu";
-    int random_num_of_options;
+    int num_of_options;
     Button[] upgrade_buttons = new Button[3];
     Button[] ball_buttons = new Button[2];
     Button confirmation_button;
@@ -21,9 +21,7 @@ public class Menu {
         position = new PVector(_x, _y);
         this.menu_width = _width;
         this.menu_height = _height;
-        random_num_of_options = int(random(2, 4));
-        // debug: random_num_of_options
-        //println("random_num_of_options: "+random_num_of_options);
+        num_of_options = 3; // Not random anymore
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
         Object[] arr;
         if (fireMultiplier < fireMultiplierMax) {
@@ -59,7 +57,7 @@ public class Menu {
             possibleUpgrades.add(arr);
         }
 
-        for (int i = 0; i < random_num_of_options; ++i) {
+        for (int i = 0; i < num_of_options; ++i) {
             // Pick upgrades to display
             // Pick random upgrade from possibleUpgrades, and make button for it. If none left, dont make a button
             Object[] chosenUpgrade = null;
@@ -83,7 +81,7 @@ public class Menu {
             }
             // add the button into array
             upgrade_buttons[i] = button;
-            if (i == random_num_of_options - 1) {
+            if (i == num_of_options - 1) {
                 // save the last  position for next part of the menu
                 last_upgrade_position_y = (screen_height*0.3 + i*50);
             }
@@ -147,13 +145,13 @@ public class Menu {
         // upgrade buttons
         // only display if they are not all null
         if (!checkAllButtonNull(upgrade_buttons)) {
-            for (int i = 0; i < random_num_of_options; i++) {
+            for (int i = 0; i < num_of_options; i++) {
                 // if hover or clicked, update the button booleans
                 upgrade_buttons[i].update();
                 if (upgrade_buttons[i].button_clicked) {
                     // check if any other upgrade button is selected, if so, set button clicked to false, leaving only the current button as clicked
                     selected_upgrade_button = upgrade_buttons[i];
-                    for (int j = 0; j < random_num_of_options; j++) {
+                    for (int j = 0; j < num_of_options; j++) {
                         if (j != i) {
                             upgrade_buttons[j].button_clicked = false;
                         }
@@ -169,7 +167,7 @@ public class Menu {
         if (!checkAllButtonNull(upgrade_buttons)) {
             textSize(15);
             textAlign(CENTER, CENTER);
-            text("AND", this.position.copy().x, upgrade_buttons[random_num_of_options-1].position.copy().y + 50);
+            text("AND", this.position.copy().x, upgrade_buttons[num_of_options-1].position.copy().y + 50);
         }
         
         
@@ -221,7 +219,7 @@ public class Menu {
                 //     }
                 // }
 
-                // for (int j = 0; j < random_num_of_options; j++) {
+                // for (int j = 0; j < num_of_options; j++) {
                 //     Button upgrade_button = upgrade_buttons[j];
                 //     if (upgrade_button.button_clicked) {
                 //         upgrade_button.applyChanges();
