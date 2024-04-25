@@ -100,9 +100,34 @@ public class Inventory {
     fill(200, 0, 0, 128);
     rect(position.x, position.y, width, height, 5);
     fill(0);
+    textSize(20);
+    textAlign(CENTER);
     text("Inventory", position.x, position.y - 9*height/20);
     for (InvItem item : items) {
       item.draw();
+    }
+    for (InvItem item : items) {
+      if (item.hovered()) {
+        if (item instanceof FireItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "fire");
+          tooltip.draw();
+        }
+        else if (item instanceof ShockItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "shock");
+          tooltip.draw();
+        }
+        else if (item instanceof IceItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "ice");
+          tooltip.draw();
+        }
+        else if (item instanceof GravityItem) {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "gravity");
+          tooltip.draw();
+        } else {
+          Tooltip tooltip = new Tooltip(new PVector(mouseX, mouseY), "regular");
+          tooltip.draw();
+        }
+      }
     }
   }
   

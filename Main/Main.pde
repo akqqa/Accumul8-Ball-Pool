@@ -448,7 +448,6 @@ void render() {
   rect(0, 0, screen_width, screen_height, 5);
   popMatrix();
   table.draw();
-  inventory.draw();
   for (Ball b : balls) {
     b.draw();
   }
@@ -471,6 +470,7 @@ void render() {
   for (Ball b : pocketed) {
     b.draw();
   }
+  inventory.draw();
 }
 
 
