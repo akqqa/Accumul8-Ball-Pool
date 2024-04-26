@@ -40,7 +40,7 @@ public class Tooltip {
             text("Balls hit with this are frozen", mouseX + 10, mouseY + 50);
             text("in place, giving bonus points", mouseX + 10, mouseY + 70);
             text("when hit.", mouseX + 10, mouseY + 90);
-            text("Points: " + shockMultiplier*points_per_ball + " ("+ shockMultiplierMax*points_per_ball+" max)", mouseX+10, mouseY + 120);
+            text("Points: " + frozenMultiplier*points_per_ball + " ("+ frozenMultiplierMax*points_per_ball+" max)", mouseX+10, mouseY + 120);
             text("Freeze Duration: " + freezeDuration + " ("+ freezeDurationMax+" max)", mouseX+10, mouseY + 150);
         } else if (ballType.equals("gravity")) {
             text("Gravity Ball.", mouseX + 10, mouseY + 20);
@@ -48,7 +48,7 @@ public class Tooltip {
             text("ball. When this ball is pocketed", mouseX + 10, mouseY + 70);
             text("it incurs no penalty and", mouseX + 10, mouseY + 90);
             text("attracts nearby balls.", mouseX + 10, mouseY + 110);
-            text("Points: " + shockMultiplier*points_per_ball + " ("+ shockMultiplierMax*points_per_ball+" max)", mouseX+10, mouseY + 140);
+            text("Points: " + gravityMultiplier*points_per_ball + " ("+ gravityMultiplierMax*points_per_ball+" max)", mouseX+10, mouseY + 140);
             text("Radius: " + gravityRadius + " ("+ gravityRadiusMax + " max)", mouseX+10, mouseY + 160);
         }
         rectMode(CENTER);

@@ -98,8 +98,8 @@ float fireMultiplier = 0.25; // Each fire ball worth 2.5 points
 float fireMultiplierIncrement = 0.25;
 float fireMultiplierMax = 1;
 float shockMultiplier = 1; // Each shocked ball worth 10 points
-float shockMultiplierIncrement = 0.5;
-float shockMultiplierMax = 2.5;
+float shockMultiplierIncrement = 0.25;
+float shockMultiplierMax = 1.75;
 float frozenMultiplier = 0.5; // Each frozen ball worth 5 points
 float frozenMultiplierIncrement = 0.5;
 float frozenMultiplierMax = 2;
@@ -111,8 +111,8 @@ final float originalFireRadius = 20;
 float fireRadius = 30;
 float fireRadiusIncrement = 10;
 float fireRadiusMax = 60;
-final float originalShockRadius = 100;
-float shockRadius = 100;
+final float originalShockRadius = 120;
+float shockRadius = 120;
 float freezeRadius = ball_diameter;
 float gravityRadius = 50;
 float gravityRadiusIncrement = 25;
@@ -580,13 +580,17 @@ void updateMovements() {
         animations.add(new PointIcon(b.position.copy(), 60, -10));
       }
     } else {
-      score += points_per_ball;
-      // Display points as icon
-      animations.add(new PointIcon(b.position.copy(), 60, points_per_ball));
-      // Handle shock effect
       if (b.shocked) {
+        score += points_per_ball * shockMultiplier;
+        animations.add(new PointIcon(b.position.copy(), 60, points_per_ball*shockMultiplier));
+        // Handle shock effect
         handleShockChain(b);
+      } else {
+        score += points_per_ball;
+        // Display points as icon
+        animations.add(new PointIcon(b.position.copy(), 60, points_per_ball));
       }
+
     }
   }
 }
