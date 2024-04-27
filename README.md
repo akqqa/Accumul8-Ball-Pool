@@ -25,3 +25,10 @@ Pre-first week: set up basic pool table and ball objects
 First week plan:
 - Johan - player controls, moving cue, dragging for power, releasing to impulse the ball
 - Joe and alex - work on ball phsyics and collisions
+
+
+Notes - todo for alex:
+- aim lines with wall hits
+- proper gravity ball balance
+- sound effects not stacking
+- more sound effects and music
