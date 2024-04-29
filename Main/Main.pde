@@ -48,7 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {20, 40, 60, 90, 110, 130, 160, 180, 200}; //{20, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
 float score = 0;
