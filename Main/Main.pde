@@ -48,7 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {2000, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {20, 40, 60, 90, 120, 150, 190, 230, 270};
 int tableSides = 4;
 
 float score = 0;
@@ -122,6 +122,39 @@ int shockChains = 1;
 int shockChainsIncrement = 1;
 int shockChainsMax = 4;
 
+void resetStats() {
+  fireDuration = 1;
+  shockDuration = 1;
+  freezeDuration = 1;
+  freezeDurationIncrement = 1;
+  freezeDurationMax = 4;
+  fireMultiplier = 0.25; // Each fire ball worth 2.5 points
+  fireMultiplierIncrement = 0.25;
+  fireMultiplierMax = 1;
+  shockMultiplier = 1; // Each shocked ball worth 10 points
+  shockMultiplierIncrement = 0.25;
+  shockMultiplierMax = 1.75;
+  frozenMultiplier = 0.5; // Each frozen ball worth 5 points
+  frozenMultiplierIncrement = 0.5;
+  frozenMultiplierMax = 2;
+  gravityMultiplier = 1; // Each ball pulled into a hole by gravity is worth its default amount to start
+  gravityMultiplierIncrement = 0.5;
+  gravityMultiplierMax = 2.5;
+  // Radius while moving
+  fireRadius = 30;
+  fireRadiusIncrement = 10;
+  fireRadiusMax = 60;
+  shockRadius = 120;
+  freezeRadius = ball_diameter;
+  gravityRadius = 50;
+  gravityRadiusIncrement = 25;
+  gravityRadiusMax = 125;
+  // Chains for shock ball
+  shockChains = 1;
+  shockChainsIncrement = 1;
+  shockChainsMax = 4;
+}
+
 
 //Pocket pocket;
 // sprites
@@ -183,22 +216,14 @@ void reset() {
   flash_count = 0;
   animations = new ArrayList<>();
 
-  fireDuration = 1;
-  shockDuration = 1;
-  shockChains = 4;
-  freezeDuration = 5;
-  fireMultiplier = 0.5;
-  shockMultiplier = 1;
-  frozenMultiplier = 1;
-  fireRadius = 40;
-  shockRadius = 125;
-  freezeRadius = ball_diameter;
+  resetStats();
 
   table_setup(tableSides);
   inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
 }
 
 void setup() {
+    resetStats();
     frameRate(60);
     table_setup(tableSides);
     inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
