@@ -37,7 +37,7 @@ public abstract class PowerBall extends Ball{
       // if not the cue ball and the ball is within powerradius -> attack
       if (b != this && circleCircle(position.x, position.y, powerRadius, b.position.x, b.position.y, b.radius)) {
         applyEffect(b);
-      }
+      } else if (this instanceof GravityBall) b.gravity = false;
     }
   }
   
