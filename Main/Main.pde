@@ -143,7 +143,7 @@ void reset() {
   
   state = 0;
   round_num = 0;
-  roundScores = new int[] {20, 40, 60, 90, 120, 150, 190, 230, 270};
+  //roundScores = new int[] {20, 40, 60, 90, 120, 150, 190, 230, 270};
   tableSides = 4;
   
   score = 0;
@@ -154,6 +154,18 @@ void reset() {
   flash_count = 0;
   animations = new ArrayList<>();
 
+  fireDuration = 1;
+  shockDuration = 1;
+  shockChains = 4;
+  freezeDuration = 5;
+  fireMultiplier = 0.5;
+  shockMultiplier = 1;
+  frozenMultiplier = 1;
+  fireRadius = 40;
+  shockRadius = 125;
+  freezeRadius = ball_diameter;
+
+  table_setup(tableSides);
   inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
 }
 
