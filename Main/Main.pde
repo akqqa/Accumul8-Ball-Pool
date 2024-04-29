@@ -48,7 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {20, 40, 60, 90, 110, 130, 160, 180, 200}; //{20, 40, 60, 90, 120, 150, 190, 230, 270};
+int[] roundScores = {20, 40, 60, 80, 110, 130, 170, 190, 210}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
 int tableSides = 4;
 
 float score = 0;
@@ -88,39 +88,40 @@ InvItem currentSelectedItem = null;
 // Fire = radius and points, Shock = chains and points, Ice = duration and points, gravity = radius + points
 // TODO - make uneditable ones final
 // Duration of effect (shots)
-int fireDuration = 1;
-int shockDuration = 1;
-int freezeDuration = 1;
-int freezeDurationIncrement = 1;
-int freezeDurationMax = 4;
+int fireDuration;
+int shockDuration;
+int freezeDuration;
+int freezeDurationIncrement;
+int freezeDurationMax;
 // Multiplier (each ball is worth a default of 10)
-float fireMultiplier = 0.25; // Each fire ball worth 2.5 points
-float fireMultiplierIncrement = 0.25;
-float fireMultiplierMax = 1;
-float shockMultiplier = 1; // Each shocked ball worth 10 points
-float shockMultiplierIncrement = 0.25;
-float shockMultiplierMax = 1.75;
-float frozenMultiplier = 0.5; // Each frozen ball worth 5 points
-float frozenMultiplierIncrement = 0.5;
-float frozenMultiplierMax = 2;
-float gravityMultiplier = 1; // Each ball pulled into a hole by gravity is worth its default amount to start
-float gravityMultiplierIncrement = 0.5;
-float gravityMultiplierMax = 2.5;
+float fireMultiplier; // Each fire ball worth 2.5 points
+float fireMultiplierIncrement;
+float fireMultiplierMax;
+float shockMultiplier; // Each shocked ball worth 10 points
+float shockMultiplierIncrement;
+float shockMultiplierMax;
+// Potentially nerf so increments of 3?
+float frozenMultiplier; // Each frozen ball worth 5 points
+float frozenMultiplierIncrement;
+float frozenMultiplierMax;
+float gravityMultiplier; // Each ball pulled into a hole by gravity is worth its default amount to start
+float gravityMultiplierIncrement;
+float gravityMultiplierMax;
 // Radius while moving
 final float originalFireRadius = 20;
-float fireRadius = 30;
-float fireRadiusIncrement = 10;
-float fireRadiusMax = 60;
+float fireRadius;
+float fireRadiusIncrement;
+float fireRadiusMax;
 final float originalShockRadius = 120;
-float shockRadius = 120;
+float shockRadius;
 float freezeRadius = ball_diameter;
-float gravityRadius = 50;
-float gravityRadiusIncrement = 25;
-float gravityRadiusMax = 125;
+float gravityRadius;
+float gravityRadiusIncrement;
+float gravityRadiusMax;
 // Chains for shock ball
-int shockChains = 1;
-int shockChainsIncrement = 1;
-int shockChainsMax = 4;
+int shockChains;
+int shockChainsIncrement;
+int shockChainsMax;
 
 void resetStats() {
   fireDuration = 1;
@@ -134,9 +135,9 @@ void resetStats() {
   shockMultiplier = 1; // Each shocked ball worth 10 points
   shockMultiplierIncrement = 0.25;
   shockMultiplierMax = 1.75;
-  frozenMultiplier = 0.5; // Each frozen ball worth 5 points
-  frozenMultiplierIncrement = 0.5;
-  frozenMultiplierMax = 2;
+  frozenMultiplier = 0.4; // Each frozen ball worth 4 points
+  frozenMultiplierIncrement = 0.4;
+  frozenMultiplierMax = 1.6;
   gravityMultiplier = 1; // Each ball pulled into a hole by gravity is worth its default amount to start
   gravityMultiplierIncrement = 0.5;
   gravityMultiplierMax = 2.5;
@@ -146,9 +147,9 @@ void resetStats() {
   fireRadiusMax = 60;
   shockRadius = 120;
   freezeRadius = ball_diameter;
-  gravityRadius = 50;
-  gravityRadiusIncrement = 25;
-  gravityRadiusMax = 125;
+  gravityRadius = 60;
+  gravityRadiusIncrement = 20;
+  gravityRadiusMax = 120;
   // Chains for shock ball
   shockChains = 1;
   shockChainsIncrement = 1;
