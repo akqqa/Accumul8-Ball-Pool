@@ -519,7 +519,8 @@ void updateMovements() {
         animations.add(new PointIcon(b.position.copy(), 60, -10));
       }
     } else {
-      score += points_per_ball;
+      if (cue_ball instanceof GravityBall) score += points_per_ball * gravityMultiplier;
+      else score += points_per_ball;
       // Display points as icon
       animations.add(new PointIcon(b.position.copy(), 60, points_per_ball));
       // Handle shock effect
