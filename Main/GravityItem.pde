@@ -1,6 +1,6 @@
 public class GravityItem extends InvItem {
 
-    public float effectRadius = 200;
+    public float effectRadius = 100;
     public boolean travelling = true;
     public boolean impact = false;
     public float diameter = ball_diameter;

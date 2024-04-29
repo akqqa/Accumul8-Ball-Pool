@@ -128,6 +128,10 @@ public class Ball {
         imageMode(CENTER);
         image(frost, position.x, position.y, radius*1.5, radius * 1.75);
       }
+      else if (gravity) {
+        imageMode(CENTER);
+        image(grav_arrow, position.x, position.y-diameter*0.0625, radius*1.5, radius * 1.5);
+      }
       
       
     }

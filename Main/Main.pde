@@ -128,6 +128,7 @@ int shockChainsMax = 4;
 PImage flame;
 PImage bolt;
 PImage frost;
+PImage grav_arrow;
 
 public boolean endChecksDone = false;
 public boolean firstFrameOfShot = false;
@@ -205,6 +206,7 @@ void setup() {
     flame = loadImage("flame.png");
     bolt = loadImage("bolt.png");
     frost = loadImage("frost.png");
+    grav_arrow = loadImage("gravity.png");
 
     // Minim
     minim = new Minim(this);
@@ -434,6 +436,12 @@ void handleEndOfRoundEffects() {
         b.effectDuration -= 1;
         if (b.effectDuration <= 0) {
           b.thaw();
+        }
+      }
+      if (b.gravity) {
+        b.effectDuration -= 1;
+        if (b.effectDuration <= 0) {
+          b.gravity = false;
         }
       }
     }
