@@ -2,7 +2,7 @@ public class Button {
     protected PVector position;
     protected float button_width;
     protected float button_height;
-    protected int button_amount;
+    protected float button_amount;
     protected String button_element;
     protected String button_type;
     protected String button_text;
@@ -12,7 +12,7 @@ public class Button {
     protected int startTime = 0;
 
     // button constructor, taking in x, y coordinates, width, height, amount (for upgrade or ball addition), element, type(points, radius, upgrade or confirmation)
-    public Button (float _x, float _y, float _width, float _height, int _amount, String _element, String _type/* , int _r, int _g, int _b */) {
+    public Button (float _x, float _y, float _width, float _height, float _amount, String _element, String _type/* , int _r, int _g, int _b */) {
         this.position = new PVector(_x, _y);
         this.button_width = _width;
         this.button_height = _height;
@@ -22,7 +22,7 @@ public class Button {
         // this.button_color = color(_r, _g, _b);
 
         // check the type of the button and set the text accoerdingly
-        if (this.button_type.equals("points") || this.button_type.equals("radius")) {
+        if (this.button_type.equals("points") || this.button_type.equals("radius") ) {
             // type for upgrade
             this.button_text = "+" + button_amount + "% " + this.button_element + " " + this.button_type;
         } else if (this.button_type.equals("ball")) {
@@ -41,6 +41,11 @@ public class Button {
 
         this.button_clicked = false;
         this.button_over = false;
+    }
+
+    // Manually set text of button from outside
+    public void setText(String text) {
+        this.button_text = text;
     }
 
     // update function checks if the cursor is over the button and if the user clicks
@@ -97,62 +102,50 @@ public class Button {
         if (this.button_type.equals("points")) {
             // points upgrade (nf is used for correcting to 2 decimal places)
             if (this.button_element.equals("electricity")) {
-                // electricity points * 1.xx
-                shockMultiplier = shockMultiplier + (this.button_amount/100.0);
-                //print(shockMultiplier);
-                electricity_points = float(nf(electricity_points, 0, 2));
-                
-                //println("electricity_points: "+electricity_points);
-              
+                shockMultiplier = shockMultiplier + (this.button_amount);
+                println("shockMultiplier:" + shockMultiplier);
                 return;
             } else if (this.button_element.equals("fire")) {
                 // fire points * 1.xx
-                fireMultiplier = fireMultiplier + (this.button_amount/ 100.0);
-                fire_points = float(nf(fire_points, 0, 2));
-                //println("fire_points: "+fire_points);
+                fireMultiplier = fireMultiplier + (this.button_amount);
+                println("fireMultiplier: "+fireMultiplier);
                 return;
             } else if (this.button_element.equals("ice")) {
                 // ice points * 1.xx
-                frozenMultiplier = frozenMultiplier + (this.button_amount/100.0);
-                ice_points = float(nf(ice_points, 0, 2));
-                //println("ice_points: "+ice_points);
+                frozenMultiplier = frozenMultiplier + (this.button_amount);
+                println("frozenMultiplier: "+frozenMultiplier);
+                return;
+            } else if (this.button_element.equals("gravity")) {
+                // gravity points * 1.xx
+                gravityMultiplier = gravityMultiplier + (this.button_amount);
+                println("gravityMultipler: "+gravityMultiplier);
                 return;
             }
-            // } else if (this.button_element.equals("gravity")) {
-            //     // gravity points * 1.xx
-            //     gravity_points = gravity_points * (1 + this.button_amount/100.0);
-            //     gravity_points = float(nf(gravity_points, 0, 2));
-            //     println("gravity_points: "+gravity_points);
-            //     return;
-            // }
         } else if (this.button_type.equals("radius")) {
             // radius upgrade
-            if (this.button_element.equals("electricity")) {
-                // electricity radius * 1.xx
-                shockRadius = shockRadius + (originalShockRadius * (button_amount/100.0));
-                electricity_radius = float(nf(electricity_radius, 0, 2));
-                //println("electricity_radius: "+electricity_radius);
-                return;
-            } else if (this.button_element.equals("fire")) {
+            if (this.button_element.equals("fire")) {
                 // fire radius * 1.xx
-                fireRadius = fireRadius + (originalFireRadius * (button_amount/100.0));
-                fire_radius = float(nf(fire_radius, 0, 2));
-                //println("fire_radius: "+fire_radius);
+                fireRadius = fireRadius + this.button_amount;
+                println("fireRadius: "+fireRadius);
+                return;
+            } else if (this.button_element.equals("gravity")) {
+                // gravity radius * 1.xx
+                gravityRadius = gravityRadius + this.button_amount;
+                println("gravityRadius: "+gravityRadius);
                 return;
             }
-            // } else if (this.button_element.equals("ice")) {
-            //     // ice radius * 1.xx
-            //     ice_radius = ice_radius * (1 + button_amount/100.0);
-            //     ice_radius = float(nf(ice_radius, 0, 2));
-            //     println("ice_radius: "+ice_radius);
-            //     return;
-              else if (this.button_element.equals("gravity")) {
-                 // gravity radius * 1.xx
-                 gravity_radius = gravity_radius * (1 + button_amount/100.0);
-                 gravity_radius = float(nf(gravity_radius, 0, 2));
-                 println("gravity_radius: "+gravity_radius);
-                 return;
-             }
+        } else if (this.button_type.equals("chains")) {
+            if (this.button_element.equals("electricity")) {
+                shockChains = shockChains + (int) this.button_amount;
+                println("shockChains: "+shockChains);
+                return;
+            }
+        } else if (this.button_type.equals("duration")) {
+            if (this.button_element.equals("ice")) {
+                freezeDuration = freezeDuration + (int) this.button_amount;
+                println("freezeDuration: "+freezeDuration);
+                return;
+            }
         } else if (this.button_type.equals("ball")) {
             // add ball
             if (this.button_element.equals("electricity")) {
