@@ -281,8 +281,8 @@ void draw() {
     else if (start_menu) renderStart();
     else {
       renderHUD();
-      render();
       updateMovements();
+      render();
       firstFrameOfShot = false;
     }
     //if (cue_ball_potted && nextTurn()) resetCueBall();
