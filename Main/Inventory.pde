@@ -36,13 +36,12 @@ public class Inventory {
     addItem("gravity", 0);
     //items.get(4).unlock();
     numBalls ++;
-    addItem("yellow", 0);
   }
   
   // add a ball to the inventory
   private void addItem(String colour, int count) {
     float y1 = calcHeight();
-    Ball ball = new Ball(position.x, y1, ball_diameter*2, cue_ball_mass, colour);
+    Ball ball = new Ball(position.x, y1, ball_diameter*2.5, cue_ball_mass, colour);
     if (colour.equals("fire")) {
       items.add(new FireItem(position.x, y1, ball, count));
     } else if (colour.equals("shock")) {
@@ -93,7 +92,7 @@ public class Inventory {
   // calculate the y location an inventory item should display at based on the number of balls already stored
   // fills top down
   public float calcHeight() {
-    return position.y - (10-(numBalls*3))*height/20;
+    return position.y - (9-(numBalls*3))*height/17;
   }
   
   public void draw() {
