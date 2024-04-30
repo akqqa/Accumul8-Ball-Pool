@@ -48,6 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
+// Potentially decrease to 20, 35, 50, 80, 110, 130, 160, 185, 210
 int[] roundScores = {20, 40, 60, 80, 110, 130, 170, 190, 210}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
 int tableSides = 4;
 
