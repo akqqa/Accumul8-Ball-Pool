@@ -591,7 +591,7 @@ void updateMovements() {
         // Handle shock effect
         handleShockChain(b);
       } else {
-        if (cue_ball instanceof GravityBall) {
+        if (b.gravity) {
           score += points_per_ball * gravityMultiplier;
           animations.add(new PointIcon(b.position.copy(), 60, points_per_ball * gravityMultiplier));
         }
