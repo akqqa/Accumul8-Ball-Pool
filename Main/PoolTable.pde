@@ -80,7 +80,7 @@ final class PoolTable {
         pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
         // lines
         if (count++ % 2 == 1)
-          pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+          pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter*1.2));
       } else if (sides < 7) {
         pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
       } else {
@@ -96,7 +96,7 @@ final class PoolTable {
           if ((((count - (3 + (sides/3)*pocket_num) == 0) && pocket_num < 3) ||
                 ((count - (sides + 1 + (sides/3)*(pocket_num-2)) == 0) && pocket_num > 2)) && count < sides*2) {
             println(count, (sides + 1 + (sides/3)*(pocket_num-2)));
-            pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
+            pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter*1.2));
             pocket_num ++;
           }
           count ++; 
