@@ -12,7 +12,8 @@ public class PointIcon extends Animation {
         if (value < 0) {
             pointLoss.trigger();
         } else {
-            pointGain.trigger();
+            pointGain.rewind();
+            pointGain.play();
         }
     }
 

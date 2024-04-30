@@ -237,7 +237,8 @@ public class Ball {
         if (distanceVectMag < minDistance) {
           //circle(this.position.x, this.position.y, 25);
         
-          ballHit.trigger();
+          ballHit.rewind();
+          ballHit.play();
             
           //If this ball is frozen, and soemthing hits it, add points and handle accordingly
           if (frozen && !powerBall) {

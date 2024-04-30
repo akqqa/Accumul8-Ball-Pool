@@ -9,7 +9,7 @@ final class PoolTable {
   protected ArrayList<Pocket> pockets = new ArrayList<Pocket>();
   protected PShape shape;
   protected PShape boundary;
-  protected float elasticity = 0.5;
+  public float elasticity = 0.5;
   
   public PoolTable(int sides, float scale, PVector position, float maxX) {
     this.sides = sides;

@@ -174,9 +174,13 @@ AudioSample ballHit;
 AudioSample fireSelect;
 AudioSample shockSelect;
 AudioSample iceSelect;
+AudioSample gravitySelect;
 AudioSample wallHit;
-AudioSample pointGain;
+AudioPlayer pointGain; // Audioplayer as otherwise it stacks samples on simultaneous gains and gets too loud!!
 AudioSample pointLoss;
+AudioSample cueHit;
+AudioSample gameOver;
+AudioSample gameWin;
 
 // Font
 PFont font;
@@ -241,9 +245,13 @@ void setup() {
     fireSelect = minim.loadSample("data/sfx/fireSelect.mp3");
     shockSelect = minim.loadSample("data/sfx/shockSelect.mp3");
     iceSelect = minim.loadSample("data/sfx/iceSelect.mp3");
+    gravitySelect = minim.loadSample("data/sfx/gravitySelect.mp3");
     wallHit = minim.loadSample("data/sfx/wallHit.mp3");
-    pointGain = minim.loadSample("data/sfx/pointGain.mp3");
+    pointGain = minim.loadFile("data/sfx/pointGain.mp3");
     pointLoss = minim.loadSample("data/sfx/pointLoss.wav");
+    cueHit = minim.loadSample("data/sfx/cueHit3.mp3");
+    gameOver = minim.loadSample("data/sfx/gameOver.mp3");
+    gameWin = minim.loadSample("data/sfx/gameWin.mp3");
     
     menu_table = new PoolTable(4, table_rad_4*1.9, new PVector(screen_height/2,screen_width/2), 321);
     font = createFont("joystix monospace.otf", 20);
@@ -319,6 +327,7 @@ void endOfRound() {
   // Game over
   if (inventory.getBallCount() == 0 && score < points_needed) {
     finished = true;
+    gameOver.trigger();
   }
   
   // Proceed to next round
@@ -328,6 +337,7 @@ void endOfRound() {
     else {
       finished = true;
       win = true;
+      gameWin.trigger();
     }
   } 
   // Game over if 0 non-cue balls are left
@@ -392,6 +402,7 @@ void switchCueBalls() {
     balls.remove(cue_ball);
     cue_ball = new GravityBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, gravityRadius, sel.travelling, sel.impact);
     balls.add(cue_ball);
+    gravitySelect.trigger();
   } else {
     balls.remove(cue_ball);
     cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, cue_ball_mass, inventory.selected.ball.colourString);
@@ -754,6 +765,7 @@ void mousePressed() {
 void mouseReleased() {
   // only apply resultant when cue is active
   if (cue.getActive() && cue_drag && cue.getResultant().mag() != 0) { // && !inventory.mouseInInventory()) {
+    cueHit.trigger();
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());

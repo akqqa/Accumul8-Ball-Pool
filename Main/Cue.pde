@@ -151,6 +151,7 @@ public class Cue {
         // Project a ball forwards every pixel, and find the first ball that hits another
         PVector collidingPosition = null;
         Ball collidingBall = null;
+        Line collidingLine = null;
         for (int i = 0; i < 700; i++) {
             PVector coordinates = new PVector(cueBallVector.x + cos(direction + PI) * i, cueBallVector.y + sin(direction + PI) * i);
             for (Ball b : balls) {
@@ -164,21 +165,17 @@ public class Cue {
             if (collidingBall != null) {
                 break;
             }
+            // Check table walls also
+            for (Line l : table.lines) {
+                if (lineCircle(l.start.x, l.start.y, l.end.x, l.end.y, coordinates.x, coordinates.y, cue_ball.radius)) {
+                    collidingLine = l;
+                    collidingPosition = coordinates;
+                }
+            }
+            if (collidingLine != null) {
+                break;
+            }
         }
-        // // Check to see if any balls are colliding with the line:
-        // Ball collidingBall = null;
-        // float collidingDistance = 999999;
-        // for (Ball b : balls) {
-        //     if (b != cue_ball){
-        //         if (lineCircle(cueBallVector.x, cueBallVector.y, lineEndX, lineEndY, b.position.x, b.position.y, b.radius + cue_ball.radius)) {
-        //             float distance = dist(cueBallVector.x, cueBallVector.y, b.position.x, b.position.y);
-        //             if (distance < collidingDistance) {
-        //                 collidingBall = b;
-        //                 collidingDistance = distance;
-        //             }
-        //         }
-        //     }
-        // }
         // Calculate angles of collision between the two balls - perfect elastic collision
         if (collidingBall != null) {
             line(cue_ball.position.x, cue_ball.position.y, collidingPosition.x, collidingPosition.y);
@@ -196,12 +193,26 @@ public class Cue {
             cueCopy.velocity.setMag(100);
             otherCopy.velocity.setMag(100);
 
-            //println(cueCopy.position.x + (cueCopy.velocity.x*5000));
-            //println(cueCopy.position.y + (cueCopy.velocity.y*5000));
             line(cueCopy.position.x, cueCopy.position.y, cueCopy.position.x + (cueCopy.velocity.x), cueCopy.position.y + (cueCopy.velocity.y));
             line(otherCopy.position.x, otherCopy.position.y, otherCopy.position.x + (otherCopy.velocity.x), otherCopy.position.y + (otherCopy.velocity.y));
-            //circle(cueCopy.velocity.x*5000, cueCopy.velocity.y*5000, 5000);
-            //circle(cueCopy.position.x, cueCopy.position.y, 5);
+        } else if (collidingLine != null) {
+            line(cue_ball.position.x, cue_ball.position.y, collidingPosition.x, collidingPosition.y);
+            fill(255, 128);
+            circle(collidingPosition.x, collidingPosition.y, cue_ball.diameter);
+            PVector normalVector = new PVector((collidingLine.end.y-collidingLine.start.y), -(collidingLine.end.x-collidingLine.start.x));
+            // Calculate components of balls velocity perpendicular and parallel to the line colliding with
+            // https://stackoverflow.com/a/573206
+            Ball cueCopy = new Ball(collidingPosition.x, collidingPosition.y, cue_ball.diameter, cue_ball.mass, "red");
+            // Give cue ball a velocity in the direction of its movement.
+            cueCopy.velocity = PVector.fromAngle(direction + PI);
+            cueCopy.velocity.setMag(100);
+            PVector u = normalVector.mult((cueCopy.velocity.copy().dot(normalVector) / normalVector.dot(normalVector)));
+            PVector w = cueCopy.velocity.copy().sub(u);
+
+            PVector newVelocity = w.sub(u.mult(table.elasticity));
+            cueCopy.velocity.setMag(100);
+            cueCopy.velocity = newVelocity.copy();
+            line(cueCopy.position.x, cueCopy.position.y, cueCopy.position.x + (cueCopy.velocity.x), cueCopy.position.y + (cueCopy.velocity.y));
         }
         
     }
