@@ -16,7 +16,7 @@ public class Menu {
     
     
     // instruction message
-    String menu_message = "Please select 1 upgrade AND\n1 ball to add into inventory\nthat you like\nskip if there is nothing\nsuitable";
+    String menu_message = "Please select 1 upgrade\nAND 1 ball that you like\nto add into inventory\nskip if there is nothing\nsuitable";
     public Menu (float _x, float _y, float _width, float _height) {
         position = new PVector(_x, _y);
         this.menu_width = _width;
@@ -74,9 +74,9 @@ public class Menu {
             // constructor Button (float _x, float _y, float _width, float _height, int _amount, String _element, String _type, int r, int g, int b)
             Button button;
             if (chosenUpgrade == null) {
-                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, 0, "", ""/* , 30, 0, 20 */);
+                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width * 0.9, 30, 0, "", ""/* , 30, 0, 20 */);
             } else {
-                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, (float) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
+                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width * 0.9, 30, (float) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
                 button.setText((String) chosenUpgrade[3]);
             }
             // add the button into array
@@ -89,7 +89,7 @@ public class Menu {
 
         // reset last upgrade position if all upgrades are null
         if (checkAllButtonNull(upgrade_buttons)) {
-            menu_message = "Please select a ball\nto add into inventory\nthat you like or skip";
+            menu_message = "Please select a ball\nthat you like to add into\ninventory or skip";
             last_upgrade_position_y = screen_height * 0.3;
         }
 
@@ -111,9 +111,9 @@ public class Menu {
                 }
                 
             }
-            Button button = new Button(screen_width*0.85, (last_upgrade_position_y + (k + 2) * 50), this.menu_width * 0.8, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
+            Button button = new Button(screen_width*0.85, (last_upgrade_position_y + (k + 2) * 50), this.menu_width * 0.9, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
             if (checkAllButtonNull(upgrade_buttons)) {
-                button = new Button(screen_width*0.85, (last_upgrade_position_y + k * 50), this.menu_width * 0.8, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
+                button = new Button(screen_width*0.85, (last_upgrade_position_y + k * 50), this.menu_width * 0.9, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
             }
             // add the button to ball buttons array
             ball_buttons[k] = button;
@@ -121,8 +121,8 @@ public class Menu {
         }
 
         // create the confirmation button for the upgrades and ball addition
-        confirmation_button = new Button(screen_width*0.85, last_ball_position_y + 50, this.menu_width * 0.8, 30, 0, "", "confirmation"/* , 0, 0, 150 */);
-        skip_button = new Button(screen_width*0.85, last_ball_position_y + 2 * 50, this.menu_width * 0.8, 30, 0, "", "skip"/* , 0, 0, 150 */);
+        confirmation_button = new Button(screen_width*0.85, last_ball_position_y + 50, this.menu_width * 0.9, 30, 0, "", "confirmation"/* , 0, 0, 150 */);
+        skip_button = new Button(screen_width*0.85, last_ball_position_y + 2 * 50, this.menu_width * 0.9, 30, 0, "", "skip"/* , 0, 0, 150 */);
     }
 
     // displaying the menu with the buttons in different parts

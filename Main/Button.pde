@@ -51,7 +51,7 @@ public class Button {
     // update function checks if the cursor is over the button and if the user clicks
     public void update() {
         if (mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - 10/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 -10/* /2-1) */ &&
-            mouseY >= this.position.copy().y - /* round( */this.button_height/2 + 15/* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/* /2-1) */) {
+            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 /* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 - 5/* /2-1) */) {
             // cursor is inside the button
             this.button_over = true;
         } else {
