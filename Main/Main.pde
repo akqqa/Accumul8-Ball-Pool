@@ -508,7 +508,7 @@ void render() {
   // adjusting the rectangle position
   pushMatrix();
   translate(screen_width/2, screen_height/2);
-  fill(255);
+  fill(196, 245, 174);
   strokeWeight(5);
   stroke(200, 0, 0);
   rect(0, 0, screen_width, screen_height, 5);
