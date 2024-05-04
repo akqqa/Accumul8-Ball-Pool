@@ -95,7 +95,7 @@ public class Cue {
     // display translate and rotate the cue according to user's cursor
     public void display() {
         pushMatrix();
-        translate(position.x, position.y);
+        translate(position.copy().x, position.copy().y);
         rotate(angle);
         fill(139, 69, 19);
         rectMode(CENTER);
@@ -119,7 +119,7 @@ public class Cue {
 
     // get the position of the cue
     public PVector getPosition() {
-        return this.position;
+        return this.position.copy();
     }
 
     // get the resultant when mouse release
@@ -155,7 +155,7 @@ public class Cue {
             PVector coordinates = new PVector(cueBallVector.x + cos(direction + PI) * i, cueBallVector.y + sin(direction + PI) * i);
             for (Ball b : balls) {
                 if (b != cue_ball) {
-                    if (dist(b.position.x, b.position.y, coordinates.x, coordinates.y) < b.radius+cue_ball.radius) {
+                    if (dist(b.position.copy().x, b.position.copy().y, coordinates.x, coordinates.y) < b.radius+cue_ball.radius) {
                         collidingBall = b;
                         collidingPosition = coordinates;
                     }
@@ -181,13 +181,13 @@ public class Cue {
         // }
         // Calculate angles of collision between the two balls - perfect elastic collision
         if (collidingBall != null) {
-            line(cue_ball.position.x, cue_ball.position.y, collidingPosition.x, collidingPosition.y);
+            line(cue_ball.position.copy().x, cue_ball.position.copy().y, collidingPosition.copy().x, collidingPosition.copy().y);
             fill(255, 128);
-            circle(collidingPosition.x, collidingPosition.y, cue_ball.diameter);
+            circle(collidingPosition.copy().x, collidingPosition.copy().y, cue_ball.diameter);
             // Gets vector between point on line and this ball. When added to the collidingBalls position, gives the position of the cue ball in the future when it hits the ball
             //line(collidingBall.position.x, collidingBall.position.y, collidingBall.position.x + distanceVect.x, collidingBall.position.y + distanceVect.y);
-            Ball cueCopy = new Ball(collidingPosition.x, collidingPosition.y, cue_ball.diameter, cue_ball.mass, "red");
-            Ball otherCopy = new Ball(collidingBall.position.x, collidingBall.position.y, collidingBall.diameter, collidingBall.mass, "red");
+            Ball cueCopy = new Ball(collidingPosition.copy().x, collidingPosition.copy().y, cue_ball.diameter, cue_ball.mass, "red");
+            Ball otherCopy = new Ball(collidingBall.position.copy().x, collidingBall.position.copy().y, collidingBall.diameter, collidingBall.mass, "red");
             // Give cue ball a velocity in the direction of its movement.
             cueCopy.velocity = PVector.fromAngle(direction + PI);
             cueCopy.velocity.setMag(100);
@@ -198,8 +198,8 @@ public class Cue {
 
             //println(cueCopy.position.x + (cueCopy.velocity.x*5000));
             //println(cueCopy.position.y + (cueCopy.velocity.y*5000));
-            line(cueCopy.position.x, cueCopy.position.y, cueCopy.position.x + (cueCopy.velocity.x), cueCopy.position.y + (cueCopy.velocity.y));
-            line(otherCopy.position.x, otherCopy.position.y, otherCopy.position.x + (otherCopy.velocity.x), otherCopy.position.y + (otherCopy.velocity.y));
+            line(cueCopy.position.copy().x, cueCopy.position.copy().y, cueCopy.position.copy().x + (cueCopy.velocity.copy().x), cueCopy.position.copy().y + (cueCopy.velocity.copy().y));
+            line(otherCopy.position.copy().x, otherCopy.position.copy().y, otherCopy.position.copy().x + (otherCopy.velocity.copy().x), otherCopy.position.copy().y + (otherCopy.velocity.copy().y));
             //circle(cueCopy.velocity.x*5000, cueCopy.velocity.y*5000, 5000);
             //circle(cueCopy.position.x, cueCopy.position.y, 5);
         }
