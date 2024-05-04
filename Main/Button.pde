@@ -149,6 +149,8 @@ public class Button {
         // strokeWeight(30);  // Thicker
         // point(position.copy().x, position.copy().y);
         // strokeWeight(1);
+        strokeWeight(1);
+        stroke(0);
     }
 
     // add the number of balls/ upgrade percentage to the respective fields
