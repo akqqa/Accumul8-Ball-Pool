@@ -96,7 +96,7 @@ public class Inventory {
   }
   
   public void draw() {
-    fill(200, 0, 0, 128);
+    fill(255, 0, 0, 150);
     rect(position.x, position.y, width, height, 5);
     fill(0);
     textSize(20);

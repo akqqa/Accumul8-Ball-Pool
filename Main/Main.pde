@@ -135,9 +135,9 @@ void resetStats() {
   shockMultiplier = 1; // Each shocked ball worth 10 points
   shockMultiplierIncrement = 0.25;
   shockMultiplierMax = 1.75;
-  frozenMultiplier = 0.4; // Each frozen ball worth 4 points
-  frozenMultiplierIncrement = 0.4;
-  frozenMultiplierMax = 1.6;
+  frozenMultiplier = 0.3; // Each frozen ball worth 4 points
+  frozenMultiplierIncrement = 0.3;
+  frozenMultiplierMax = 1.2;
   gravityMultiplier = 1; // Each ball pulled into a hole by gravity is worth its default amount to start
   gravityMultiplierIncrement = 0.5;
   gravityMultiplierMax = 2.5;

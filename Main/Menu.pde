@@ -130,7 +130,7 @@ public class Menu {
     public void display() {
         // the rectangle surrounding the whole menu
         rectMode(CENTER);
-        fill(255);
+        fill(0, 0, 255, 128);
         rect(this.position.copy().x, this.position.copy().y, this.menu_width, this.menu_height);
         textAlign(CENTER, CENTER);
         

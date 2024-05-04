@@ -169,7 +169,7 @@ public class Cue {
         // Calculate angles of collision between the two balls - perfect elastic collision
         if (collidingBall != null) {
             line(cue_ball.position.copy().x, cue_ball.position.copy().y, collidingPosition.copy().x, collidingPosition.copy().y);
-            fill(255, 128);
+            fill(255, 0);
             circle(collidingPosition.copy().x, collidingPosition.copy().y, cue_ball.diameter);
             // Gets vector between point on line and this ball. When added to the collidingBalls position, gives the position of the cue ball in the future when it hits the ball
             //line(collidingBall.position.x, collidingBall.position.y, collidingBall.position.x + distanceVect.x, collidingBall.position.y + distanceVect.y);

@@ -109,15 +109,27 @@ public class Button {
         rectMode(CENTER);
         if (this.button_over) {
             // inside the button
-            fill(153);
+            if (button_type.equals("confirmation")) {
+                fill(126, 244, 70);
+            } else if (button_type.equals("skip")) {
+                fill(255,0,0,200);
+            } else {
+                fill(0,0,255,100);
+            }
         } else {
             // outside the button
-            fill(255);
+            if (button_type.equals("confirmation")) {
+                fill(169, 244, 134);
+            } else if (button_type.equals("skip")) {
+                fill(255,0,0,150);
+            } else {
+                fill(158,172,229);
+            }
         }
 
         if (this.button_clicked) {
             // mouse clicked this button, blue stroke will be shown around the button
-            stroke(0, 0, 255);
+            stroke(0,0,255);
             strokeWeight(10);
         } else {
             // mouse did not clicked this button, normal black stroke surrounding the button
