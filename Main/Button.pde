@@ -10,6 +10,8 @@ public class Button {
     protected boolean button_clicked;
     protected boolean button_over;
     protected int startTime = 0;
+    protected int xAdjustmentLeft = 7;
+    protected int xAdjustmentRight = 12;
 
     // button constructor, taking in x, y coordinates, width, height, amount (for upgrade or ball addition), element, type(points, radius, upgrade or confirmation)
     public Button (float _x, float _y, float _width, float _height, float _amount, String _element, String _type/* , int _r, int _g, int _b */) {
@@ -49,8 +51,34 @@ public class Button {
     }
 
     // update function checks if the cursor is over the button and if the user clicks
-    public void update() {
-        if (mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - 10/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 -10/* /2-1) */ &&
+    public void update(int index) {
+        if ((this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("duration")) && (index == 0) &&
+            mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
+            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + 20 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + 20/* /2-1) */)) {
+            // background(125);
+            this.button_over = true;
+        } else if ((this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("duration")) && (index == 1) &&
+            mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
+            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + 20 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + 18/* /2-1) */)) {
+            // background(0);
+            this.button_over = true;
+        } else if ((this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("duration")) && (index == 2) &&
+            mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
+            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + 17 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + 15/* /2-1) */)) {
+            // background(125);
+            this.button_over = true;
+        } else if (this.button_type.equals("ball") && (index == 0) &&
+            mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
+            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 + 10/* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 + 7/* /2-1) */) {
+            
+            this.button_over = true;
+        } else if (this.button_type.equals("ball") && (index != 0) &&
+            mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
+            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 + 5/* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 + 2/* /2-1) */) {
+            
+            this.button_over = true;
+        } else if (!(this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("ball") || this.button_type.equals("duration")) &&
+            mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
             mouseY >= this.position.copy().y - /* round( */ this.button_height/2 /* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 - 5/* /2-1) */) {
             // cursor is inside the button
             this.button_over = true;
@@ -94,6 +122,10 @@ public class Button {
         textAlign(CENTER, CENTER);
         textSize(13);
         text(this.button_text, this.position.copy().x, this.position.copy().y);
+
+        // strokeWeight(30);  // Thicker
+        // point(position.copy().x, position.copy().y);
+        // strokeWeight(1);
     }
 
     // add the number of balls/ upgrade percentage to the respective fields
