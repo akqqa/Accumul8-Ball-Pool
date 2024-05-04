@@ -17,7 +17,7 @@ public class Menu {
     
     
     // instruction message
-    String menu_message = "Please select 1 upgrade\nAND 1 ball that you like\nto add into inventory\nskip if there is nothing\nsuitable";
+    String menu_message = "Please select\n 1 upgrade and 1 ball\n to add to inventory";
     public Menu (float _x, float _y, float _width, float _height) {
         position = new PVector(_x, _y);
         this.menu_width = _width;
@@ -26,7 +26,7 @@ public class Menu {
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
         Object[] arr;
         if (fireMultiplier < fireMultiplierMax) {
-            arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + "fire points"};
+            arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + " fire points"};
             possibleUpgrades.add(arr);
         }
         if (fireRadius < fireRadiusMax) {
@@ -34,23 +34,23 @@ public class Menu {
             possibleUpgrades.add(arr);
         }
         if (shockMultiplier < shockMultiplierMax) {
-            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + "shock points"};
+            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + " shock points"};
             possibleUpgrades.add(arr);
         }
         if (shockChains < shockChainsMax) {
-            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChains) + "shock chain"};
+            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChainsIncrement) + " shock chain"};
             possibleUpgrades.add(arr);
         }
         if (frozenMultiplier < frozenMultiplierMax) {
-            arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + "freeze points"};
+            arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + " freeze points"};
             possibleUpgrades.add(arr);
         }
         if (freezeDuration < freezeDurationMax) {
-            arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + "shots balls stay frozen"};
+            arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + " freeze duration"};
             possibleUpgrades.add(arr);
         }
         if (gravityMultiplier < gravityMultiplierMax) {
-            arr = new Object[]{gravityMultiplierIncrement, "gravity", "points", "+" + str(gravityMultiplierIncrement*points_per_ball) + "gravity points"};
+            arr = new Object[]{gravityMultiplierIncrement, "gravity", "points", "+" + str(gravityMultiplierIncrement*points_per_ball) + " gravity points"};
             possibleUpgrades.add(arr);
         }
         if (gravityRadius < gravityRadiusMax) {
