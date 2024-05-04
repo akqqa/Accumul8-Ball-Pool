@@ -12,7 +12,18 @@ public class Button {
     protected int startTime = 0;
     protected int xAdjustmentLeft = 7;
     protected int xAdjustmentRight = 12;
-
+    protected int yUpgradesAdjustment0 = 20;
+    
+    protected int yUpgradesAdjustmentTop1 = 20;
+    protected int yUpgradesAdjustmentBot1 = 20;
+    protected int yUpgradesAdjustmentTop2 = 17;
+    protected int yUpgradesAdjustmentBot2 = 15;
+    protected int yBallAdjustmentTop0 = 10;
+    protected int yBallAdjustmentBot0 = 7;
+    protected int yBallAdjustmentTop1 = 5;
+    protected int yBallAdjustmentBot1 = 2;
+    protected int yGenAdjustmentBot = 5;
+    
     // button constructor, taking in x, y coordinates, width, height, amount (for upgrade or ball addition), element, type(points, radius, upgrade or confirmation)
     public Button (float _x, float _y, float _width, float _height, float _amount, String _element, String _type/* , int _r, int _g, int _b */) {
         this.position = new PVector(_x, _y);
@@ -54,32 +65,32 @@ public class Button {
     public void update(int index) {
         if ((this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("duration")) && (index == 0) &&
             mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
-            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + 20 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + 20/* /2-1) */)) {
+            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + yUpgradesAdjustment0 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + yUpgradesAdjustment0/* /2-1) */)) {
             // background(125);
             this.button_over = true;
         } else if ((this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("duration")) && (index == 1) &&
             mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
-            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + 20 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + 18/* /2-1) */)) {
+            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + yUpgradesAdjustmentTop1 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + yUpgradesAdjustmentBot1/* /2-1) */)) {
             // background(0);
             this.button_over = true;
         } else if ((this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("duration")) && (index == 2) &&
             mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
-            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + 17 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + 15/* /2-1) */)) {
+            mouseY >= (this.position.copy().y - /* round( */ this.button_height/2 + yUpgradesAdjustmentTop2 /* /2 + 1) */) && mouseY <= (this.position.copy().y + /* round( */this.button_height/2 + yUpgradesAdjustmentBot2/* /2-1) */)) {
             // background(125);
             this.button_over = true;
         } else if (this.button_type.equals("ball") && (index == 0) &&
             mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
-            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 + 10/* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 + 7/* /2-1) */) {
+            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 + yBallAdjustmentTop0 /* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 + yBallAdjustmentBot0/* /2-1) */) {
             
             this.button_over = true;
         } else if (this.button_type.equals("ball") && (index != 0) &&
             mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
-            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 + 5/* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 + 2/* /2-1) */) {
+            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 + yBallAdjustmentTop1/* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 + yBallAdjustmentBot1/* /2-1) */) {
             
             this.button_over = true;
         } else if (!(this.button_type.equals("points") || this.button_type.equals("radius") || this.button_type.equals("chains") || this.button_type.equals("ball") || this.button_type.equals("duration")) &&
             mouseX >= this.position.copy().x - /* round( */this.button_width/ 2 - xAdjustmentLeft/* /2 + 1) */ && mouseX <= this.position.copy().x + /* round( */this.button_width/2 - xAdjustmentRight/* /2-1) */ &&
-            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 /* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 - 5/* /2-1) */) {
+            mouseY >= this.position.copy().y - /* round( */ this.button_height/2 /* /2 + 1) */ && mouseY <= this.position.copy().y + /* round( */this.button_height/2 - yGenAdjustmentBot/* /2-1) */) {
             // cursor is inside the button
             this.button_over = true;
         } else {
