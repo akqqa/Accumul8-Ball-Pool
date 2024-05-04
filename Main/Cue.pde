@@ -42,17 +42,6 @@ public class Cue {
                     // 2. apply log scale to give it a feeling of more power needed the further the player moves the cue
                     dotProduct = log(1.045 + vectorFromAngle.copy().dot(vectorFromMouseToStart.copy()))/ log(1.045) - log(1.045 + max_dot_product / 2)/log(1.045) + max_dot_product/2;
                 }
-                
-                // debug check
-                // println("mouseX - xStart "+ (mouseX - xStart));
-                // println("mouseY - yStart "+ (mouseY - yStart));
-                // println("vectorFromAngle.copy().dot(vectorFromMouseToStart.copy())"+vectorFromAngle.copy().dot(vectorFromMouseToStart.copy()));
-                // println("dotProduct: ", dotProduct);
-                // println("xStart: "+ xStart);
-                // println("mouseX"+mouseX);
-                // println("yStart: "+yStart);
-                // println("mouseY: "+mouseY);
-                // println("max_dot_product: "+ max_dot_product);
 
                 // set cue position according to the dot product
                 if (dotProduct > 0 && dotProduct <= max_dot_product) {
@@ -76,7 +65,7 @@ public class Cue {
                 // update the resultant vector
                 if (dotProduct > 1) {
                     // resultant multiply by the ratio
-                    float ratio = max_force * dotProduct/ max_dot_product;
+                    float ratio = max_force * pow(dotProduct/ max_dot_product, 1.1); // exponent to scale so that smaller distances are more sensitive!
                     resultant.x = originalPosition.copy().x - position.copy().x;
                     resultant.y = originalPosition.copy().y - position.copy().y;
                     // get unit vector 1
@@ -137,6 +126,7 @@ public class Cue {
         this.active = _b;
     }
 
+    // Method to figure out where the currently aimed cue ball will collide, and the resulting angles from this
     public void findAngles() {
         PVector cueBallVector = cue_ball.position.copy();
         float direction = 0;
@@ -179,10 +169,9 @@ public class Cue {
         // Calculate angles of collision between the two balls - perfect elastic collision
         if (collidingBall != null) {
             line(cue_ball.position.x, cue_ball.position.y, collidingPosition.x, collidingPosition.y);
-            fill(255, 128);
+            fill(255, 0);
             circle(collidingPosition.x, collidingPosition.y, cue_ball.diameter);
             // Gets vector between point on line and this ball. When added to the collidingBalls position, gives the position of the cue ball in the future when it hits the ball
-            //line(collidingBall.position.x, collidingBall.position.y, collidingBall.position.x + distanceVect.x, collidingBall.position.y + distanceVect.y);
             Ball cueCopy = new Ball(collidingPosition.x, collidingPosition.y, cue_ball.diameter, cue_ball.mass, "red");
             Ball otherCopy = new Ball(collidingBall.position.x, collidingBall.position.y, collidingBall.diameter, collidingBall.mass, "red");
             // Give cue ball a velocity in the direction of its movement.
@@ -197,7 +186,7 @@ public class Cue {
             line(otherCopy.position.x, otherCopy.position.y, otherCopy.position.x + (otherCopy.velocity.x), otherCopy.position.y + (otherCopy.velocity.y));
         } else if (collidingLine != null) {
             line(cue_ball.position.x, cue_ball.position.y, collidingPosition.x, collidingPosition.y);
-            fill(255, 128);
+            fill(255, 0);
             circle(collidingPosition.x, collidingPosition.y, cue_ball.diameter);
             PVector normalVector = new PVector((collidingLine.end.y-collidingLine.start.y), -(collidingLine.end.x-collidingLine.start.x));
             // Calculate components of balls velocity perpendicular and parallel to the line colliding with

@@ -48,8 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-// Potentially decrease to 20, 35, 50, 80, 110, 130, 160, 185, 210
-int[] roundScores = {20, 40, 60, 80, 110, 130, 170, 190, 210}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
+int[] roundScores = {20, 40, 60, 85, 110, 135, 165, 195, 225}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
 int tableSides = 4;
 
 float score = 0;
@@ -211,8 +210,7 @@ void reset() {
   
   state = 0;
   round_num = 0;
-  //roundScores = new int[] {20, 40, 60, 90, 120, 150, 190, 230, 270};
-  tableSides = 4;
+  tableSides = int(random(4, 10));
   
   score = 0;
   points_needed = roundScores[0];
@@ -263,13 +261,12 @@ void table_setup(int sides) {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
   if (sides == 4) {
     table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
-  } else {
+  } else if (sides % 2 == 0) {
     table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
+  } else { // Odd table - lower position to fit correctly
+    table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2 + 10), 225);
   }
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
-  //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
-  //cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
-  //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
@@ -472,15 +469,15 @@ void renderHUD() {
   fill(0);
   textSize(20);
   textAlign(CENTER);
-  text("Round " + str(round_num + 1), 4*screen_width/5.0, -screen_height*0.02);
+  text("Round " + str(round_num + 1), 8*screen_width/9.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Points Needed: " + str(points_needed), 3*screen_width/5.0, -screen_height*0.02);
+  text("Points Needed: " + str(points_needed), 5*screen_width/8.0, -screen_height*0.02);
   if (inventory.getBallCount() < 3) fill(0);
   textAlign(CENTER);
-  text("Score: " + str(score), 2*screen_width/5.0, -screen_height*0.02);
+  text("Score: " + str(score), 3*screen_width/8.0, -screen_height*0.02);
   textAlign(CENTER);
   if (inventory.getBallCount() < 3) fill(255, 0, 0);
-  text("Shots Remaining: " + str(inventory.getBallCount()), 1*screen_width/5.0, -screen_height*0.02);
+  text("Shots Remaining: " + str(inventory.getBallCount()), 1*screen_width/8.0, -screen_height*0.02);
   fill(0);
 }
 
