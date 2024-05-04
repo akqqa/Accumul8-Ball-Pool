@@ -442,13 +442,13 @@ public class Ball {
     
     public void thaw() {
       frozen = false;
-      //println("tempmass: " + str(this.normalMass));
       this.mass = this.normalMass;
     }   
     
     // GravityBall
     public void pull(Ball towards) {
       gravity = true;
+      // If pocketed, impulse nearby balls towards the hole
       if (pocketed.contains(cue_ball)) {
         PVector direction = towards.position.copy().sub(position);
         velocity = velocity.add(direction.setMag(0.075));

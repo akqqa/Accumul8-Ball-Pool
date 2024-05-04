@@ -17,7 +17,9 @@ public abstract class PowerBall extends Ball{
       if (velocity.x != 0 || velocity.y != 0) {
          noStroke();
          fill(colour, 150);
-         circle (position.x, position.y, powerRadius*2);
+         if (!(this instanceof ShockBall)) {
+          circle (position.x, position.y, powerRadius*2);
+         }
          stroke(0,0,0);
       }
       fill(colour);     

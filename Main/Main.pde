@@ -48,8 +48,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-// Potentially decrease to 20, 35, 50, 80, 110, 130, 160, 185, 210
-int[] roundScores = {20, 40, 60, 80, 110, 130, 170, 190, 210}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
+int[] roundScores = {20, 40, 60, 85, 110, 135, 165, 195, 225}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
 int tableSides = 4;
 
 float score = 0;
@@ -174,9 +173,13 @@ AudioSample ballHit;
 AudioSample fireSelect;
 AudioSample shockSelect;
 AudioSample iceSelect;
+AudioSample gravitySelect;
 AudioSample wallHit;
-AudioSample pointGain;
+AudioPlayer pointGain; // Audioplayer as otherwise it stacks samples on simultaneous gains and gets too loud!!
 AudioSample pointLoss;
+AudioSample cueHit;
+AudioSample gameOver;
+AudioSample gameWin;
 
 // Font
 PFont font;
@@ -207,8 +210,7 @@ void reset() {
   
   state = 0;
   round_num = 0;
-  //roundScores = new int[] {20, 40, 60, 90, 120, 150, 190, 230, 270};
-  tableSides = 4;
+  tableSides = int(random(4, 10));
   
   score = 0;
   points_needed = roundScores[0];
@@ -241,9 +243,13 @@ void setup() {
     fireSelect = minim.loadSample("data/sfx/fireSelect.mp3");
     shockSelect = minim.loadSample("data/sfx/shockSelect.mp3");
     iceSelect = minim.loadSample("data/sfx/iceSelect.mp3");
+    gravitySelect = minim.loadSample("data/sfx/gravitySelect.mp3");
     wallHit = minim.loadSample("data/sfx/wallHit.mp3");
-    pointGain = minim.loadSample("data/sfx/pointGain.mp3");
+    pointGain = minim.loadFile("data/sfx/pointGain.mp3");
     pointLoss = minim.loadSample("data/sfx/pointLoss.wav");
+    cueHit = minim.loadSample("data/sfx/cueHit3.mp3");
+    gameOver = minim.loadSample("data/sfx/gameOver.mp3");
+    gameWin = minim.loadSample("data/sfx/gameWin.mp3");
     
     menu_table = new PoolTable(4, table_rad_4*1.9, new PVector(screen_height/2,screen_width/2), 321);
     font = createFont("joystix monospace.otf", 20);
@@ -255,13 +261,12 @@ void table_setup(int sides) {
   // For table, when 4 sides, radius 450. When any other sides, radius 325!!!
   if (sides == 4) {
     table = new PoolTable(4, table_rad_4, new PVector(screen_width/2,screen_height/2), 225);
-  } else {
+  } else if (sides % 2 == 0) {
     table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2), 225);
+  } else { // Odd table - lower position to fit correctly
+    table = new PoolTable(sides, table_rad_other, new PVector(screen_width/2,screen_height/2 + 10), 225);
   }
   cue_ball = new Ball(cue_ball_start.x,cue_ball_start.y, ball_diameter, cue_ball_mass, "white");
-  //cue_ball = new FireBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
-  //cue_ball = new ShockBall(cue_ball_start.x,cue_ball_start.y, ball_diameter, ball_mass+0.5, "black", 30, true, true);
-  //cue_ball.applyForce(new PVector(0, -100));
   cue = new Cue(cue_ball.position.copy(), height * 0.3);
   balls.clear();
   balls.add(cue_ball);    
@@ -319,6 +324,7 @@ void endOfRound() {
   // Game over
   if (inventory.getBallCount() == 0 && score < points_needed) {
     finished = true;
+    gameOver.trigger();
   }
   
   // Proceed to next round
@@ -328,6 +334,7 @@ void endOfRound() {
     else {
       finished = true;
       win = true;
+      gameWin.trigger();
     }
   } 
   // Game over if 0 non-cue balls are left
@@ -392,6 +399,7 @@ void switchCueBalls() {
     balls.remove(cue_ball);
     cue_ball = new GravityBall(cue_ball.position.x, cue_ball.position.y, sel.diameter, sel.mass, sel.colour, gravityRadius, sel.travelling, sel.impact);
     balls.add(cue_ball);
+    gravitySelect.trigger();
   } else {
     balls.remove(cue_ball);
     cue_ball = new Ball(cue_ball.position.x,cue_ball.position.y, ball_diameter, cue_ball_mass, inventory.selected.ball.colourString);
@@ -461,15 +469,15 @@ void renderHUD() {
   fill(0);
   textSize(20);
   textAlign(CENTER);
-  text("Round " + str(round_num + 1), 4*screen_width/5.0, -screen_height*0.02);
+  text("Round " + str(round_num + 1), 8*screen_width/9.0, -screen_height*0.02);
   textAlign(CENTER);
-  text("Points Needed: " + str(points_needed), 3*screen_width/5.0, -screen_height*0.02);
+  text("Points Needed: " + str(points_needed), 5*screen_width/8.0, -screen_height*0.02);
   if (inventory.getBallCount() < 3) fill(0);
   textAlign(CENTER);
-  text("Score: " + str(score), 2*screen_width/5.0, -screen_height*0.02);
+  text("Score: " + str(score), 3*screen_width/8.0, -screen_height*0.02);
   textAlign(CENTER);
   if (inventory.getBallCount() < 3) fill(255, 0, 0);
-  text("Shots Remaining: " + str(inventory.getBallCount()), 1*screen_width/5.0, -screen_height*0.02);
+  text("Shots Remaining: " + str(inventory.getBallCount()), 1*screen_width/8.0, -screen_height*0.02);
   fill(0);
 }
 
@@ -497,7 +505,7 @@ void render() {
   // adjusting the rectangle position
   pushMatrix();
   translate(screen_width/2, screen_height/2);
-  fill(255);
+  fill(196, 245, 174);
   strokeWeight(5);
   stroke(200, 0, 0);
   rect(0, 0, screen_width, screen_height, 5);
@@ -754,6 +762,7 @@ void mousePressed() {
 void mouseReleased() {
   // only apply resultant when cue is active
   if (cue.getActive() && cue_drag && cue.getResultant().mag() != 0) { // && !inventory.mouseInInventory()) {
+    cueHit.trigger();
     moving = true;
     PVector res = cue.getResultant();
     cue_ball.applyForce(res.copy());
