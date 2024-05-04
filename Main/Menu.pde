@@ -5,6 +5,7 @@ public class Menu {
     float menu_width;
     float menu_height;
     String menu_title = "Upgrade Menu";
+    float upgrade_buttons_start = screen_height * 0.3;
     int num_of_options;
     Button[] upgrade_buttons = new Button[3];
     Button[] ball_buttons = new Button[2];
@@ -16,7 +17,7 @@ public class Menu {
     
     
     // instruction message
-    String menu_message = "Please select 1 upgrade AND\n1 ball to add into inventory\nthat you like\nskip if there is nothing\nsuitable";
+    String menu_message = "Please select\n 1 upgrade and 1 ball\n to add to inventory";
     public Menu (float _x, float _y, float _width, float _height) {
         position = new PVector(_x, _y);
         this.menu_width = _width;
@@ -25,7 +26,7 @@ public class Menu {
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
         Object[] arr;
         if (fireMultiplier < fireMultiplierMax) {
-            arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + "fire points"};
+            arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + " fire points"};
             possibleUpgrades.add(arr);
         }
         if (fireRadius < fireRadiusMax) {
@@ -33,23 +34,23 @@ public class Menu {
             possibleUpgrades.add(arr);
         }
         if (shockMultiplier < shockMultiplierMax) {
-            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + "shock points"};
+            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + " shock points"};
             possibleUpgrades.add(arr);
         }
         if (shockChains < shockChainsMax) {
-            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChains) + "shock chain"};
+            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChainsIncrement) + " shock chain"};
             possibleUpgrades.add(arr);
         }
         if (frozenMultiplier < frozenMultiplierMax) {
-            arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + "freeze points"};
+            arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + " freeze points"};
             possibleUpgrades.add(arr);
         }
         if (freezeDuration < freezeDurationMax) {
-            arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + "shots balls stay frozen"};
+            arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + " freeze duration"};
             possibleUpgrades.add(arr);
         }
         if (gravityMultiplier < gravityMultiplierMax) {
-            arr = new Object[]{gravityMultiplierIncrement, "gravity", "points", "+" + str(gravityMultiplierIncrement*points_per_ball) + "gravity points"};
+            arr = new Object[]{gravityMultiplierIncrement, "gravity", "points", "+" + str(gravityMultiplierIncrement*points_per_ball) + " gravity points"};
             possibleUpgrades.add(arr);
         }
         if (gravityRadius < gravityRadiusMax) {
@@ -74,23 +75,23 @@ public class Menu {
             // constructor Button (float _x, float _y, float _width, float _height, int _amount, String _element, String _type, int r, int g, int b)
             Button button;
             if (chosenUpgrade == null) {
-                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, 0, "", ""/* , 30, 0, 20 */);
+                button = new Button(screen_width*0.85, (/* screen_height*0.3 */upgrade_buttons_start + i*50), this.menu_width * 0.9, 30, 0, "", ""/* , 30, 0, 20 */);
             } else {
-                button = new Button(screen_width*0.85, (screen_height*0.3 + i*50), this.menu_width* 0.8, 30, (float) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
+                button = new Button(screen_width*0.85, (/* screen_height*0.3 */upgrade_buttons_start + i*50), this.menu_width * 0.9, 30, (float) chosenUpgrade[0], (String) chosenUpgrade[1], (String) chosenUpgrade[2]/* , 30, 0, 20 */);
                 button.setText((String) chosenUpgrade[3]);
             }
             // add the button into array
             upgrade_buttons[i] = button;
             if (i == num_of_options - 1) {
                 // save the last  position for next part of the menu
-                last_upgrade_position_y = (screen_height*0.3 + i*50);
+                last_upgrade_position_y = (/* screen_height*0.3 */upgrade_buttons_start + i*50);
             }
         }
 
         // reset last upgrade position if all upgrades are null
         if (checkAllButtonNull(upgrade_buttons)) {
-            menu_message = "Please select a ball\nto add into inventory\nthat you like or skip";
-            last_upgrade_position_y = screen_height * 0.3;
+            menu_message = "Please select a ball\nthat you like to add into\ninventory or skip";
+            last_upgrade_position_y = /* screen_height * 0.3 */upgrade_buttons_start;
         }
 
         // ball addition buttons
@@ -111,9 +112,9 @@ public class Menu {
                 }
                 
             }
-            Button button = new Button(screen_width*0.85, (last_upgrade_position_y + (k + 2) * 50), this.menu_width * 0.8, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
+            Button button = new Button(screen_width*0.85, (last_upgrade_position_y + (k + 2) * 50), this.menu_width * 0.9, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
             if (checkAllButtonNull(upgrade_buttons)) {
-                button = new Button(screen_width*0.85, (last_upgrade_position_y + k * 50), this.menu_width * 0.8, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
+                button = new Button(screen_width*0.85, (last_upgrade_position_y + k * 50), this.menu_width * 0.9, 30, 1, elements[random_element], "ball"/* , 0, 30, 20 */);
             }
             // add the button to ball buttons array
             ball_buttons[k] = button;
@@ -121,8 +122,8 @@ public class Menu {
         }
 
         // create the confirmation button for the upgrades and ball addition
-        confirmation_button = new Button(screen_width*0.85, last_ball_position_y + 50, this.menu_width * 0.8, 30, 0, "", "confirmation"/* , 0, 0, 150 */);
-        skip_button = new Button(screen_width*0.85, last_ball_position_y + 2 * 50, this.menu_width * 0.8, 30, 0, "", "skip"/* , 0, 0, 150 */);
+        confirmation_button = new Button(screen_width*0.85, last_ball_position_y + 50, this.menu_width * 0.9, 30, 0, "", "confirmation"/* , 0, 0, 150 */);
+        skip_button = new Button(screen_width*0.85, last_ball_position_y + 2 * 50, this.menu_width * 0.9, 30, 0, "", "skip"/* , 0, 0, 150 */);
     }
 
     // displaying the menu with the buttons in different parts
@@ -147,7 +148,7 @@ public class Menu {
         if (!checkAllButtonNull(upgrade_buttons)) {
             for (int i = 0; i < num_of_options; i++) {
                 // if hover or clicked, update the button booleans
-                upgrade_buttons[i].update();
+                upgrade_buttons[i].update(i);
                 if (upgrade_buttons[i].button_clicked) {
                     // check if any other upgrade button is selected, if so, set button clicked to false, leaving only the current button as clicked
                     selected_upgrade_button = upgrade_buttons[i];
@@ -171,7 +172,7 @@ public class Menu {
         }
         
         
-        skip_button.update();
+        skip_button.update(0);
         skip_button.display();
         // continue to game if skip button is clicked
         if (skip_button.button_clicked) {
@@ -182,7 +183,7 @@ public class Menu {
         for (int k = 0; k < ball_buttons.length; k++) {
             Button ball_button = ball_buttons[k];
             // check if cursor is inside or clicked, update the button booleans
-            ball_button.update();
+            ball_button.update(k);
             if (ball_button.button_clicked) {
                 // check if any other ball addition button is selected, if so, set button clicked to false, leaving only the current button as clicked
                 selected_ball_button = ball_button;
@@ -199,7 +200,7 @@ public class Menu {
         // only show confirmation button when either upgrade or ball is selected
         if (checkSelected(upgrade_buttons) || checkSelected(ball_buttons)) {
             // check if cursor inside button or clicking button
-            confirmation_button.update();
+            confirmation_button.update(0);
             confirmation_button.display();
             if (confirmation_button.button_clicked) {
                 // apply upgrade only if selected upgrade button is not null
