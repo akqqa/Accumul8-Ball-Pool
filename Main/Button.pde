@@ -208,26 +208,18 @@ public class Button {
             if (this.button_element.equals("electricity")) {
                 inventory.addBall("shock");
                 // electricity ball + number of balls to add
-                num_of_electricity_ball += this.button_amount;
-                //println("num_of_electricity_ball: "+num_of_electricity_ball);
                 return;
             } else if (this.button_element.equals("fire")) {
                 inventory.addBall("fire");
                 // fire ball + number of balls to add
-                num_of_fire_ball += this.button_amount;
-                //println("num_of_fire_ball: "+num_of_fire_ball);
                 return;
             } else if (this.button_element.equals("ice")) {
                 inventory.addBall("ice");
                 // ice ball + number of balls to add
-                num_of_ice_ball += this.button_amount;
-                //println("num_of_ice_ball: "+num_of_ice_ball);
                 return;
             } else if (this.button_element.equals("gravity")) {
                 inventory.addBall("gravity");
                // gravity ball + number of balls to add
-               num_of_gravity_ball += this.button_amount;
-               println("num_of_gravity_ball: "+num_of_gravity_ball);
                return;
             }
         }

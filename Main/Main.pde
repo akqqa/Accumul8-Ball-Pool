@@ -13,7 +13,7 @@ final float ball_diameter = 720/25;
 final float pocket_diameter = 720/20;
 final float ball_mass = ball_diameter*.1;
 final int button_time = 1000;
-final float cue_ball_mass = ball_mass + 0.5;
+final float cue_ball_mass = ball_mass +0.5;
 // TODO: change the round end state number
 final int round_end_state = 12345;
 final int game_state= 56789;
@@ -21,26 +21,6 @@ final int game_state= 56789;
 final String[] elements = {"electricity", "fire", "ice", "gravity"};
 final int[] percentages = {10, 15, 20, 25};
 final String[] upgrade_types = {"points", "radius"};
-
-// electricity
-int num_of_electricity_ball = 0;
-float electricity_points = 1;
-float electricity_radius = 1;
-
-// fire
-int num_of_fire_ball = 0;
-float fire_points = 1;
-float fire_radius = 1;
-
-// ice
-int num_of_ice_ball = 0;
-float ice_points = 1;
-float ice_radius = 1;
-
-// gravity
-int num_of_gravity_ball = 0;
-float gravity_points = 1;
-float gravity_radius = 1;
 
 final int max_force = 100;
 final float base_distance = screen_height * 0.19/* 0.2 */;
@@ -189,24 +169,6 @@ void settings() {
 }
 
 void reset() {
-  num_of_electricity_ball = 0;
-  electricity_points = 1;
-  electricity_radius = 1;
-  
-  // fire
-  num_of_fire_ball = 0;
-  fire_points = 1;
-  fire_radius = 1;
-  
-  // ice
-  num_of_ice_ball = 0;
-  ice_points = 1;
-  ice_radius = 1;
-  
-  // gravity
-  num_of_gravity_ball = 0;
-  gravity_points = 1;
-  gravity_radius = 1;
   
   state = 0;
   round_num = 0;
@@ -433,10 +395,7 @@ void handleEndOfRoundEffects() {
         }
       }
       if (b.gravity) {
-        b.effectDuration -= 1;
-        if (b.effectDuration <= 0) {
-          b.gravity = false;
-        }
+        b.gravity = false; // Should always end after shot
       }
     }
   }

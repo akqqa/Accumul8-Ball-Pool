@@ -447,6 +447,7 @@ public class Ball {
     
     // GravityBall
     public void pull(Ball towards) {
+      this.effectDuration = 1;
       gravity = true;
       // If pocketed, impulse nearby balls towards the hole
       if (pocketed.contains(cue_ball)) {
