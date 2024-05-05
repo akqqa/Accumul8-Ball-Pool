@@ -263,6 +263,9 @@ void draw() {
     // check here in case ball is stationary to allow selection change
     else if (checkAllBallStop() && inventory.getBallCount() != 0 && score <= points_needed) {
       if (currentSelectedItem != inventory.selected) switchCueBalls();
+      for (Ball b : balls) { // Manual fix to stop gravity balls persisting after a shot
+        b.gravity = false;
+      }
     }
   }
 }
