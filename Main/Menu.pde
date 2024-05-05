@@ -25,30 +25,30 @@ public class Menu {
         num_of_options = 3; // Not random anymore
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
         Object[] arr;
-        // if (fireMultiplier < fireMultiplierMax) {
-        //     arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + " fire points"};
-        //     possibleUpgrades.add(arr);
-        // }
-        // if (fireRadius < fireRadiusMax) {
-        //     arr = new Object[]{fireRadiusIncrement, "fire", "radius", "Increase fire radius"};
-        //     possibleUpgrades.add(arr);
-        // }
-        // if (shockMultiplier < shockMultiplierMax) {
-        //     arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + " shock points"};
-        //     possibleUpgrades.add(arr);
-        // }
-        // if (shockChains < shockChainsMax) {
-        //     arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChainsIncrement) + " shock chain"};
-        //     possibleUpgrades.add(arr);
-        // }
-        // if (frozenMultiplier < frozenMultiplierMax) {
-        //     arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + " freeze points"};
-        //     possibleUpgrades.add(arr);
-        // }
-        // if (freezeDuration < freezeDurationMax) {
-        //     arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + " freeze duration"};
-        //     possibleUpgrades.add(arr);
-        // }
+        if (fireMultiplier < fireMultiplierMax) {
+            arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + " fire points"};
+            possibleUpgrades.add(arr);
+        }
+        if (fireRadius < fireRadiusMax) {
+            arr = new Object[]{fireRadiusIncrement, "fire", "radius", "Increase fire radius"};
+            possibleUpgrades.add(arr);
+        }
+        if (shockMultiplier < shockMultiplierMax) {
+            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + " shock points"};
+            possibleUpgrades.add(arr);
+        }
+        if (shockChains < shockChainsMax) {
+            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChainsIncrement) + " shock chain"};
+            possibleUpgrades.add(arr);
+        }
+        if (frozenMultiplier < frozenMultiplierMax) {
+            arr = new Object[]{frozenMultiplierIncrement, "ice", "points", "+" + str(frozenMultiplierIncrement*points_per_ball) + " freeze points"};
+            possibleUpgrades.add(arr);
+        }
+        if (freezeDuration < freezeDurationMax) {
+            arr = new Object[]{(float) freezeDurationIncrement, "ice", "duration", "+" + freezeDurationIncrement + " freeze duration"};
+            possibleUpgrades.add(arr);
+        }
         if (gravityMultiplier < gravityMultiplierMax) {
             arr = new Object[]{gravityMultiplierIncrement, "gravity", "points", "+" + str(gravityMultiplierIncrement*points_per_ball) + " gravity points"};
             possibleUpgrades.add(arr);
