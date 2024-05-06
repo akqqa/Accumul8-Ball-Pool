@@ -11,10 +11,6 @@ public class Pocket {
   }
   
   public void draw() {
-    //stroke(58, 181, 3);
-    //strokeWeight(1);
-    //fill(58, 181, 3);     
-    //circle(position.x, position.y, diameter*1.2);
     stroke(0);
     strokeWeight(0);
     fill(0);     

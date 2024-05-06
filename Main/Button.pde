@@ -32,7 +32,6 @@ public class Button {
         this.button_amount = _amount;
         this.button_element = _element;
         this.button_type = _type;
-        // this.button_color = color(_r, _g, _b);
 
         // check the type of the button and set the text accoerdingly
         if (this.button_type.equals("points") || this.button_type.equals("radius") ) {
@@ -146,9 +145,6 @@ public class Button {
         textSize(13);
         text(this.button_text, this.position.copy().x, this.position.copy().y);
 
-        // strokeWeight(30);  // Thicker
-        // point(position.copy().x, position.copy().y);
-        // strokeWeight(1);
         strokeWeight(1);
         stroke(0);
     }
@@ -163,17 +159,14 @@ public class Button {
                 println("shockMultiplier:" + shockMultiplier);
                 return;
             } else if (this.button_element.equals("fire")) {
-                // fire points * 1.xx
                 fireMultiplier = fireMultiplier + (this.button_amount);
                 println("fireMultiplier: "+fireMultiplier);
                 return;
             } else if (this.button_element.equals("ice")) {
-                // ice points * 1.xx
                 frozenMultiplier = frozenMultiplier + (this.button_amount);
                 println("frozenMultiplier: "+frozenMultiplier);
                 return;
             } else if (this.button_element.equals("gravity")) {
-                // gravity points * 1.xx
                 gravityMultiplier = gravityMultiplier + (this.button_amount);
                 println("gravityMultipler: "+gravityMultiplier);
                 return;
@@ -181,12 +174,10 @@ public class Button {
         } else if (this.button_type.equals("radius")) {
             // radius upgrade
             if (this.button_element.equals("fire")) {
-                // fire radius * 1.xx
                 fireRadius = fireRadius + this.button_amount;
                 println("fireRadius: "+fireRadius);
                 return;
             } else if (this.button_element.equals("gravity")) {
-                // gravity radius * 1.xx
                 gravityRadius = gravityRadius + this.button_amount;
                 println("gravityRadius: "+gravityRadius);
                 return;
@@ -207,19 +198,15 @@ public class Button {
             // add ball
             if (this.button_element.equals("electricity")) {
                 inventory.addBall("shock");
-                // electricity ball + number of balls to add
                 return;
             } else if (this.button_element.equals("fire")) {
                 inventory.addBall("fire");
-                // fire ball + number of balls to add
                 return;
             } else if (this.button_element.equals("ice")) {
                 inventory.addBall("ice");
-                // ice ball + number of balls to add
                 return;
             } else if (this.button_element.equals("gravity")) {
                 inventory.addBall("gravity");
-               // gravity ball + number of balls to add
                return;
             }
         }

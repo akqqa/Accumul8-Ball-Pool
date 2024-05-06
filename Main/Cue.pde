@@ -28,11 +28,7 @@ public class Cue {
             } else {
                 PVector vectorFromAngle = PVector.fromAngle(this.angle);
                 PVector vectorFromMouseToStart = new PVector();
-                // if (abs(mouseX - xStart)/* cueBallVector.x */ <= 10 || abs(mouseY - yStart)/* cueBallVector.y */ <= 10) {
-                    // vectorFromMouseToStart = new PVector(base_distance * cos(angle)/* 50 * vectorFromAngle.x */, base_distance * sin(angle)/* 50 * vectorFromAngle.y */);
-                // } else {
-                    vectorFromMouseToStart = new PVector(mouseX - xStart/* cueBallVector.x */, mouseY - yStart/* cueBallVector.y */);
-                // }
+                vectorFromMouseToStart = new PVector(mouseX - xStart/* cueBallVector.x */, mouseY - yStart/* cueBallVector.y */);
                 float tempDotProduct = vectorFromAngle.copy().dot(vectorFromMouseToStart.copy());
                 float dotProduct = 0;
                 if (tempDotProduct < max_dot_product / 2) {
@@ -52,9 +48,6 @@ public class Cue {
                     position.x = cueBallVector.copy().x + base_distance * cos(angle) + max_dot_product * cos(angle);
                     position.y = cueBallVector.copy().y + base_distance * sin(angle) + max_dot_product * sin(angle);
                 } else {
-                    // reset the position and resultant when the dot product is <= 0
-                    // xStart = mouseX;
-                    // yStart = mouseY;
                     position.x = originalPosition.copy().x;
                     position.y = originalPosition.copy().y;
                     resultant.x = 0;
@@ -142,8 +135,10 @@ public class Cue {
         PVector collidingPosition = null;
         Ball collidingBall = null;
         Line collidingLine = null;
+        // 700 (arbitrary amount) of iterations - checks each ball position along the line and returns the data for the first thing the cue will collide with
         for (int i = 0; i < 700; i++) {
             PVector coordinates = new PVector(cueBallVector.x + cos(direction + PI) * i, cueBallVector.y + sin(direction + PI) * i);
+            // Check balls for collision
             for (Ball b : balls) {
                 if (b != cue_ball) {
                     if (dist(b.position.copy().x, b.position.copy().y, coordinates.x, coordinates.y) < b.radius+cue_ball.radius) {
@@ -166,25 +161,25 @@ public class Cue {
                 break;
             }
         }
-        // Calculate angles of collision between the two balls - perfect elastic collision
+        // Calculate angles of collision between the two balls
         if (collidingBall != null) {
             line(cue_ball.position.copy().x, cue_ball.position.copy().y, collidingPosition.copy().x, collidingPosition.copy().y);
             fill(255, 0);
             circle(collidingPosition.copy().x, collidingPosition.copy().y, cue_ball.diameter);
             // Gets vector between point on line and this ball. When added to the collidingBalls position, gives the position of the cue ball in the future when it hits the ball
-            //line(collidingBall.position.x, collidingBall.position.y, collidingBall.position.x + distanceVect.x, collidingBall.position.y + distanceVect.y);
             Ball cueCopy = new Ball(collidingPosition.copy().x, collidingPosition.copy().y, cue_ball.diameter, cue_ball.mass, "red");
             Ball otherCopy = new Ball(collidingBall.position.copy().x, collidingBall.position.copy().y, collidingBall.diameter, collidingBall.mass, "red");
             // Give cue ball a velocity in the direction of its movement.
             cueCopy.velocity = PVector.fromAngle(direction + PI);
             cueCopy.velocity.setMag(100);
-            //otherCopy.velocity.setMag(100);
+            // Simulate the collision
             ballCollisionSimulation(cueCopy, otherCopy);
             cueCopy.velocity.setMag(100);
             otherCopy.velocity.setMag(100);
+            // Draw lines to show the velocities
             line(cueCopy.position.copy().x, cueCopy.position.copy().y, cueCopy.position.copy().x + (cueCopy.velocity.copy().x), cueCopy.position.copy().y + (cueCopy.velocity.copy().y));
             line(otherCopy.position.copy().x, otherCopy.position.copy().y, otherCopy.position.copy().x + (otherCopy.velocity.copy().x), otherCopy.position.copy().y + (otherCopy.velocity.copy().y));
-        } else if (collidingLine != null) {
+        } else if (collidingLine != null) { // Case of ball hitting the table
             line(cue_ball.position.x, cue_ball.position.y, collidingPosition.x, collidingPosition.y);
             fill(255, 0);
             circle(collidingPosition.x, collidingPosition.y, cue_ball.diameter);
@@ -201,6 +196,7 @@ public class Cue {
             PVector newVelocity = w.sub(u.mult(table.elasticity));
             cueCopy.velocity.setMag(100);
             cueCopy.velocity = newVelocity.copy();
+            // Draw line to show the velocity
             line(cueCopy.position.x, cueCopy.position.y, cueCopy.position.x + (cueCopy.velocity.x), cueCopy.position.y + (cueCopy.velocity.y));
         }
         
@@ -208,10 +204,7 @@ public class Cue {
 
 
     // For finding the angles, simulate a collision between the cue ball and the ball it is found to be hitting.
-    // This method should taken the velocities and positions of each ball, and return final velocities for each
-    // The first ball should be constructed based on the position of the cue, and a large velocity based on the current angle
-    // the second ball should be constructed at the position of the other ball, and no velocity
-    // The angles can then be extracted from the velocity
+    // This code is mostly taken from Ball, with minor changes
     private void ballCollisionSimulation(Ball first, Ball other) {
 
         // Get distances between the balls components

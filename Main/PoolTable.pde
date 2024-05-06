@@ -53,25 +53,8 @@ final class PoolTable {
     }
   }
   
-  //void spawnPockets() {
-  //  boolean sides_or_corners = (int) random(0, 1) == 0;
-  //  int count = 1;
-  //  for (Line l : lines) {
-  //    if (sides == 4) {
-  //      // corners
-  //      pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
-  //      // lines
-  //      if (count++ % 2 == 0)
-  //        pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
-  //    } else {
-  //      if (sides_or_corners) pockets.add(new Pocket(l.start.x, l.start.y, pocket_diameter*1.5));
-  //      else pockets.add(new Pocket((l.start.x + l.end.x)/2, (l.start.y + l.end.y)/2, pocket_diameter));
-  //    }
-  //  }
-  //}
-  
+  // Spawn the pockets on the table
   void spawnPockets() {
-    println("spawning pockets");
     int count = 0;
     int pocket_num = 0;
     for (Line l : lines) {
@@ -110,17 +93,6 @@ final class PoolTable {
       }
     }
   }
-  
-  // void update() {
-  //   // Detect collisions for each line (with a circle around the mouse for now)
-  //   for (Line line : this.lines) {
-  //     if (lineCircle(line.start.x, line.start.y, line.end.x, line.end.y, mouseX, mouseY, 1)) {
-  //       stroke(0,200,0);
-  //       strokeWeight(5);
-  //       line(line.start.x, line.start.y, line.end.x, line.end.y);
-  //     }
-  //   }
-  // }
 
   // Check if ball is colliding with a wall. If so, reflect the velocity of the ball based on the wall angle
   // Projects backwards based on the current velocity of the ball, with a step size of the balls diameter
@@ -179,10 +151,10 @@ final class PoolTable {
     }
   }
 
+  // Check if ball is in pocket, and if so move into pocket
   boolean ballInPocket(Ball b) {
     for (Pocket p : pockets) {
      if (p.pocketed(b)) {
-       //b.velocity.setMag(p.position.copy().sub(b.position).mult(0.1).mag());
        b.velocity = p.position.copy().sub(b.position).mult(0.05);
        if (b.velocity.mag() < 0.1) {
         b.velocity.setMag(0);
@@ -193,6 +165,7 @@ final class PoolTable {
     }
     return false;
   }
+
   boolean ballFinished(Ball b) {
     if (b.pocket_counter++ == 20) return true;
     return false;
@@ -200,6 +173,7 @@ final class PoolTable {
 }
 
 // Adapted from https://processing.org/examples/regularpolygon.html
+// Create a regular polygon
 PShape polygon(float x, float y, float radius, int sides, float initial_angle) {
   float angle = TWO_PI / sides;
   PShape s = createShape();
@@ -214,8 +188,10 @@ PShape polygon(float x, float y, float radius, int sides, float initial_angle) {
   return s;
 }
 
+// Scale shape on the x-axis to squash it 
 PShape scaleShape(float x, float y, PShape shape, float maxX) {
   float maxDist = 0;
+  // Figure out the furthest horizontal distance that a vertex is
   for (int i = 0; i < shape.getVertexCount(); i++) {
      if (abs(shape.getVertex(i).x - x) > maxDist) {
        maxDist = abs(shape.getVertex(i).x - x);
@@ -225,6 +201,7 @@ PShape scaleShape(float x, float y, PShape shape, float maxX) {
     return shape;
   }
   
+  // Scale the entire shape by the maximum horizontal distance to ensure it is within a set boundary
   float scaleFactor = maxX/maxDist;
   for (int i = 0; i < shape.getVertexCount(); i++) {
      // Scale each x by the scale factor

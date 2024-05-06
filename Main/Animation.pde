@@ -1,3 +1,4 @@
+// Abstract class for animations, so that all animations can be held in a single list
 public abstract class Animation {
 
     public int frames;

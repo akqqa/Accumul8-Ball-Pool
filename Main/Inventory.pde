@@ -30,11 +30,11 @@ public class Inventory {
     addItem("shock",0);
     //items.get(2).unlock();
     numBalls ++;
-    addItem("ice", 0);
-    //items.get(3).unlock();
+    addItem("ice", 5);
+    items.get(3).unlock();
     numBalls ++;
-    addItem("gravity", 0);
-    //items.get(4).unlock();
+    addItem("gravity", 5);
+    items.get(4).unlock();
     numBalls ++;
   }
   
@@ -185,6 +185,7 @@ public class Inventory {
     }
   }
 
+  // Get total number of balls for the shots remaining counter
   public int getBallCount() {
     int num = 0;
     for (InvItem i : items) {
@@ -193,6 +194,7 @@ public class Inventory {
     return num;
   }
 
+  // Reset the inventory for a game restart
   public void resetBalls() {
     for (InvItem i : items) {
       i.deselect();

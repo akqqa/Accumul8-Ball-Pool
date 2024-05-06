@@ -92,16 +92,8 @@ public class Ball {
       fill(colour);     
       circle(position.x, position.y, diameter);
       power(255);
-      // If shocked, draw raidius of shock
-      // if (this.shocked) {
-      //   noStroke();
-      //   fill(255,255,0, 100);
-      //   circle(position.x, position.y, shockRadius*2);
-      // }
-      //if (!this.powerBall) {
-      //  println(this.mass);
-      //}
-      // If frozen, keep setting velocity to zero! hacky but to fix a bug
+
+      // If frozen, keep setting velocity to zero! hacky but to fix a bug where frozen balls would have tiny velocities but due to mass would launch other balls
       if (this.frozen && !this.equals(cue_ball)) {
         this.velocity = new PVector(0,0);
       }
@@ -180,31 +172,7 @@ public class Ball {
       return new PVector(radius * cos(angle), radius * sin(angle));
     }
     
-    
-    //public void ballCollision(Ball other_ball) {  // collisions from https://openprocessing.org/sketch/560864
-    //  // check they are colliding
-    //  if(position.dist(other_ball.position) > diameter) return;
-      
-    //  // find angle of impact point
-    //  float angle = position.copy().sub(other_ball.position).heading();
-    //  position = other_ball.position.copy().add(this.polar(diameter, angle));
-      
-    //  // find accelerations to apply to balls
-    //  float A1 = velocity.heading() - angle;
-    //  float A2 = other_ball.velocity.heading() - angle;
-      
-    //  // convert to velocities
-    //  PVector V1 = polar(velocity.mag()*cos(A1), angle);
-    //  PVector V2 = polar(other_ball.velocity.mag()*cos(A2), angle);
-      
-    //  // apply impulses
-    //  acceleration.sub(V1).add(V2);
-    //  other_ball.acceleration.sub(V2).add(V1);
-    //  //applyForce(new PVector(0, 0).sub(V1).add(V2));
-    //  //other_ball.applyForce(new PVector(0, 0).sub(V2).add(V1));
-    //}
-    
-    public boolean ballCollision(Ball other) {  // collisions fomr https://processing.org/examples/circlecollision.html
+    public boolean ballCollision(Ball other) {  // collisions from https://processing.org/examples/circlecollision.html
       // Create a list of all ball positions between the current position and the previous position based on the velocity, with a step size of diameter
       PVector currentPosition = this.position.copy();
       ArrayList<PVector> pastPositions = new ArrayList<PVector>();
@@ -215,15 +183,11 @@ public class Ball {
         pastPositions.add(this.position.copy().sub(this.velocity.copy().setMag(1*i)));
       }
       pastPositions.add(this.position.copy().sub(this.velocity));
-      for (PVector pos : pastPositions) {
-        //circle (pos.x, pos.y, 25);
-      }
 
       Collections.reverse(pastPositions); // Reverse so calculates in chronological order
 
       for (PVector pos : pastPositions) {
         this.position = pos;
-        //circle(this.position.x, this.position.y, 5);
   
         // Get distances between the balls components
         PVector distanceVect = PVector.sub(other.position, position);
@@ -340,55 +304,13 @@ public class Ball {
           bFinal[1].x = cosine * bTemp[1].x - sine * bTemp[1].y;
           bFinal[1].y = cosine * bTemp[1].y + sine * bTemp[1].x;
     
-          // ALL OF THIS WAS NOT ONLY UNNECCESARY BUT CAUSED THE BALLS TO PHASE THROUGH EACH OTHER (still happens now but less)
-
-          // update balls to screen position
-          //other.position.x = position.x + bFinal[1].x + 1;
-          //other.position.y = position.y + bFinal[1].y + 1;
-          
-          // // Simply update balls to be apart from each other in direction of intersection
-          // // intersection magnitude
-          // if (!frozen) {
-          //   float intersectMag = this.radius + other.radius - (distanceVect.mag());
-          //   PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
-          //   if (other.frozen && !other.powerBall) {
-          //     this.position.x = this.position.x - scaledDistanceVect.x*2;
-          //     this.position.y = this.position.y - scaledDistanceVect.y*2;
-          //   } else {
-          //     this.position.x = this.position.x - scaledDistanceVect.x/2;
-          //     this.position.y = this.position.y - scaledDistanceVect.y/2;
-          //   }
-          // }
-
-          // float intersectMag = this.radius + other.radius - (distanceVect.mag());
-          // PVector scaledDistanceVect = distanceVect.copy().setMag(intersectMag);
-          // if (this.frozen && !this.equals(cue_ball) && !other.frozen) {
-          //   scaledDistanceVect.mult(1.1);
-          //   other.position.x = other.position.x - scaledDistanceVect.x;
-          //   other.position.y = other.position.y - scaledDistanceVect.y + 10;
-          // } else if (other.frozen && !other.equals(cue_ball) && !this.frozen) {
-          //   scaledDistanceVect.mult(1.1);
-          //   this.position.x = this.position.x + scaledDistanceVect.x - 10;
-          //   this.position.y = this.position.y + scaledDistanceVect.y - 10;
-          // }
-          // else {
-          //   other.position.x = other.position.x + scaledDistanceVect.x/4;
-          //   other.position.y = other.position.y + scaledDistanceVect.y/4;
-          //   this.position.x = this.position.x - scaledDistanceVect.x/4;
-          //   this.position.y = this.position.y - scaledDistanceVect.y/4;
-          // }
-    
           position.add(bFinal[0]);
     
-          // update velocities
-          //if (!this.frozen || this.equals(cue_ball)) {
-            velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
-            velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
-          //}
-          //if (!other.frozen) {
-            other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
-            other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
-          //}
+          velocity.x = cosine * vFinal[0].x - sine * vFinal[0].y;
+          velocity.y = cosine * vFinal[0].y + sine * vFinal[0].x;
+          other.velocity.x = cosine * vFinal[1].x - sine * vFinal[1].y;
+          other.velocity.y = cosine * vFinal[1].y + sine * vFinal[1].x;
+
           velocity.setMag(velocity.mag() * elastic_constant);
           other.velocity.setMag(other.velocity.mag() * elastic_constant);
           

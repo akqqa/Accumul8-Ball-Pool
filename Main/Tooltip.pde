@@ -16,6 +16,7 @@ public class Tooltip {
         textSize(20);
         textAlign(LEFT);
         fill(0,0,0);
+        // Text to display
         if (ballType.equals("regular")) {
             text("Cue Ball.", mouseX + 10, mouseY + 20);
             text("A regular cue ball.", mouseX + 10, mouseY + 80);

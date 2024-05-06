@@ -1,3 +1,4 @@
+// The animated floating point indicator when points are scored
 public class PointIcon extends Animation {
 
     public PVector position;
@@ -9,6 +10,7 @@ public class PointIcon extends Animation {
         this.position = position;
         this.value = value;
         this.opacity = 255;
+        // Play relevant sound effect
         if (value < 0) {
             pointLoss.trigger();
         } else {
@@ -18,6 +20,7 @@ public class PointIcon extends Animation {
     }
 
     public void draw() {
+        // Float upwards and decrease opacity
         if (frames > 0) {
             textAlign(LEFT);
             textSize(30);

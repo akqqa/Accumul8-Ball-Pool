@@ -1,4 +1,4 @@
-// All code taken from https://www.jeffreythompson.org/collision-detection/line-circle.php
+// All code except centreInsideTable taken from https://www.jeffreythompson.org/collision-detection/line-circle.php
 
 // LINE/CIRCLE
 // x1,x2,y1,y2 = line coords, cx,cy = circle coords, r = circle radius

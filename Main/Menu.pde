@@ -25,6 +25,7 @@ public class Menu {
         num_of_options = 3; // Not random anymore
         ArrayList<Object[]> possibleUpgrades = new ArrayList<Object[]>();
         Object[] arr;
+        // Add all upgrades provided the stat is not already at the maximum value
         if (fireMultiplier < fireMultiplierMax) {
             arr = new Object[]{fireMultiplierIncrement, "fire", "points", "+" + str(fireMultiplierIncrement*points_per_ball) + " fire points"};
             possibleUpgrades.add(arr);
@@ -63,8 +64,6 @@ public class Menu {
             // Pick random upgrade from possibleUpgrades, and make button for it. If none left, dont make a button
             Object[] chosenUpgrade = null;
             if (!possibleUpgrades.isEmpty()) {
-            //     // do nothing
-            // } else {
                 int random_upgrade = int(random(possibleUpgrades.size()));
                 chosenUpgrade = possibleUpgrades.get(random_upgrade);
                 possibleUpgrades.remove(chosenUpgrade);
@@ -212,24 +211,9 @@ public class Menu {
                 if (selected_ball_button != null) {
                     selected_ball_button.applyChanges();
                 }
-                
-                // for (int i = 0; i < ball_buttons.length; i++) {
-                //     Button ball_button = ball_buttons[i];
-                //     if (ball_button.button_clicked) {
-                //         ball_button.applyChanges();
-                //     }
-                // }
-
-                // for (int j = 0; j < num_of_options; j++) {
-                //     Button upgrade_button = upgrade_buttons[j];
-                //     if (upgrade_button.button_clicked) {
-                //         upgrade_button.applyChanges();
-                //     }
-                // }
 
                 // update the state, back to the game
                 state = game_state;
-                // TODO: currently hard set to 100, you might have other ways updating points required
                 cue.setActive(true);
             }
         }

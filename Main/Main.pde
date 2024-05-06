@@ -28,7 +28,7 @@ final float max_dot_product = screen_height * 0.2;
 
 int state = 0;
 int round_num = 0;
-int[] roundScores = {20, 40, 60, 85, 110, 135, 165, 195, 225}; //{20, 40, 60, 90, 120, 150, 190, 230, 270}; - currently this is good, but perhapds too easy by rounds 8 and 9? maybe scale harder to win? or just let players win if theyve build good this far! let them feel overpowered
+int[] roundScores = {20, 40, 60, 85, 110, 135, 165, 195, 225};
 int tableSides = 4;
 
 float score = 0;
@@ -66,7 +66,6 @@ InvItem currentSelectedItem = null;
 
 // Global variables for status effects:
 // Fire = radius and points, Shock = chains and points, Ice = duration and points, gravity = radius + points
-// TODO - make uneditable ones final
 // Duration of effect (shots)
 int fireDuration;
 int shockDuration;
@@ -103,6 +102,7 @@ int shockChains;
 int shockChainsIncrement;
 int shockChainsMax;
 
+// The starting stats - reset every time the game is started
 void resetStats() {
   fireDuration = 1;
   shockDuration = 1;
@@ -115,7 +115,7 @@ void resetStats() {
   shockMultiplier = 1; // Each shocked ball worth 10 points
   shockMultiplierIncrement = 0.25;
   shockMultiplierMax = 1.75;
-  frozenMultiplier = 0.3; // Each frozen ball worth 4 points
+  frozenMultiplier = 0.3; // Each frozen ball worth 3 points
   frozenMultiplierIncrement = 0.3;
   frozenMultiplierMax = 1.2;
   gravityMultiplier = 1; // Each ball pulled into a hole by gravity is worth its default amount to start
@@ -127,7 +127,7 @@ void resetStats() {
   fireRadiusMax = 60;
   shockRadius = 120;
   freezeRadius = ball_diameter;
-  gravityRadius = 60;
+  gravityRadius = 600;
   gravityRadiusIncrement = 20;
   gravityRadiusMax = 120;
   // Chains for shock ball
@@ -168,6 +168,7 @@ void settings() {
     size(screen_width, screen_height);
 }
 
+// Resets the game state
 void reset() {
   
   state = 0;
@@ -193,7 +194,6 @@ void setup() {
     frameRate(60);
     table_setup(tableSides);
     inventory = new Inventory(1.25*screen_width/10, screen_height/2, screen_width/5, table_rad_4*1.5, 5);
-    //inventory = new Inventory(0, 0, screen_width/5, table_rad*2);
     flame = loadImage("flame.png");
     bolt = loadImage("bolt.png");
     frost = loadImage("frost.png");
@@ -233,7 +233,6 @@ void table_setup(int sides) {
   balls.clear();
   balls.add(cue_ball);    
   setupTriangle(new PVector(screen_width/2,screen_height/2), 5, ball_diameter, ball_mass);
-  //shots = 5 * round_num+1;
 }
 
 void menu_setup() {
@@ -253,11 +252,10 @@ void draw() {
       render();
       firstFrameOfShot = false;
     }
-    //if (cue_ball_potted && nextTurn()) resetCueBall();
     // If the balls are moving, and now the balls have stopped, handle logic for next shot
     if (moving) {
       if (checkAllBallStop()) {
-        endOfRound();
+        endOfShot();
       }
     }
     // check here in case ball is stationary to allow selection change
@@ -270,11 +268,10 @@ void draw() {
   }
 }
 
-void endOfRound() {
-  // HERE WE PERFORM THE END OF ROUND PHASE
+void endOfShot() {
   // Performs end checks once per situation where previously balls were moving, and now all stopped
   if (!endChecksDone) {
-    handleEndOfRoundEffects();
+    handleEndOfShotEffects();
     endChecksDone = true;
     return;
   }
@@ -309,13 +306,14 @@ void endOfRound() {
   } 
   else {
     if (cue_ball_potted) resetCueBall();
-    // set the cue colour to that of the selected ball in the inventory (swap to powerups)
+    // switch cue balls if selected a different one
     if (currentSelectedItem != inventory.selected) switchCueBalls();
     cue.setActive(true);
   }
   moving = false;
 }
 
+// Logic for moving onto the next round
 void nextRoundProcedure() {
   inventory.resetBalls();
   switchCueBalls();
@@ -323,10 +321,9 @@ void nextRoundProcedure() {
   state = round_end_state;
   if (round_num % 3 == 0 && round_num != 0) {
     tableSides = int(random(4, 10));
-    print("tablesides set to" + str(tableSides));
   }
   table_setup(tableSides);
-  if (round_num <= 9) {
+  if (round_num <= 9) { // Quick fix so game doesnt crash on win
     points_needed = roundScores[round_num];
   } else {
     points_needed = 99999;
@@ -335,8 +332,6 @@ void nextRoundProcedure() {
   // reactivate cue stick here
   cue.setActive(false);
   score = 0;
-  // set the cue colour to that of the selected ball in the inventory (swap to powerups)
-  //cue_ball.setColour(inventory.selectedBallType());
 }
 
 void switchCueBalls() {
@@ -373,7 +368,8 @@ void switchCueBalls() {
   currentSelectedItem = inventory.selected;
 }
 
-void handleEndOfRoundEffects() {
+// Handles effect durations at the end of a shot
+void handleEndOfShotEffects() {
   for (Ball b : balls) {
     b.hitThisShot.clear();
     if (b != cue_ball) {
@@ -404,6 +400,7 @@ void handleEndOfRoundEffects() {
   }
 }
 
+// Render the start screen
 void renderStart() {
   translate(screen_width, 0);
   rotate(HALF_PI);
@@ -424,6 +421,7 @@ void renderStart() {
   flash_count ++;
 }
 
+// Render the HUD
 void renderHUD() {
   background(58, 181, 3);
   scale(0.98, 0.925);
@@ -443,6 +441,7 @@ void renderHUD() {
   fill(0);
 }
 
+// Render game over / win screen
 void renderEnd() {
   translate(screen_width, 0);
   rotate(HALF_PI);
@@ -486,8 +485,6 @@ void render() {
 
   if (state == round_end_state) {
     menu.display();
-    // tempBut.update();
-    // tempBut.display();
   }
   if (cue.getActive() && state != round_end_state) {
     cue.display();
@@ -498,7 +495,7 @@ void render() {
   inventory.draw();
 }
 
-
+// Update the movements of all balls every frame
 void updateMovements() {
   for (Ball b : balls) {
     b.applyDrag();
@@ -511,11 +508,7 @@ void updateMovements() {
   for (int i = 0; i < balls.size()-1; i++){
     for (int j = i + 1; j < balls.size(); j++){
       boolean res;
-      // if (balls.get(i).velocity.mag() >= balls.get(j).velocity.mag()) {
-      //   res = balls.get(i).ballCollision(balls.get(j));
-      // } else {
-      //   res = balls.get(j).ballCollision(balls.get(i));
-      // }
+
       if (balls.get(balls.size()-1) == cue_ball) { // If the final ball is the cue ball, must switch the order of collisions. Otherwise the cue ball is slightly less accurate, leading to incorrect aim lines
         res = balls.get(j).ballCollision(balls.get(i));
       } else {
@@ -524,13 +517,10 @@ void updateMovements() {
       if (res) {
         if (balls.get(i) instanceof PowerBall) ((PowerBall)balls.get(i)).impactEffect(balls.get(j));
         else if (balls.get(j) instanceof PowerBall) ((PowerBall)balls.get(j)).impactEffect(balls.get(i));
-        // else if (balls.get(i).isShocked() || balls.get(j).isShocked()) {
-        //   balls.get(i).shock();
-        //   balls.get(j).shock();
-        // }
       }
     }
   }
+  // Unsure why, but having movement after boundary collisions actually stops balls phasing out of boundaries
   for (Ball b : balls) {
    table.boundaryCollision(b);
    if (table.ballInPocket(b)) pocketed.add(b);
@@ -538,6 +528,8 @@ void updateMovements() {
   for (Ball b : balls) {
     b.move();
   }
+  
+  
   ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : pocketed) {
     if (b == cue_ball && cue_ball instanceof GravityBall) {
@@ -713,9 +705,6 @@ void mousePressed() {
       xStart = mouseX;
       yStart = mouseY;
       cue_drag = true;
-      // debug check
-      // println("xStart: " + xStart);
-      // println("yStart: " + yStart);
     }
   }
 }
@@ -743,13 +732,11 @@ void mouseReleased() {
 boolean checkAllBallStop() {
   for (Ball b : balls) {
     if (b.velocity.mag() != 0) {
-      //println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }
   for (Ball b : pocketed) {
     if (b.velocity.mag() != 0) {
-      //println("b.velocity.mag()" + b.velocity.mag());
       return false;
     }
   }

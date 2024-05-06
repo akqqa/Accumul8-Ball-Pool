@@ -12,6 +12,7 @@ public class LineAnimation extends Animation {
     }
 
     public void draw() {
+        // Draw a line between the two balls and slowly lose opacity over time
         if (frames > 0) {
             strokeWeight(2);
             stroke(color(255, 219, 0, opacity));
