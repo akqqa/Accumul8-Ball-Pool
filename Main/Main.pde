@@ -127,7 +127,7 @@ void resetStats() {
   fireRadiusMax = 60;
   shockRadius = 120;
   freezeRadius = ball_diameter;
-  gravityRadius = 600;
+  gravityRadius = 60;
   gravityRadiusIncrement = 20;
   gravityRadiusMax = 120;
   // Chains for shock ball

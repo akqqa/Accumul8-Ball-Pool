@@ -30,11 +30,11 @@ public class Inventory {
     addItem("shock",0);
     //items.get(2).unlock();
     numBalls ++;
-    addItem("ice", 5);
-    items.get(3).unlock();
+    addItem("ice", 0);
+    //items.get(3).unlock();
     numBalls ++;
-    addItem("gravity", 5);
-    items.get(4).unlock();
+    addItem("gravity", 0);
+    //items.get(4).unlock();
     numBalls ++;
   }
   
