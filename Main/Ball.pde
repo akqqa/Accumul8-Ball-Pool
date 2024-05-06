@@ -151,7 +151,6 @@ public class Ball {
     
     // movement
     public void move() {
-      //println(powerBall);
       if (!(frozen && !powerBall)) {
         velocity.add(acceleration);
         position.add(velocity);
@@ -199,7 +198,6 @@ public class Ball {
         float minDistance = radius + other.radius;
     
         if (distanceVectMag < minDistance) {
-          //circle(this.position.x, this.position.y, 25);
         
           ballHit.trigger();
             

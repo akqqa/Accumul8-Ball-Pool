@@ -85,7 +85,7 @@ public class Cue {
         fill(255);
         square(-cueLength/2, 0, 10);
         popMatrix();
-        findAngles();
+        drawAngles();
     }
     
     // lock the angle for user to start adjusting the power
@@ -120,7 +120,8 @@ public class Cue {
     }
 
     // Method to figure out where the currently aimed cue ball will collide, and the resulting angles from this
-    public void findAngles() {
+    // Then draws the lines representing this to the screen
+    public void drawAngles() {
         PVector cueBallVector = cue_ball.position.copy();
         float direction = 0;
         if (lockAngle == false) {

@@ -153,7 +153,7 @@ public class Button {
     public void applyChanges() {
         // checks the upgrade type of the button
         if (this.button_type.equals("points")) {
-            // points upgrade (nf is used for correcting to 2 decimal places)
+            // points upgrade
             if (this.button_element.equals("electricity")) {
                 shockMultiplier = shockMultiplier + (this.button_amount);
                 println("shockMultiplier:" + shockMultiplier);
@@ -172,7 +172,6 @@ public class Button {
                 return;
             }
         } else if (this.button_type.equals("radius")) {
-            // radius upgrade
             if (this.button_element.equals("fire")) {
                 fireRadius = fireRadius + this.button_amount;
                 println("fireRadius: "+fireRadius);

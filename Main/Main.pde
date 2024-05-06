@@ -268,6 +268,7 @@ void draw() {
   }
 }
 
+// Called at the end of each shot to handle necessary behaviours
 void endOfShot() {
   // Performs end checks once per situation where previously balls were moving, and now all stopped
   if (!endChecksDone) {
@@ -334,6 +335,7 @@ void nextRoundProcedure() {
   score = 0;
 }
 
+// Logic for switching the cue balls in the inventory
 void switchCueBalls() {
   // If the selected item has changed from the last frame, switch it out
   if (inventory.selected instanceof FireItem) {
@@ -529,7 +531,7 @@ void updateMovements() {
     b.move();
   }
   
-  
+  // LOGIC FOR POCKETED BALLS
   ArrayList<Ball> bin = new ArrayList<>();
   for (Ball b : pocketed) {
     if (b == cue_ball && cue_ball instanceof GravityBall) {
@@ -538,7 +540,6 @@ void updateMovements() {
     balls.remove(b);
     if (table.ballFinished(b)) bin.add(b);
   }
-  // LOGIC FOR POTTED BALLS
   for (Ball b : bin) {
     pocketed.remove(b);
     if (b == cue_ball) {
@@ -568,13 +569,14 @@ void updateMovements() {
   }
 }
 
+// When a shocked ball is pocketed, this method is run to figure out all the balls that the electricity chains to, and give the correct number of points
 void handleShockChain(Ball ball) {
   ArrayList<Ball> ballsToHandleShock = new ArrayList<Ball>();
   ArrayList<Ball> newBallsToHandleShock = new ArrayList<Ball>();
   ballsToHandleShock.add(ball);
   ArrayList<Ball> shockedBalls = new ArrayList<Ball>();
   shockedBalls.add(ball);
-  // Repeat for number of chains the player has unlocked
+  // Repeat for number of chains the player has unlocked - every time the list of balls to handle will change
   for (int i = 0; i < shockChains; i++) {
     ArrayList<Ball> candidateBalls = new ArrayList<Ball>();
     // Iterate through each ball that should be handled. Every iteration of chain means new balls are handled
@@ -654,30 +656,6 @@ void resetCueBall() {
   switchCueBalls();
 }
 
-int nextTurn() {
-  // return -1 for still moving
-  // return 0 for some reds remain
-  // return 1 for no reds remain
-  if (pocketed.size() > 0) return -1;
-  boolean reds_remain = false;
-  for (Ball b : balls)
-   {
-     if (b.velocity.mag() != 0) {
-        return -1;
-     } else if (b != cue_ball) reds_remain = true;
-   }
-  if (reds_remain) return 0;
-  return 1;
-}
-
-void keyPressed() {
-
-  if (key == ' ') {
-    frameDivider = 20;
-  }
-
-}
-
 void mousePressed() {
   if (finished) {
     finished = false;
@@ -728,7 +706,7 @@ void mouseReleased() {
 }
 
 
-// check if all balls have stopped
+// check if all balls have stopped (to know if the shot is over)
 boolean checkAllBallStop() {
   for (Ball b : balls) {
     if (b.velocity.mag() != 0) {
