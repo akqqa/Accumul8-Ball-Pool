@@ -35,11 +35,11 @@ public class Menu {
             possibleUpgrades.add(arr);
         }
         if (shockMultiplier < shockMultiplierMax) {
-            arr = new Object[]{shockMultiplierIncrement, "electricity", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + " shock points"};
+            arr = new Object[]{shockMultiplierIncrement, "shock", "points", "+" + str(shockMultiplierIncrement*points_per_ball) + " shock points"};
             possibleUpgrades.add(arr);
         }
         if (shockChains < shockChainsMax) {
-            arr = new Object[]{(float) shockChainsIncrement, "electricity", "chains", "+" + str(shockChainsIncrement) + " shock chain"};
+            arr = new Object[]{(float) shockChainsIncrement, "shock", "chains", "+" + str(shockChainsIncrement) + " shock chain"};
             possibleUpgrades.add(arr);
         }
         if (frozenMultiplier < frozenMultiplierMax) {
