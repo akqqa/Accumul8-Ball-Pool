@@ -18,7 +18,7 @@ final float cue_ball_mass = ball_mass +0.5;
 final int round_end_state = 12345;
 final int game_state= 56789;
 // the following are variables for menu testing
-final String[] elements = {"electricity", "fire", "ice", "gravity"};
+final String[] elements = {"shock", "fire", "ice", "gravity"};
 final int[] percentages = {10, 15, 20, 25};
 final String[] upgrade_types = {"points", "radius"};
 
@@ -569,7 +569,7 @@ void updateMovements() {
   }
 }
 
-// When a shocked ball is pocketed, this method is run to figure out all the balls that the electricity chains to, and give the correct number of points
+// When a shocked ball is pocketed, this method is run to figure out all the balls that the shock chains to, and give the correct number of points
 void handleShockChain(Ball ball) {
   ArrayList<Ball> ballsToHandleShock = new ArrayList<Ball>();
   ArrayList<Ball> newBallsToHandleShock = new ArrayList<Ball>();

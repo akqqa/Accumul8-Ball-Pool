@@ -154,7 +154,7 @@ public class Button {
         // checks the upgrade type of the button
         if (this.button_type.equals("points")) {
             // points upgrade
-            if (this.button_element.equals("electricity")) {
+            if (this.button_element.equals("shock")) {
                 shockMultiplier = shockMultiplier + (this.button_amount);
                 println("shockMultiplier:" + shockMultiplier);
                 return;
@@ -182,7 +182,7 @@ public class Button {
                 return;
             }
         } else if (this.button_type.equals("chains")) {
-            if (this.button_element.equals("electricity")) {
+            if (this.button_element.equals("shock")) {
                 shockChains = shockChains + (int) this.button_amount;
                 println("shockChains: "+shockChains);
                 return;
@@ -195,7 +195,7 @@ public class Button {
             }
         } else if (this.button_type.equals("ball")) {
             // add ball
-            if (this.button_element.equals("electricity")) {
+            if (this.button_element.equals("shock")) {
                 inventory.addBall("shock");
                 return;
             } else if (this.button_element.equals("fire")) {
