@@ -44,7 +44,7 @@ public class Cue {
                     position.x = cueBallVector.copy().x + base_distance * cos(angle) + dotProduct * cos(angle);
                     position.y = cueBallVector.copy().y + base_distance* sin(angle) + dotProduct * sin(angle);
 
-                } else if (dotProduct >= max_dot_product) {
+                } else if (dotProduct > max_dot_product) {
                     position.x = cueBallVector.copy().x + base_distance * cos(angle) + max_dot_product * cos(angle);
                     position.y = cueBallVector.copy().y + base_distance * sin(angle) + max_dot_product * sin(angle);
                 } else {
