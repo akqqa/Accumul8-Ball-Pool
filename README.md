@@ -1,4 +1,4 @@
-# CS4303-P4 - Accumul8 Ball Pool
+# Accumul8 Ball Pool
 
 A rogue-like pool videogame
 
